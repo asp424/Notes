@@ -1,11 +1,11 @@
 package com.lm.notes.di.compose
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -26,18 +26,20 @@ interface ComposeValues {
         override fun mainScreenValues() = with(LocalConfiguration.current) {
             with(LocalDensity.current) {
                 MainDeps(
-                    _width = remember { mutableStateOf(screenWidthDp.dp) },
-                    _height = remember { mutableStateOf(screenHeightDp.dp) },
-                    _scaleX = rememberSaveable { mutableStateOf(85f) },
-                    _scaleY = rememberSaveable { mutableStateOf(300f) },
-                    _eventOffset = remember { mutableStateOf(Offset.Zero) },
-                    _listPoints = remember { mutableStateListOf() },
-                    _action = remember { mutableStateOf(-1) },
-                    _startMove = remember { mutableStateOf(false) },
-                    _strike = remember { mutableStateOf(false) },
+                    _width = screenWidthDp.dp,
+                    _height = screenHeightDp.dp,
                     _iconUri = remember { mutableStateOf(checkNotNull(sPreferences.readIconUri())) },
-                    _progressVisibility = remember { mutableStateOf(false) }
-                )
+                    _progressVisibility = remember { mutableStateOf(false) },
+                    _infoVisibility = remember { mutableStateOf(false) },
+                    _coroutine = rememberCoroutineScope()
+                ).apply {
+                    animateDpAsState(
+                        if (infoVisibility) 30.dp else 0.dp, tween(500)
+                    ).setInfoHeightStart
+                    animateDpAsState(
+                        if (infoVisibility) 15.dp else 0.dp, tween(500)
+                    ).setInfoHeightEnd
+                }
             }
         }
     }
