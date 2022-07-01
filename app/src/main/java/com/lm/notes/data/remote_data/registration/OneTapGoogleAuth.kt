@@ -26,18 +26,22 @@ interface OneTapGoogleAuth {
 
         override fun handleResultAndFBReg(result: ActivityResult) = callbackFlow {
             if (result.resultCode == RESULT_OK) {
-                val token = signInClient.getSignInCredentialFromIntent(result.data)
-                    .googleIdToken
-                if (token == null) trySendBlocking(FBRegState.OnError("null"))
-                else fbAuth.startAuthWithGoogleIdToken(token)
-                    .collect{
-                        trySendBlocking(
-                        when(it){
-                            is FBRegState.OnSuccess -> FBRegState.OnSuccess(it.uid)
-                            is FBRegState.OnError -> FBRegState.OnError(it.message)
-                            is FBRegState.Loading -> FBRegState.Loading
-                        })
-                    }
+                signInClient.getSignInCredentialFromIntent(result.data).apply {
+                    val token = googleIdToken
+                    val icon = profilePictureUri
+                    token.log
+                    if (token == null) trySendBlocking(FBRegState.OnError("null"))
+                    else fbAuth.startAuthWithGoogleId(token)
+                        .collect {
+                            trySendBlocking(
+                                when (it) {
+                                    is FBRegState.OnSuccess -> FBRegState.OnSuccess(icon)
+                                    is FBRegState.OnError -> FBRegState.OnError(it.message)
+                                    is FBRegState.Loading -> FBRegState.Loading
+                                }
+                            )
+                        }
+                }
             }
             awaitClose()
         }.flowOn(IO)

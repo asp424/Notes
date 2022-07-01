@@ -1,5 +1,6 @@
 package com.lm.notes.data.remote_data.registration
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.Dispatchers.IO
@@ -12,29 +13,20 @@ import javax.inject.Inject
 
 interface FBAuth {
 
-    fun startAuthWithGoogleIdToken(googleIdToken: String): Flow<FBRegState>
+    fun startAuthWithGoogleId(googleIdToken: String): Flow<FBRegState>
 
     class Base @Inject constructor(
         private val firebaseAuth: FirebaseAuth
-    ): FBAuth {
+    ) : FBAuth {
 
-        override fun startAuthWithGoogleIdToken(googleIdToken: String)
-        = callbackFlow{
+        override fun startAuthWithGoogleId(googleIdToken: String) = callbackFlow {
             val credential = GoogleAuthProvider.getCredential(googleIdToken, null)
-           firebaseAuth.signInWithCredential(credential)
-               .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    task.result.user.apply {
-                        if (this == null) trySendBlocking(FBRegState.OnError("null"))
-                         else trySendBlocking(FBRegState.OnSuccess(uid))
-                    }
-                } else {
-                    task.exception.apply {
-                        if (this == null) trySendBlocking(FBRegState.OnError("null"))
-                         else trySendBlocking(FBRegState.OnError(message?: "null"))
-                    }
-                }
-            }
+            firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) { trySendBlocking(FBRegState.OnSuccess(Uri.EMPTY))
+                    } else trySendBlocking(FBRegState.OnError(task.exception?.message ?: "null"))
+                }.addOnFailureListener { trySendBlocking(FBRegState.OnError(it.message ?: "null")) }
+                .addOnCanceledListener { trySendBlocking(FBRegState.OnError("cancelled")) }
             awaitClose()
         }.flowOn(IO)
     }

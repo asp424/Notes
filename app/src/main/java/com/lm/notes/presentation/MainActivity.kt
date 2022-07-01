@@ -2,28 +2,31 @@ package com.lm.notes.presentation
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Abc
-import androidx.compose.material.icons.filled.Radio
-import androidx.compose.material3.Icon
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import com.lm.notes.utils.log
+import com.google.firebase.auth.FirebaseAuth
+import com.lm.notes.appComponent
+import com.lm.notes.data.SPreferences
+import com.lm.notes.di.compose.ComposeDependencies
+import com.lm.notes.ui.Screens
+import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
+    @Inject
+    lateinit var screens: Screens
+
+    @Inject
+    lateinit var composeDependencies: ComposeDependencies
+
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        appComponent.inject(this)
         setContent {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.Abc, contentDescription = null)
+            composeDependencies.MainScreenDependencies {
+                screens.MainScreen()
             }
         }
-
-        if (isAuth) startLoginActivity
-        else ("ass" + fBAuth.currentUser?.uid).log
     }
 }

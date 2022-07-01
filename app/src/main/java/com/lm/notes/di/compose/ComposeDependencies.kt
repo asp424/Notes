@@ -10,35 +10,22 @@ interface ComposeDependencies {
     fun mainScreenDepsLocal(): MainDeps
 
     @Composable
-    fun MainScreenDependencies(
-        content: @Composable () -> Unit
-    )
+    fun MainScreenDependencies(content: @Composable () -> Unit)
 
     @Composable
     fun MainScreenDeps(loc: @Composable MainDeps.() -> Unit)
 
-    class Base @Inject constructor(
-        private val composeValues: ComposeValues
-    ) : ComposeDependencies {
+    class Base @Inject constructor(private val composeValues: ComposeValues) : ComposeDependencies {
         @Composable
-        override fun MainScreenDependencies(
-            content: @Composable () -> Unit
-        ) {
+        override fun MainScreenDependencies(content: @Composable () -> Unit) {
             CompositionLocalProvider(
                 local provides composeValues.mainScreenValues(),
                 content = content
             )
         }
-
-        private val local by lazy {
-            staticCompositionLocalOf<MainDeps> { error("No value provided") }
-        }
-
+        private val local by lazy { staticCompositionLocalOf<MainDeps> { error("No value provided") } }
         @Composable
-        override fun MainScreenDeps(loc: @Composable MainDeps.() -> Unit) {
-            loc(local.current)
-        }
-
+        override fun MainScreenDeps(loc: @Composable MainDeps.() -> Unit) { loc(local.current) }
         @Composable
         override fun mainScreenDepsLocal() = local.current
     }

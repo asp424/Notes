@@ -1,9 +1,7 @@
 package com.lm.notes.di.dagger
 
-import com.google.android.gms.auth.api.identity.SignInClient
-import com.lm.notes.data.remote_data.registration.FBAuth
-import com.lm.notes.data.remote_data.registration.OneTapGoogleAuth
 import com.lm.notes.di.dagger.annotations.RegScope
+import com.lm.notes.presentation.LoginActivity
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Component.Builder
@@ -15,12 +13,10 @@ interface RegComponent {
     interface Builder {
 
         @BindsInstance
-        fun signInClient(signInClient: SignInClient): Builder
+        fun loginActivity(loginActivity: LoginActivity): Builder
 
         fun create(): RegComponent
     }
 
-    fun fBAuth(): FBAuth
-
-    fun oTGAuth(): OneTapGoogleAuth
+    fun inject(loginActivity: LoginActivity)
 }

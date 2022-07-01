@@ -1,7 +1,6 @@
 package com.lm.notes.di.dagger
 
-import com.lm.notes.di.dagger.modules.app.ViewModelFactoryModule
-import com.lm.notes.di.dagger.modules.app.ViewModelsModule
+import com.lm.notes.di.dagger.modules.app.*
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -10,6 +9,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
     includes = [
         ViewModelFactoryModule::class,
         ViewModelsModule::class,
+        ScreensModule::class,
+        ComposeDependenciesModule::class,
+        ComposeValuesModule::class,
+        FBAuthInstanceModule::class
     ]
 )
 interface AppMapModules

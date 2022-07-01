@@ -1,4 +1,4 @@
-package com.lm.notes.di.dagger.modules.app
+package com.lm.notes.di.dagger.modules.reg
 
 import androidx.lifecycle.ViewModelProvider
 import com.lm.notes.di.dagger.annotations.AppScope
@@ -9,11 +9,11 @@ import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
-@Module(includes = [ViewModelModules::class])
-interface ViewModelFactoryModule {
+@Module(includes = [LoginViewModelModule::class])
+interface LoginViewModelFactoryModule {
 
     @Binds
-    @AppScope
+    @RegScope
     fun bindsViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 }
 

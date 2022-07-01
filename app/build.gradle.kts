@@ -61,6 +61,8 @@ dependencies {
     implementation("androidx.compose.animation:animation:$composeVersion")
     implementation("androidx.compose.material3:material3:1.0.0-alpha13")
     implementation("androidx.activity:activity-compose:1.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
+
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -77,6 +79,9 @@ dependencies {
     implementation ("com.google.firebase:firebase-database-ktx:20.0.5")
     implementation("com.google.firebase:firebase-auth-ktx:21.0.6")
     implementation ("com.google.android.gms:play-services-auth:20.2.0")
+
+    //Koil
+    implementation("io.coil-kt:coil-compose:2.1.0")
 }
 
 
