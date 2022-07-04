@@ -2,7 +2,7 @@ package com.lm.notes.di.dagger.modules.app
 
 import androidx.lifecycle.ViewModel
 import com.lm.notes.di.dagger.annotations.AppScope
-import com.lm.notes.presentation.MainViewModel
+import com.lm.notes.presentation.NotesViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -14,7 +14,7 @@ interface ViewModelModules {
     @IntoMap
     @Binds
     @AppScope
-    @ViewModelKey(MainViewModel::class)
-    fun bindsMainViewModel(viewModel: MainViewModel): ViewModel
+    @ViewModelKey(NotesViewModel::class)
+    fun bindsMainViewModel(viewModel: NotesViewModel): ViewModel
 }
 

@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.SPreferences
+import com.lm.notes.presentation.ViewModels
 import javax.inject.Inject
 
 interface ComposeValues {
@@ -19,7 +20,8 @@ interface ComposeValues {
     ): MainDeps
 
     class Base @Inject constructor(
-        private val sPreferences: SPreferences
+        private val sPreferences: SPreferences,
+        private val viewModels: ViewModels
     ) : ComposeValues {
 
         @Composable
@@ -34,11 +36,8 @@ interface ComposeValues {
                     _coroutine = rememberCoroutineScope()
                 ).apply {
                     animateDpAsState(
-                        if (infoVisibility) 30.dp else 0.dp, tween(500)
-                    ).setInfoHeightStart
-                    animateDpAsState(
-                        if (infoVisibility) 15.dp else 0.dp, tween(500)
-                    ).setInfoHeightEnd
+                        if (infoVisibility) 20.dp else 0.dp, tween(500)
+                    ).setInfoOffset
                 }
             }
         }

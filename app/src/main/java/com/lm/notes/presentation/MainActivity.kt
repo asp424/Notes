@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.appComponent
-import com.lm.notes.data.SPreferences
 import com.lm.notes.di.compose.ComposeDependencies
 import com.lm.notes.ui.Screens
 import javax.inject.Inject

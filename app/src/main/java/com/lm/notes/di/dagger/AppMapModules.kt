@@ -12,7 +12,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         ScreensModule::class,
         ComposeDependenciesModule::class,
         ComposeValuesModule::class,
-        FBAuthInstanceModule::class
+        FBAuthInstanceModule::class,
+        FirebaseRepositoryModule::class,
+        FirebaseHandlerModule::class,
+        ValueListenerModule::class,
+        ChildListenerModule::class,
+        NotesHandlerModule::class,
+        FirebaseReferenceModule::class
     ]
 )
 interface AppMapModules

@@ -8,37 +8,40 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Logout
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import coil.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.R
 import com.lm.notes.data.SPreferences
+import com.lm.notes.data.remote_data.firebase.FBLoadStates
 import com.lm.notes.di.compose.ComposeDependencies
 import com.lm.notes.presentation.MainActivity
-import com.lm.notes.presentation.MainViewModel
+import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModels
 import com.lm.notes.utils.noRippleClickable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.cos
-import kotlin.math.sin
 
 interface Screens {
 
@@ -55,100 +58,87 @@ interface Screens {
         @Composable
         override fun MainScreen() {
             LocalViewModelStoreOwner.current?.also { owner ->
-                val mainViewModel = remember {
-                    viewModels.viewModelProvider(owner)[MainViewModel::class.java]
+                val notesViewModel = remember {
+                    viewModels.viewModelProvider(owner)[NotesViewModel::class.java]
                 }
 
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .background(White)
-                ) {
-                    with(composeDependencies.mainScreenDepsLocal()) {
-                        Column(Modifier.fillMaxSize()) {
+                val lifecycle = LocalLifecycleOwner.current
+
+                val notesList = notesViewModel.notesList
+
+                Column {
+                    Box(Modifier.background(White)) {
+                        with(composeDependencies.mainScreenDepsLocal()) {
                             TopAppBar(
                                 Modifier
-                                    .alpha(0.5f)
-                                    //.padding(bottom = infoHeight)
-                                    , backgroundColor = Blue
+                                    .alpha(0.5f), backgroundColor = Blue
                             ) {
                             }
-                        }
-                        Canvas(
-                            Modifier.offset(width - 55.dp - infoHeightEnd, 28.dp)
-                        ) {
-                            drawCircle(
-                                Red, 65f,
-                                Offset.Zero
-                            )
-                        }
-                        Box(
-                            Modifier.offset(width - 65.dp - infoHeightEnd, 18.dp)
-                        ) {
-                            Icon(Icons.Sharp.Logout, null,
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .noRippleClickable {
-                                        firebaseAuth.signOut()
-                                        if (firebaseAuth.currentUser?.uid == null) {
-                                            sPreferences.saveIconUri(Uri.EMPTY)
-                                            Uri.EMPTY.setIconUri
-                                        }
-                                    }, tint = White)
-                        }
-                        Canvas(
-                            Modifier
-                                .offset(width - 55.dp, 28.dp)
-                                .padding(start = infoHeightStart)
-                        ) {
-                            repeat(650) {
-                                drawCircle(
-                                    White, 10f,
-                                    Offset(55 * sin(it * 0.01f), 55 * cos(it * 0.01f))
-                                )
-                            }
-                            drawCircle(
-                                White, 53f,
-                                Offset.Zero
-                            )
-                            repeat(630) {
-                                drawCircle(
-                                    Gray, 2f,
-                                    Offset(48f * sin(it * 0.01f), 48f * cos(it * 0.01f))
-                                )
-                            }
-                        }
 
-                        Box(
-                            modifier = Modifier
-                                .offset(width - 70.dp, 13.dp)
-                                .padding(start = infoHeightStart)
-                        ) {
-                            (LocalContext.current as MainActivity).apply {
-                                AsyncImage(
-                                    model = if (iconUri.toString() != "") iconUri else R.drawable.face,
-                                    contentDescription = null,
-                                    placeholder = painterResource(id = R.drawable.face),
+                            Canvas(
+                                Modifier.offset(width - 55.dp - infoOffset, 28.dp)
+                            ) { drawCircle(Red, infoOffset.value + 28f, Offset.Zero) }
+
+                            Box(
+                                Modifier.offset(width - 63.dp - infoOffset, 18.dp)
+                            ) {
+                                Icon(
+                                    Icons.Sharp.Logout, null,
                                     modifier = Modifier
-                                        .size(if (!progressVisibility) 30.dp else 0.dp)
+                                        .size(20.dp)
                                         .noRippleClickable {
-                                            if (!firebaseAuth.isAuth) {
-                                                true.setProgressVisibility; startLoginActivity
-                                            } else {
-                                                coroutine.launch {
-                                                    if (infoVisibility) false.setInfoVisibility
-                                                    else true.setInfoVisibility
-                                                    delay(1000)
-                                                    if (infoVisibility) false.setInfoVisibility
-                                                    else true.setInfoVisibility
+                                            firebaseAuth.signOut()
+                                            if (firebaseAuth.currentUser?.uid == null) {
+                                                sPreferences.saveIconUri(Uri.EMPTY)
+                                                Uri.EMPTY.setIconUri
+                                            }
+                                        }, tint = White
+                                )
+                            }
+
+                            Canvas(
+                                Modifier.offset(width - 55.dp + infoOffset, 28.dp)
+                            ) {
+                                drawCircle(
+                                    White, 46f,
+                                    Offset.Zero
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier.offset(width - 70.dp + infoOffset, 13.dp)
+                            ) {
+                                (LocalContext.current as MainActivity).apply {
+                                    AsyncImage(
+                                        model = if (iconUri.toString() != "") iconUri else R.drawable.face,
+                                        contentDescription = null,
+                                        placeholder = painterResource(id = R.drawable.face),
+                                        modifier = Modifier
+                                            .size(if (!progressVisibility) 30.dp else 0.dp)
+                                            .noRippleClickable {
+                                                if (!firebaseAuth.isAuth) {
+                                                    true.setProgressVisibility; startLoginActivity
+                                                } else {
+                                                    if (!infoVisibility) {
+                                                        coroutine.launch {
+                                                            if (infoVisibility) false.setInfoVisibility
+                                                            else true.setInfoVisibility
+                                                            delay(1000)
+                                                            if (infoVisibility) false.setInfoVisibility
+                                                            else true.setInfoVisibility
+                                                        }
+                                                    }
                                                 }
                                             }
-                                        }
-                                        .clip(CircleShape),
-                                    contentScale = ContentScale.Crop,
-                                    onLoading = { if (iconUri.toString() != "") true.setProgressVisibility },
-                                    onSuccess = { false.setProgressVisibility }
-                                )
+                                            .clip(CircleShape),
+                                        contentScale = ContentScale.Crop,
+                                        onLoading = {
+                                            if (iconUri.toString()
+                                                    .isNotEmpty()
+                                            ) true.setProgressVisibility
+                                        }, onSuccess = { false.setProgressVisibility }
+                                    )
+                                }
                                 if (progressVisibility) CircularProgressIndicator(
                                     modifier =
                                     Modifier
@@ -157,6 +147,25 @@ interface Screens {
                                 )
                             }
                         }
+                    }
+
+                    when (notesList) {
+                        is FBLoadStates.Loading ->
+                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
+                            { CircularProgressIndicator() }
+                        is FBLoadStates.Success<*> ->
+                                Text(text = notesList.data.toString())
+
+                        is FBLoadStates.Failure ->
+                            Text(text = notesList.message)
+                        else -> {}
+                    }
+                }
+                Box(
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter
+                ) {
+                    Button(onClick = { notesViewModel.updateNotesList(lifecycle.lifecycleScope) }) {
+                        Text(text = "update")
                     }
                 }
             }
