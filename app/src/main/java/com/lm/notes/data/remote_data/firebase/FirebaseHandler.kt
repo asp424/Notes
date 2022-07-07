@@ -4,7 +4,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ServerValue
-import com.lm.notes.data.remote_data.firebase.NotesHandler.Base.Companion.NOTE
 import com.lm.notes.utils.log
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.ProducerScope
@@ -12,9 +11,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -31,6 +28,8 @@ interface FirebaseHandler {
     suspend fun <T> runSuspendCoroutine(task: Task<T>): Flow<FBLoadStates>
 
     fun saveString(value: String, node: String, key: String): Flow<FBLoadStates>
+
+    fun saveStringById(value: String, node: String, key: String, id: String): Flow<FBLoadStates>
 
     class Base @Inject constructor(
         private val firebaseAuth: FirebaseAuth,
@@ -51,7 +50,7 @@ interface FirebaseHandler {
                     { trySendBlocking(FBLoadStates.Complete) }
                     addOnCanceledListener { trySendBlocking(FBLoadStates.Cancelled) }
                     addOnFailureListener { trySendBlocking(FBLoadStates.Failure(it)) }
-                    awaitClose{ trySendBlocking(FBLoadStates.EndLoading) }
+                    awaitClose { trySendBlocking(FBLoadStates.EndLoading) }
                 }
             }
 
@@ -82,7 +81,7 @@ interface FirebaseHandler {
         }.flowOn(IO)
 
         override fun saveString(value: String, node: String, key: String) =
-            with(id) {
+            with(randomId) {
                 runTask(
                     node.path.child(this).updateChildren(
                         mapOf(key to value, TIMESTAMP to timestamp, NOTE_ID to this)
@@ -90,13 +89,25 @@ interface FirebaseHandler {
                 )
             }
 
+        override fun saveStringById(
+            value: String,
+            node: String,
+            key: String,
+            id: String
+        ): Flow<FBLoadStates> =
+            runTask(
+                node.path.child(id).updateChildren(
+                    mapOf(key to value, TIMESTAMP to timestamp, NOTE_ID to id)
+                )
+            )
+
         private val String.path
             get() = fireBaseDatabase
                 .child(firebaseAuth.currentUser?.uid.toString()).child(this)
 
         private val timestamp get() = ServerValue.TIMESTAMP
 
-        private val id get() = fireBaseDatabase.push().key.toString()
+        private val randomId get() = fireBaseDatabase.push().key.toString()
 
         companion object {
             const val TIMESTAMP = "timestamp"

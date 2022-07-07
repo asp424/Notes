@@ -8,7 +8,9 @@ interface FirebaseRepository {
 
     fun notesList(): Flow<FBLoadStates>
 
-    fun saveNote(note: String): Flow<FBLoadStates>
+    fun saveNewNote(note: String): Flow<FBLoadStates>
+
+    fun saveNoteById(note: String, id: String): Flow<FBLoadStates>
 
     class Base @Inject constructor(
         private val notesHandler: NotesHandler,
@@ -18,6 +20,8 @@ interface FirebaseRepository {
         override fun notesList() =
             firebaseHandler.runListener(NOTES, ListenerMode.SINGLE)
 
-        override fun saveNote(note: String) = notesHandler.saveNote(note)
+        override fun saveNewNote(note: String) = notesHandler.saveNote(note)
+
+        override fun saveNoteById(note: String, id: String) = notesHandler.saveNoteById(note, id)
     }
 }

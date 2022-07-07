@@ -64,6 +64,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.5.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0")
     implementation("com.arkivanov.decompose:decompose:$deComposeVersion")
+    implementation("com.arkivanov.decompose:extensions-compose-jetpack:0.7.0")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")

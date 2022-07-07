@@ -9,7 +9,8 @@ import com.lm.notes.di.dagger.DaggerAppComponent
 class App : Application() {
 
     val appComponent: AppComponent by lazy {
-        DaggerAppComponent.builder().sPreferences(
+        DaggerAppComponent.builder().application(this)
+            .sPreferences(
             SPreferences.Base(
                 getSharedPreferences("user", MODE_PRIVATE)
             )
