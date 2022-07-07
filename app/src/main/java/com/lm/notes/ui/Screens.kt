@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -34,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.R
 import com.lm.notes.data.SPreferences
 import com.lm.notes.data.remote_data.firebase.FBLoadStates
+import com.lm.notes.data.remote_data.firebase.NoteModel
 import com.lm.notes.di.compose.ComposeDependencies
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
@@ -64,7 +67,7 @@ interface Screens {
 
                 val lifecycle = LocalLifecycleOwner.current
 
-                val notesList = notesViewModel.notesList
+                val notesList = notesViewModel.notesListState
 
                 Column {
                     Box(Modifier.background(White)) {
@@ -150,13 +153,19 @@ interface Screens {
                     }
 
                     when (notesList) {
-                        is FBLoadStates.Loading ->
+                        is UiStates.Loading ->
                             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
                             { CircularProgressIndicator() }
-                        is FBLoadStates.Success<*> ->
-                                Text(text = notesList.data.toString())
+                        is UiStates.Success ->
+                            LazyColumn(content = {
+                                notesList.listNotes.forEach {
+                                    item(key = it.id, content = {
+                                        Text(text = "${it.note}: ${it.timestamp}")
+                                    })
+                                }
+                            })
 
-                        is FBLoadStates.Failure ->
+                        is UiStates.Failure ->
                             Text(text = notesList.message)
                         else -> {}
                     }
@@ -164,8 +173,13 @@ interface Screens {
                 Box(
                     modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter
                 ) {
-                    Button(onClick = { notesViewModel.updateNotesList(lifecycle.lifecycleScope) }) {
-                        Text(text = "update")
+                    Column() {
+                        Button(onClick = { notesViewModel.updateNotesList(lifecycle.lifecycleScope) }) {
+                            Text(text = "update")
+                        }
+                        Button(onClick = { notesViewModel.saveNote("save") }) {
+                            Text(text = "save")
+                        }
                     }
                 }
             }

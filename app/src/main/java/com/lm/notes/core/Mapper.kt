@@ -7,7 +7,6 @@ interface Mapper {
     }
 
     interface DataToUI<in S, out R> {
-        fun map(exception: Exception): R
-        suspend fun map(data: S): R
+        suspend fun map(state: S): R
     }
 }

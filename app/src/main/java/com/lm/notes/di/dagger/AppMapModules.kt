@@ -18,7 +18,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         ValueListenerModule::class,
         ChildListenerModule::class,
         NotesHandlerModule::class,
-        FirebaseReferenceModule::class
+        FirebaseReferenceModule::class,
+        NotesMapperModule::class
     ]
 )
 interface AppMapModules

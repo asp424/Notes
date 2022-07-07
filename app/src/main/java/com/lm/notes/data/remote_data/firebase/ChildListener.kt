@@ -44,7 +44,7 @@ interface ChildListener {
             when (snapshot) {
                 is DataSnapshot -> if (flag == 0) FBLoadStates.Success(snapshot)
                 else FBLoadStates.Update(snapshot)
-                is DatabaseError -> FBLoadStates.Failure(snapshot.message)
+                is DatabaseError -> FBLoadStates.Failure(snapshot)
                 else -> FBLoadStates.Loading
             }
         )

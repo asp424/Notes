@@ -7,6 +7,7 @@ plugins {
 }
 
 val composeVersion = "1.2.0-rc02"
+val deComposeVersion = "0.7.0-native-compose-01"
 val roomVersion = "2.4.2"
 
 android {
@@ -47,11 +48,11 @@ dependencies {
     //Base
     implementation("androidx.core:core-ktx:1.9.0-alpha05")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.0-rc02")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0-rc02")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha01")
 
     //Compose
-    implementation("androidx.compose.ui:ui:1.2.0-rc02")
+    implementation("androidx.compose.ui:ui:1.3.0-alpha01")
     implementation("androidx.compose.ui:ui-tooling:$composeVersion")
     implementation("androidx.compose.compiler:compiler:$composeVersion")
     implementation("androidx.compose.foundation:foundation:$composeVersion")
@@ -59,10 +60,10 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     implementation("androidx.compose.animation:animation:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.0.0-alpha13")
-    implementation("androidx.activity:activity-compose:1.4.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
-
+    implementation("androidx.compose.material3:material3:1.0.0-alpha14")
+    implementation("androidx.activity:activity-compose:1.5.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0")
+    implementation("com.arkivanov.decompose:decompose:$deComposeVersion")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")

@@ -12,6 +12,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -23,7 +24,7 @@ interface FirebaseHandler {
 
     fun runListener(node: String, mode: ListenerMode): Flow<FBLoadStates>
 
-    suspend fun <T> successFlow(task: Task<T>, scope: ProducerScope<FBLoadStates>)
+    suspend fun <T> successFlow(task: Task<T>, scope: ProducerScope<FBLoadStates>): Task<T>
 
     fun <T> runTask(task: Task<T>): Flow<FBLoadStates>
 
@@ -43,16 +44,14 @@ interface FirebaseHandler {
 
         override suspend fun <T> successFlow(task: Task<T>, scope: ProducerScope<FBLoadStates>) =
             with(scope) {
-                with(task) {
+                task.apply {
                     addOnSuccessListener(Executors.newSingleThreadExecutor())
                     { trySendBlocking(FBLoadStates.Success(it)) }
                     addOnCompleteListener(Executors.newSingleThreadExecutor())
                     { trySendBlocking(FBLoadStates.Complete) }
                     addOnCanceledListener { trySendBlocking(FBLoadStates.Cancelled) }
-                    addOnFailureListener {
-                        trySendBlocking(FBLoadStates.Failure(it.message ?: "Failure"))
-                    }
-                    awaitClose { trySendBlocking(FBLoadStates.EndLoading) }
+                    addOnFailureListener { trySendBlocking(FBLoadStates.Failure(it)) }
+                    awaitClose{ trySendBlocking(FBLoadStates.EndLoading) }
                 }
             }
 
@@ -65,7 +64,7 @@ interface FirebaseHandler {
                     ListenerMode.REALTIME -> valueListener.listener(this@callbackFlow)
                         .also { listener ->
                             addValueEventListener(listener)
-                            awaitClose { removeEventListener(listener); "endC".log }
+                            awaitClose { removeEventListener(listener) }
                         }
                     ListenerMode.SINGLE -> valueListener.listener(this@callbackFlow)
                         .also { listener ->
@@ -79,6 +78,7 @@ interface FirebaseHandler {
                         }
                 }
             }
+
         }.flowOn(IO)
 
         override fun saveString(value: String, node: String, key: String) =

@@ -25,7 +25,7 @@ interface ValueListener {
         = scope.trySendBlocking(
             when (snapshot) {
                 is DataSnapshot -> FBLoadStates.Success(snapshot)
-                is DatabaseError -> FBLoadStates.Failure(snapshot.message)
+                is DatabaseError -> FBLoadStates.Failure(snapshot)
                 else -> FBLoadStates.Loading
             }
         )
