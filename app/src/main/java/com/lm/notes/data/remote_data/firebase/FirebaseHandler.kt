@@ -31,6 +31,8 @@ interface FirebaseHandler {
 
     fun saveStringById(value: String, node: String, key: String, id: String): Flow<FBLoadStates>
 
+    val randomId: String
+
     class Base @Inject constructor(
         private val firebaseAuth: FirebaseAuth,
         private val fireBaseDatabase: DatabaseReference,
@@ -68,7 +70,7 @@ interface FirebaseHandler {
                     ListenerMode.SINGLE -> valueListener.listener(this@callbackFlow)
                         .also { listener ->
                             addListenerForSingleValueEvent(listener)
-                            awaitClose { removeEventListener(listener); "end".log }
+                            awaitClose { removeEventListener(listener) }
                         }
                     ListenerMode.CHILD -> childListener.listener(this@callbackFlow)
                         .also { listener ->
@@ -107,7 +109,7 @@ interface FirebaseHandler {
 
         private val timestamp get() = ServerValue.TIMESTAMP
 
-        private val randomId get() = fireBaseDatabase.push().key.toString()
+        override val randomId get() = fireBaseDatabase.push().key.toString()
 
         companion object {
             const val TIMESTAMP = "timestamp"

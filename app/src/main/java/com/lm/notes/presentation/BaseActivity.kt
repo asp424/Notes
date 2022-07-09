@@ -16,10 +16,16 @@ abstract class BaseActivity : ComponentActivity() {
         startActivity(Intent(applicationContext, LoginActivity::class.java))
     }
 
-    val LoginActivity.startMainActivity get() = run {
-        startActivity(Intent(applicationContext, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        })
-        this.finish()
+    val LoginActivity.startMainActivity
+        get() = run {
+            startActivity(Intent(applicationContext, MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                action = IS_AUTH_ACTION
+            })
+            this.finish()
         }
+
+    companion object {
+        const val IS_AUTH_ACTION = "isAuth"
     }
+}

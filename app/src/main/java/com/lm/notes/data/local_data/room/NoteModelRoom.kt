@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull
 
 @Entity(tableName = "notes")
 class NoteModelRoom(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: String = "",
     val timestamp: Long = 0,
     var note: String = "",
 )

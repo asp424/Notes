@@ -11,5 +11,6 @@ data class NoteModel(
     var note: String = "",
     var noteState: MutableState<String> = mutableStateOf(""),
     var sizeX: MutableState<Dp> = mutableStateOf(200.dp),
-    var sizeY: MutableState<Dp> = mutableStateOf(60.dp)
+    var sizeY: MutableState<Dp> = mutableStateOf(60.dp),
+    var isChanged: MutableState<Boolean> = mutableStateOf(false)
 )

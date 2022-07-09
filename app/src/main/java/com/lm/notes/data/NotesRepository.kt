@@ -1,27 +1,35 @@
 package com.lm.notes.data
 
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.local_data.room.NotesDao
 import com.lm.notes.data.remote_data.firebase.FirebaseRepository
+import com.lm.notes.data.remote_data.firebase.NoteModel
 import com.lm.notes.data.remote_data.firebase.NotesMapper
-import com.lm.notes.ui.UiStates
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
 interface NotesRepository {
 
-    fun notesList(): Flow<UiStates>
+    fun notesList(): Flow<List<NoteModel>>
 
-    suspend fun updateNote(note: String, id: Int)
+    suspend fun updateNote(note: String, id: String)
 
-    suspend fun newNote(note: String)
+    fun newNote(
+        note: String,
+        lifecycleScope: LifecycleCoroutineScope,
+        onInsert: (NoteModel) -> Unit
+    )
+
+    fun note(id: String, note: String): NoteModelRoom
+
+    fun autoUpdateNotes(list: List<NoteModel>)
 
     class Base @Inject constructor(
         private val firebaseRepository: FirebaseRepository,
@@ -31,28 +39,34 @@ interface NotesRepository {
         private val calendar: Calendar
     ) : NotesRepository {
 
-        override fun notesList() = callbackFlow {
-            notesDao.getAllItems().also { listOfNotes ->
-                if (listOfNotes.isEmpty()) {
-                    if (isAuth)
-                        firebaseRepository.notesList().collect {
-                            trySendBlocking(notesMapper.map(it))
-                        }
-                } else trySendBlocking(notesMapper.map(listOfNotes))
+        override fun notesList() = notesDao.getAllItems().transform { list ->
+            emit(notesMapper.mapTo(list))
+        }
+
+        override suspend fun updateNote(note: String, id: String) {
+            notesDao.update(note(id, note))
+            if (isAuth) firebaseRepository.saveNoteById(note, id)
+        }
+
+        override fun autoUpdateNotes(list: List<NoteModel>) {
+            CoroutineScope(IO).launch {
+                list.find { it.isChanged.value }?.apply { updateNote(noteState.value, id) }
             }
-            awaitClose()
-        }.flowOn(IO)
-
-        override suspend fun updateNote(note: String, id: Int) {
-            notesDao.update(
-                NoteModelRoom(id = id, note = note, timestamp = actualTime)
-            )
-            firebaseRepository.saveNoteById(note, id.toString())
         }
 
-        override suspend fun newNote(note: String) {
-            notesDao.insert(NoteModelRoom(timestamp = actualTime, note = note))
+        override fun newNote(
+            note: String,
+            lifecycleScope: LifecycleCoroutineScope,
+            onInsert: (NoteModel) -> Unit
+        ) {
+            lifecycleScope.launch(IO) {
+                note(firebaseRepository.randomId, note).apply {
+                    notesDao.insert(this); onInsert(notesMapper.map(this))
+                }
+            }
         }
+
+        override fun note(id: String, note: String) = NoteModelRoom(id, actualTime, note)
 
         private val isAuth get() = firebaseAuth.currentUser?.uid != null
 

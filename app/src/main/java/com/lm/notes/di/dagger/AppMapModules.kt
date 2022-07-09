@@ -25,7 +25,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         NotesRepositoryModule::class,
         CalendarInstanceModule::class,
         TopBarModule::class,
-        StateReceiverModule::class
+        MainColumnModule::class,
+        NotesModule::class,
+        BottomBarModule::class
     ]
 )
 interface AppMapModules

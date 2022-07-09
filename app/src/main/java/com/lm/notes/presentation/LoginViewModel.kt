@@ -44,7 +44,7 @@ class LoginViewModel @Inject constructor(
                 when (it) {
                     is FBRegState.OnSuccess -> sPreferences.saveIconUri(it.iconUri)
                     is FBRegState.OnError -> toast(it.message)
-                    is FBRegState.OnClose -> { "ass".log; delay(1000) }
+                    is FBRegState.OnClose -> { delay(1000) }
                 }
                 startMainActivity
             }
