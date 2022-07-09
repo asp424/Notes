@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.R
-import com.lm.notes.data.SPreferences
+import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.di.compose.ComposeDependencies
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.utils.noRippleClickable

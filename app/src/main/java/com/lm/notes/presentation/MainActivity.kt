@@ -2,9 +2,8 @@ package com.lm.notes.presentation
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
-import com.lm.notes.appComponent
+import com.lm.notes.core.appComponent
 import com.lm.notes.di.compose.ComposeDependencies
 import com.lm.notes.ui.Screens
 import com.lm.notes.utils.log
@@ -35,6 +34,6 @@ class MainActivity : BaseActivity() {
         intent.action.toString().log
         if (intent.action.toString() == IS_AUTH_ACTION)
             viewModels.viewModelProvider(this)[NotesViewModel::class.java]
-               // .apply { lifecycleScope.notesList() }
+        // .apply { lifecycleScope.notesList() }
     }
 }

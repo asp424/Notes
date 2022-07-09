@@ -3,7 +3,7 @@ package com.lm.notes.presentation
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.lm.notes.di.dagger.DaggerRegComponent
+import com.lm.notes.di.dagger.reg.DaggerRegComponent
 
 abstract class BaseActivity : ComponentActivity() {
 

@@ -8,15 +8,13 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lm.notes.data.SPreferences
+import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.data.remote_data.registration.FBRegState
 import com.lm.notes.data.remote_data.registration.OTGRegState
 import com.lm.notes.data.remote_data.registration.OneTapGoogleAuth
-import com.lm.notes.utils.log
 import com.lm.notes.utils.toast
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject

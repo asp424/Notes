@@ -9,7 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.lm.notes.data.SPreferences
+import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.ViewModels
 import javax.inject.Inject
 
