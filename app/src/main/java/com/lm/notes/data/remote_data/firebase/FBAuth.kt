@@ -1,4 +1,4 @@
-package com.lm.notes.data.remote_data.registration
+package com.lm.notes.data.remote_data.firebase
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 interface FBAuth {
 
-    fun startAuthWithGoogleId(googleIdToken: String): Flow<FBRegState>
+    fun startAuthWithGoogleId(googleIdToken: String): Flow<FBRegStates>
 
     class Base @Inject constructor(
         private val firebaseAuth: FirebaseAuth
@@ -24,11 +24,11 @@ interface FBAuth {
             firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener { task ->
                     trySendBlocking(
-                    if (task.isSuccessful) FBRegState.OnSuccess(Uri.EMPTY)
-                    else FBRegState.OnError(task.exception?.message ?: "null")
+                    if (task.isSuccessful) FBRegStates.OnSuccess(Uri.EMPTY)
+                    else FBRegStates.OnError(task.exception?.message ?: "null")
                     )
-                }.addOnFailureListener { trySendBlocking(FBRegState.OnError(it.message ?: "null")) }
-                .addOnCanceledListener { trySendBlocking(FBRegState.OnError("cancelled")) }
+                }.addOnFailureListener { trySendBlocking(FBRegStates.OnError(it.message ?: "null")) }
+                .addOnCanceledListener { trySendBlocking(FBRegStates.OnError("cancelled")) }
             awaitClose()
         }.flowOn(IO)
     }

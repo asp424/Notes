@@ -16,10 +16,8 @@ interface SPreferences {
     ) : SPreferences {
 
         override fun saveIconUri(uri: Uri?) {
-            sharedPreferences
-                .edit()
-                .putString(Uri.EMPTY.toString(), uri.toString())
-                .apply()
+            sharedPreferences.edit()
+                .putString(Uri.EMPTY.toString(), uri.toString()).apply()
         }
 
         override fun readIconUri() = sharedPreferences

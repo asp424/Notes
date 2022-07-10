@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.ViewModels
@@ -20,25 +19,22 @@ interface ComposeValues {
     ): MainDeps
 
     class Base @Inject constructor(
-        private val sPreferences: SPreferences,
-        private val viewModels: ViewModels
+        private val sPreferences: SPreferences
     ) : ComposeValues {
 
         @Composable
         override fun mainScreenValues() = with(LocalConfiguration.current) {
-            with(LocalDensity.current) {
-                MainDeps(
-                    _width = screenWidthDp.dp,
-                    _height = screenHeightDp.dp,
-                    _iconUri = remember { mutableStateOf(checkNotNull(sPreferences.readIconUri())) },
-                    _progressVisibility = remember { mutableStateOf(false) },
-                    _infoVisibility = remember { mutableStateOf(false) },
-                    _coroutine = rememberCoroutineScope()
-                ).apply {
-                    animateDpAsState(
-                        if (infoVisibility) 20.dp else 0.dp, tween(500)
-                    ).setInfoOffset
-                }
+            MainDeps(
+                _width = screenWidthDp.dp,
+                _height = screenHeightDp.dp,
+                _iconUri = remember { mutableStateOf(checkNotNull(sPreferences.readIconUri())) },
+                _progressVisibility = remember { mutableStateOf(false) },
+                _infoVisibility = remember { mutableStateOf(false) },
+                _coroutine = rememberCoroutineScope()
+            ).apply {
+                animateDpAsState(
+                    if (infoVisibility) 20.dp else 0.dp, tween(500)
+                ).setInfoOffset
             }
         }
     }

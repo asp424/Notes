@@ -9,10 +9,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lm.notes.data.local_data.SPreferences
-import com.lm.notes.data.remote_data.registration.FBRegState
-import com.lm.notes.data.remote_data.registration.OTGRegState
-import com.lm.notes.data.remote_data.registration.OneTapGoogleAuth
-import com.lm.notes.utils.toast
+import com.lm.notes.data.remote_data.firebase.FBRegStates
+import com.lm.notes.data.remote_data.one_tap_google.OTGRegState
+import com.lm.notes.data.remote_data.one_tap_google.OneTapGoogleAuth
+import com.lm.notes.utils.longToast
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -35,14 +35,14 @@ class LoginViewModel @Inject constructor(
     private fun LoginActivity.handleResult(result: ActivityResult) =
         viewModelScope.launch(IO) {
             launch(Main) {
-                delay(20000L); toast("Authorize error, try later")
+                delay(20000L); longToast("Authorize error, try later")
                 startMainActivity
             }
             oneTapGoogleAuth.handleResultAndFBReg(result).collect {
                 when (it) {
-                    is FBRegState.OnSuccess -> sPreferences.saveIconUri(it.iconUri)
-                    is FBRegState.OnError -> toast(it.message)
-                    is FBRegState.OnClose -> { delay(1000) }
+                    is FBRegStates.OnSuccess -> sPreferences.saveIconUri(it.iconUri)
+                    is FBRegStates.OnError -> longToast(it.message)
+                    is FBRegStates.OnClose -> { delay(1000) }
                 }
                 startMainActivity
             }
@@ -55,7 +55,7 @@ class LoginViewModel @Inject constructor(
             is OTGRegState.OnSuccess ->
                 regLauncher.launch(IntentSenderRequest.Builder(it.intentSender).build())
             is OTGRegState.OnError -> {
-                toast(it.message); startMainActivity
+                longToast(it.message); startMainActivity
             }
         }
     }

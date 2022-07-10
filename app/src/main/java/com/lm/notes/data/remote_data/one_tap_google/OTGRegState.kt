@@ -1,4 +1,4 @@
-package com.lm.notes.data.remote_data.registration
+package com.lm.notes.data.remote_data.one_tap_google
 
 import android.content.IntentSender
 

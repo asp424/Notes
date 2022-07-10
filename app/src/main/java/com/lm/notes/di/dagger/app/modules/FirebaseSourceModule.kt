@@ -1,14 +1,14 @@
 package com.lm.notes.di.dagger.app.modules
 
-import com.lm.notes.data.mappers.NotesMapper
+import com.lm.notes.data.sources.FirebaseSource
 import com.lm.notes.di.dagger.app.AppScope
 import dagger.Binds
 import dagger.Module
 
 @Module
-interface NotesMapperModule {
+interface FirebaseSourceModule {
 
     @Binds
     @AppScope
-    fun bindsNotesMapper(notesMapper: NotesMapper.DefaultNotesMapper): NotesMapper
+    fun bindsFirebaseSource(firebaseSource: FirebaseSource.Base): FirebaseSource
 }

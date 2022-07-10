@@ -18,9 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.lm.notes.data.remote_data.firebase.NoteModel
+import com.lm.notes.data.models.NoteModel
 import com.lm.notes.di.compose.ComposeDependencies
-import com.lm.notes.utils.log
 import javax.inject.Inject
 
 interface Notes {
@@ -31,12 +30,13 @@ interface Notes {
     class Base @Inject constructor(
         private val composeDependencies: ComposeDependencies
     ) : Notes {
+
         @Composable
         override fun Default(noteModel: NoteModel) {
             with(noteModel) {
                 composeDependencies.mainScreenDepsLocal().apply {
-                    LaunchedEffect(true){
-                        noteModel.isChanged.value = false
+                    LaunchedEffect(true) {
+                        isChanged.value = false
                     }
                     Box(
                         modifier = Modifier
@@ -44,8 +44,8 @@ interface Notes {
                                 White,
                                 RoundedCornerShape(60.dp)
                             )
-                            .width(sizeX.value)
-                            .height(sizeY.value)
+                            .width(sizeXState.value)
+                            .height(sizeYState.value)
                             .padding(bottom = 10.dp)
                             .fillMaxWidth()
                             .border(BorderStroke(1.dp, Color.Black))
@@ -54,7 +54,7 @@ interface Notes {
                             value = noteState.value,
                             onValueChange = { str ->
                                 noteState.value = str
-                                isChanged.value = true
+                                if (!isChanged.value) isChanged.value = true
                             },
                             colors = TextFieldDefaults.textFieldColors(
                                 backgroundColor = White
@@ -65,17 +65,18 @@ interface Notes {
                         Icon(
                             Icons.Rounded.Crop, null,
                             modifier = Modifier
-                                .offset(sizeX.value - 30.dp, sizeY.value - 40.dp)
+                                .offset(sizeXState.value - 30.dp, sizeYState.value - 40.dp)
                                 .pointerInput(Unit) {
                                     detectDragGestures { change, dragAmount ->
+                                        if (!isChanged.value) isChanged.value = true
                                         change.consume()
-                                        if (sizeX.value + dragAmount.x.dp in 200.dp..width - 40.dp
+                                        if (sizeXState.value + dragAmount.x.dp in 200.dp..width - 40.dp
                                         ) {
-                                            sizeX.value += dragAmount.x.dp
+                                            sizeXState.value += dragAmount.x.dp
                                         }
-                                        if (sizeY.value + dragAmount.y.dp in 60.dp..height - 60.dp
+                                        if (sizeYState.value + dragAmount.y.dp in 60.dp..height - 60.dp
                                         ) {
-                                            sizeY.value += dragAmount.y.dp
+                                            sizeYState.value += dragAmount.y.dp
                                         }
                                     }
                                 }

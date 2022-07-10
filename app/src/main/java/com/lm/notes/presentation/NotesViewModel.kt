@@ -1,28 +1,24 @@
 package com.lm.notes.presentation
 
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lm.notes.data.local_data.NotesRepository
-import com.lm.notes.data.remote_data.firebase.FirebaseRepository
-import com.lm.notes.data.remote_data.firebase.NotesMapper
-import kotlinx.coroutines.flow.SharingStarted.Companion.Lazily
-import kotlinx.coroutines.flow.stateIn
+import com.lm.notes.data.rerositories.NotesRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 class NotesViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
-    private val firebaseRepository: FirebaseRepository,
-    private val notesMapper: NotesMapper
 ) : ViewModel() {
 
-    val notesListState = notesRepository.notesList().stateIn(viewModelScope, Lazily, emptyList())
+    val notesList get() = notesRepository.notesListAsMutableStateFlow.asStateFlow()
 
-    fun newNote(note: String, lifecycleScope: LifecycleCoroutineScope) = notesRepository
-        .newNote(note, lifecycleScope){}
+    fun newNote(coroutineScope: CoroutineScope) = notesRepository.newNote(coroutineScope)
+
+    fun synchronize(coroutineScope: CoroutineScope) = notesRepository.synchronize(coroutineScope)
 
     override fun onCleared() {
         super.onCleared()
-        notesRepository.autoUpdateNotes(notesListState.value)
+        notesRepository.autoUpdateNotes()
     }
 }

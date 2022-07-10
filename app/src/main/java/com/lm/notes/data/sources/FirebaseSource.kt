@@ -1,10 +1,13 @@
-package com.lm.notes.data.remote_data.firebase
+package com.lm.notes.data.sources
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ServerValue
-import com.lm.notes.utils.log
+import com.lm.notes.data.remote_data.RemoteLoadStates
+import com.lm.notes.data.remote_data.firebase.ChildListener
+import com.lm.notes.data.remote_data.firebase.ListenerMode
+import com.lm.notes.data.remote_data.firebase.ValueListener
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
@@ -17,47 +20,59 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-interface FirebaseHandler {
+interface FirebaseSource {
 
-    fun runListener(node: String, mode: ListenerMode): Flow<FBLoadStates>
+    fun runListener(node: String, mode: ListenerMode): Flow<RemoteLoadStates>
 
-    suspend fun <T> successFlow(task: Task<T>, scope: ProducerScope<FBLoadStates>): Task<T>
+    suspend fun <T> successFlow(task: Task<T>, scope: ProducerScope<RemoteLoadStates>): Task<T>
 
-    fun <T> runTask(task: Task<T>): Flow<FBLoadStates>
+    fun <T> runTask(task: Task<T>): Flow<RemoteLoadStates>
 
-    suspend fun <T> runSuspendCoroutine(task: Task<T>): Flow<FBLoadStates>
+    suspend fun <T> runSuspendCoroutine(task: Task<T>): Flow<RemoteLoadStates>
 
-    fun saveString(value: String, node: String, key: String): Flow<FBLoadStates>
+    fun saveString(value: String, node: String, key: String): Flow<RemoteLoadStates>
 
-    fun saveStringById(value: String, node: String, key: String, id: String): Flow<FBLoadStates>
+    fun saveStringById(
+        value: String,
+        node: String,
+        key: String,
+        id: String,
+        sizeX: String,
+        sizeY: String
+    )
 
     val randomId: String
+
+    val isAuth: Boolean
 
     class Base @Inject constructor(
         private val firebaseAuth: FirebaseAuth,
         private val fireBaseDatabase: DatabaseReference,
         private val valueListener: ValueListener,
         private val childListener: ChildListener
-    ) : FirebaseHandler {
+    ) : FirebaseSource {
 
-        override fun <T> runTask(task: Task<T>): Flow<FBLoadStates> =
+        override fun <T> runTask(task: Task<T>): Flow<RemoteLoadStates> =
             callbackFlow { successFlow(task, this) }.flowOn(IO)
 
-        override suspend fun <T> successFlow(task: Task<T>, scope: ProducerScope<FBLoadStates>) =
+        override suspend fun <T> successFlow(
+            task: Task<T>,
+            scope: ProducerScope<RemoteLoadStates>
+        ) =
             with(scope) {
                 task.apply {
                     addOnSuccessListener(Executors.newSingleThreadExecutor())
-                    { trySendBlocking(FBLoadStates.Success(it)) }
+                    { trySendBlocking(RemoteLoadStates.Success(it)) }
                     addOnCompleteListener(Executors.newSingleThreadExecutor())
-                    { trySendBlocking(FBLoadStates.Complete) }
-                    addOnCanceledListener { trySendBlocking(FBLoadStates.Cancelled) }
-                    addOnFailureListener { trySendBlocking(FBLoadStates.Failure(it)) }
-                    awaitClose { trySendBlocking(FBLoadStates.EndLoading) }
+                    { trySendBlocking(RemoteLoadStates.Complete) }
+                    addOnCanceledListener { trySendBlocking(RemoteLoadStates.Cancelled) }
+                    addOnFailureListener { trySendBlocking(RemoteLoadStates.Failure(it)) }
+                    awaitClose { trySendBlocking(RemoteLoadStates.EndLoading) }
                 }
             }
 
         override suspend fun <T> runSuspendCoroutine(task: Task<T>) =
-            suspendCoroutine<Flow<FBLoadStates>> { it.resume(runTask(task)) }
+            suspendCoroutine<Flow<RemoteLoadStates>> { it.resume(runTask(task)) }
 
         override fun runListener(node: String, mode: ListenerMode) = callbackFlow {
             node.path.apply {
@@ -86,7 +101,7 @@ interface FirebaseHandler {
             with(randomId) {
                 runTask(
                     node.path.child(this).updateChildren(
-                        mapOf(key to value, TIMESTAMP to timestamp, NOTE_ID to this)
+                        mapOf(key to value, TIMESTAMP to timestamp, ID to this)
                     )
                 )
             }
@@ -95,13 +110,22 @@ interface FirebaseHandler {
             value: String,
             node: String,
             key: String,
-            id: String
-        ): Flow<FBLoadStates> =
-            runTask(
+            id: String,
+            sizeX: String,
+            sizeY: String
+        ) {
+            if (isAuth) runTask(
                 node.path.child(id).updateChildren(
-                    mapOf(key to value, TIMESTAMP to timestamp, NOTE_ID to id)
+                    mapOf(
+                        key to value,
+                        TIMESTAMP to timestamp,
+                        ID to id,
+                        "sizeX" to sizeX,
+                        "sizeY" to sizeY
+                    )
                 )
             )
+        }
 
         private val String.path
             get() = fireBaseDatabase
@@ -111,9 +135,13 @@ interface FirebaseHandler {
 
         override val randomId get() = fireBaseDatabase.push().key.toString()
 
+        override val isAuth: Boolean get() = firebaseAuth.currentUser?.uid != null
+
         companion object {
             const val TIMESTAMP = "timestamp"
-            const val NOTE_ID = "id"
+            const val ID = "id"
+            const val NOTES = "notes"
+            const val TEXT = "text"
         }
     }
 }

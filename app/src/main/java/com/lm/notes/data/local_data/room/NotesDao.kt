@@ -16,9 +16,12 @@ interface NotesDao {
     fun getAllItems(): Flow<List<NoteModelRoom>>
 
     @Insert
-    fun insert(item: NoteModelRoom): Long
+    fun insert(item: NoteModelRoom)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(item: NoteModelRoom): Int
+    fun update(item: NoteModelRoom)
+
+    @Query("SELECT * FROM notes WHERE id=:id ")
+    fun getById(id: String): NoteModelRoom
 
 }

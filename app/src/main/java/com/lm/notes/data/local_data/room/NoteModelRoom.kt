@@ -9,7 +9,9 @@ class NoteModelRoom(
     @PrimaryKey
     val id: String = "",
     val timestamp: Long = 0,
-    var note: String = "",
+    var text: String = "",
+    var sizeX: Float = 0f,
+    var sizeY: Float = 0f,
 )
 
 

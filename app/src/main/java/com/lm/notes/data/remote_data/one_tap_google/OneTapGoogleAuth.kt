@@ -1,17 +1,15 @@
-package com.lm.notes.data.remote_data.registration
+package com.lm.notes.data.remote_data.one_tap_google
 
 import android.app.Activity.RESULT_OK
-import android.net.Uri
 import androidx.activity.result.ActivityResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.CommonStatusCodes.CANCELED
 import com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR
-import com.lm.notes.utils.log
+import com.lm.notes.data.remote_data.firebase.FBAuth
+import com.lm.notes.data.remote_data.firebase.FBRegStates
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +20,7 @@ import javax.inject.Inject
 
 interface OneTapGoogleAuth {
 
-    fun handleResultAndFBReg(result: ActivityResult): Flow<FBRegState>
+    fun handleResultAndFBReg(result: ActivityResult): Flow<FBRegStates>
 
     fun startAuth(onResult: (OTGRegState) -> Unit)
 
@@ -36,16 +34,16 @@ interface OneTapGoogleAuth {
                 try {
                     signInClient.getSignInCredentialFromIntent(result.data).apply {
                         val token = googleIdToken
-                        if (token.isNullOrEmpty()) trySendBlocking(FBRegState.OnError("null"))
+                        if (token.isNullOrEmpty()) trySendBlocking(FBRegStates.OnError("null"))
                         else launch {
                             fbAuth.startAuthWithGoogleId(token).collect {
                                 trySendBlocking(
                                     when (it) {
-                                        is FBRegState.OnSuccess -> FBRegState.OnSuccess(
+                                        is FBRegStates.OnSuccess -> FBRegStates.OnSuccess(
                                             profilePictureUri
                                         )
-                                        is FBRegState.OnError -> FBRegState.OnError(it.message)
-                                        is FBRegState.OnClose -> FBRegState.OnClose("close")
+                                        is FBRegStates.OnError -> FBRegStates.OnError(it.message)
+                                        is FBRegStates.OnClose -> FBRegStates.OnClose("close")
                                     }
                                 )
                             }
@@ -54,9 +52,9 @@ interface OneTapGoogleAuth {
                 } catch(e: ApiException){
                     trySendBlocking(
                         when (e.statusCode) {
-                            CANCELED ->  FBRegState.OnClose(e.message?: "cancelled")
-                            NETWORK_ERROR ->  FBRegState.OnClose(e.message?: "network error")
-                            else -> FBRegState.OnError(e.message?: "error")
+                            CANCELED ->  FBRegStates.OnClose(e.message?: "cancelled")
+                            NETWORK_ERROR ->  FBRegStates.OnClose(e.message?: "network error")
+                            else -> FBRegStates.OnError(e.message?: "error")
                         }
                     )
                 }

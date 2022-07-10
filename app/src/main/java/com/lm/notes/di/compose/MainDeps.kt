@@ -19,7 +19,7 @@ data class MainDeps(
 ) {
     val Uri.setIconUri get() = run { _iconUri.value = this }
     val Boolean.setProgressVisibility get() = run { _progressVisibility.value = this }
-    val State<Dp>.setInfoOffset get() = run { _infoOffset.value = this.value }
+    val State<Dp>.setInfoOffset get() = run { _infoOffset.value = value }
     val Boolean.setInfoVisibility get() = run { _infoVisibility.value = this }
 
     val progressVisibility get() = _progressVisibility.value

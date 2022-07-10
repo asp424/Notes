@@ -15,10 +15,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         ComposeValuesModule::class,
         FBAuthInstanceModule::class,
         FirebaseRepositoryModule::class,
-        FirebaseHandlerModule::class,
+        FirebaseSourceModule::class,
         ValueListenerModule::class,
         ChildListenerModule::class,
-        NotesHandlerModule::class,
         FirebaseReferenceModule::class,
         NotesMapperModule::class,
         NotesDataBaseDaoModule::class,
@@ -27,7 +26,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         TopBarModule::class,
         MainColumnModule::class,
         NotesModule::class,
-        BottomBarModule::class
+        BottomBarModule::class,
+        RoomSourceModule::class
     ]
 )
 interface AppMapModules
