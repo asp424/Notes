@@ -9,10 +9,10 @@ data class NoteModel(
     val id: String = "",
     val timestamp: Long = 0,
     var text: String = "",
-    var sizeX: String = "",
-    var sizeY: String = "",
+    var sizeX: Float = 0f,
+    var sizeY: Float = 0f,
     var noteState: MutableState<String> = mutableStateOf(""),
-    var sizeXState: MutableState<Dp> = mutableStateOf(200.dp),
-    var sizeYState: MutableState<Dp> = mutableStateOf(60.dp),
+    var sizeXState: MutableState<Float> = mutableStateOf(200f),
+    var sizeYState: MutableState<Float> = mutableStateOf(60f),
     var isChanged: MutableState<Boolean> = mutableStateOf(false)
 )

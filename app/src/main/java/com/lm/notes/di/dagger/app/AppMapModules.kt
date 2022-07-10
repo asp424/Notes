@@ -22,12 +22,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         NotesMapperModule::class,
         NotesDataBaseDaoModule::class,
         NotesRepositoryModule::class,
-        CalendarInstanceModule::class,
         TopBarModule::class,
         MainColumnModule::class,
         NotesModule::class,
         BottomBarModule::class,
-        RoomSourceModule::class
+        RoomRepositoryModule::class,
+        NotesListDataModule::class,
+        CoroutinesDispatcherModule::class
     ]
 )
 interface AppMapModules

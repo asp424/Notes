@@ -35,7 +35,7 @@ interface BottomBar {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    Button(onClick = { notesViewModel.newNote(lifecycleScope) }) {
+                    Button(onClick = { notesViewModel.addNewNote(lifecycleScope) }) {
                         Text(text = "new")
                     }
                 }

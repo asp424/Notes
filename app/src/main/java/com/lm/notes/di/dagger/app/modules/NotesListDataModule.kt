@@ -1,14 +1,14 @@
 package com.lm.notes.di.dagger.app.modules
 
-import com.lm.notes.data.sources.RoomSource
 import com.lm.notes.di.dagger.app.AppScope
+import com.lm.notes.domain.NotesListData
 import dagger.Binds
 import dagger.Module
 
 @Module
-interface RoomSourceModule {
+interface NotesListDataModule {
 
     @Binds
     @AppScope
-    fun bindsRoomRepository(roomRepository: RoomSource.Base): RoomSource
+    fun bindsNotesListData(notesListData: NotesListData.Base): NotesListData
 }

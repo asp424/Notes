@@ -35,7 +35,6 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
-        intent.action.toString().log
         if (intent.action.toString() == IS_AUTH_ACTION)
             viewModels.viewModelProvider(this)[NotesViewModel::class.java]
          .apply { synchronize(lifecycleScope) }

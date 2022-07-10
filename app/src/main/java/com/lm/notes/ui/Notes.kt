@@ -40,12 +40,9 @@ interface Notes {
                     }
                     Box(
                         modifier = Modifier
-                            .background(
-                                White,
-                                RoundedCornerShape(60.dp)
-                            )
-                            .width(sizeXState.value)
-                            .height(sizeYState.value)
+                            .background(White, RoundedCornerShape(60.dp))
+                            .width(sizeXState.value.dp)
+                            .height(sizeYState.value.dp)
                             .padding(bottom = 10.dp)
                             .fillMaxWidth()
                             .border(BorderStroke(1.dp, Color.Black))
@@ -65,18 +62,18 @@ interface Notes {
                         Icon(
                             Icons.Rounded.Crop, null,
                             modifier = Modifier
-                                .offset(sizeXState.value - 30.dp, sizeYState.value - 40.dp)
+                                .offset(sizeXState.value.dp - 30.dp, sizeYState.value.dp - 40.dp)
                                 .pointerInput(Unit) {
                                     detectDragGestures { change, dragAmount ->
                                         if (!isChanged.value) isChanged.value = true
                                         change.consume()
-                                        if (sizeXState.value + dragAmount.x.dp in 200.dp..width - 40.dp
+                                        if (sizeXState.value.dp + dragAmount.x.dp in 200.dp..width - 40.dp
                                         ) {
-                                            sizeXState.value += dragAmount.x.dp
+                                            sizeXState.value += dragAmount.x
                                         }
-                                        if (sizeYState.value + dragAmount.y.dp in 60.dp..height - 60.dp
+                                        if (sizeYState.value.dp + dragAmount.y.dp in 60.dp..height - 60.dp
                                         ) {
-                                            sizeYState.value += dragAmount.y.dp
+                                            sizeYState.value += dragAmount.y
                                         }
                                     }
                                 }

@@ -37,8 +37,9 @@ interface FirebaseSource {
         node: String,
         key: String,
         id: String,
-        sizeX: String,
-        sizeY: String
+        sizeX: Float,
+        sizeY: Float,
+        timestamp: Long
     )
 
     val randomId: String
@@ -101,7 +102,7 @@ interface FirebaseSource {
             with(randomId) {
                 runTask(
                     node.path.child(this).updateChildren(
-                        mapOf(key to value, TIMESTAMP to timestamp, ID to this)
+                        mapOf(key to value, TIMESTAMP to actualTimestamp, ID to this)
                     )
                 )
             }
@@ -111,8 +112,9 @@ interface FirebaseSource {
             node: String,
             key: String,
             id: String,
-            sizeX: String,
-            sizeY: String
+            sizeX: Float,
+            sizeY: Float,
+            timestamp: Long
         ) {
             if (isAuth) runTask(
                 node.path.child(id).updateChildren(
@@ -131,7 +133,7 @@ interface FirebaseSource {
             get() = fireBaseDatabase
                 .child(firebaseAuth.currentUser?.uid.toString()).child(this)
 
-        private val timestamp get() = ServerValue.TIMESTAMP
+        private val actualTimestamp get() = ServerValue.TIMESTAMP
 
         override val randomId get() = fireBaseDatabase.push().key.toString()
 

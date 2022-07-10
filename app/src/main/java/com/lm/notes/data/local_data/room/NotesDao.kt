@@ -13,7 +13,7 @@ interface NotesDao {
     fun delete(item: NoteModelRoom)
 
     @Query("select * from notes")
-    fun getAllItems(): Flow<List<NoteModelRoom>>
+    fun getAllItems(): List<NoteModelRoom>
 
     @Insert
     fun insert(item: NoteModelRoom)

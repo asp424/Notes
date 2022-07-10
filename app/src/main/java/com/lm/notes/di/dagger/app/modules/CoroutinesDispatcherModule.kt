@@ -3,12 +3,12 @@ package com.lm.notes.di.dagger.app.modules
 import com.lm.notes.di.dagger.app.AppScope
 import dagger.Module
 import dagger.Provides
-import java.util.Calendar
+import kotlinx.coroutines.Dispatchers.IO
 
 @Module
-class CalendarInstanceModule {
+class CoroutinesDispatcherModule {
 
     @Provides
     @AppScope
-    fun providesCalendarInstance() = Calendar.getInstance()
+    fun providesCoroutinesDispatcher() = IO
 }

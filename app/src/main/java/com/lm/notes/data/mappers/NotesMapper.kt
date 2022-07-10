@@ -17,19 +17,13 @@ interface NotesMapper {
 
     suspend fun map(state: RemoteLoadStates): FBDataStates
 
-    suspend fun map(list: List<NoteModelRoom?>): UiStates
-
-    suspend fun mapList(list: List<NoteModelRoom?>): List<NoteModel>
-
-    suspend fun map(noteModel: NoteModel): NoteModelRoom
+    fun map(list: List<NoteModelRoom?>): List<NoteModel>
 
     fun map(noteModelRoom: NoteModelRoom?): NoteModel
 
     fun data(stateFlow: Flow<RemoteLoadStates>): Flow<NoteModel>
 
-    fun mapToRoom(noteModel: NoteModel): NoteModelRoom
-
-    fun mapToUi(noteModel: NoteModel): NoteModel
+    fun map(noteModel: NoteModel): NoteModelRoom
 
     class DefaultNotesMapper @Inject constructor() : NotesMapper,
         Mapper.DataToUI<RemoteLoadStates, FBDataStates> {
@@ -54,26 +48,11 @@ interface NotesMapper {
                 else -> FBDataStates.Loading
             }
 
-        override suspend fun map(list: List<NoteModelRoom?>): UiStates {
-            mutableListOf<NoteModel>().apply {
-                list.forEach { add(map(it)) }
-                return UiStates.Success(toList().asFlow())
-            }
-        }
-
-        override suspend fun mapList(list: List<NoteModelRoom?>): List<NoteModel> {
+        override fun map(list: List<NoteModelRoom?>): List<NoteModel> {
             mutableListOf<NoteModel>().apply {
                 list.forEach { add(map(it)) }
                 return toList()
             }
-        }
-
-        override suspend fun map(noteModel: NoteModel) = with(noteModel){
-            NoteModelRoom(
-                id = id,
-                timestamp = timestamp,
-                text = text
-            )
         }
 
         override fun map(noteModelRoom: NoteModelRoom?): NoteModel {
@@ -83,36 +62,26 @@ interface NotesMapper {
                     timestamp = timestamp,
                     text = text,
                     noteState = mutableStateOf(text),
-                    sizeXState = mutableStateOf(sizeX.dp),
-                    sizeYState = mutableStateOf(sizeY.dp),
-                    isChanged = mutableStateOf(false)
+                    sizeXState = mutableStateOf(sizeX),
+                    sizeYState = mutableStateOf(sizeY),
+                    isChanged = mutableStateOf(isNew)
                 )
             }
             return NoteModel()
         }
 
-        override fun mapToRoom(noteModel: NoteModel) =
+        override fun map(noteModel: NoteModel) =
             with(noteModel) {
                 NoteModelRoom(
                     id = id,
                     timestamp = timestamp,
                     text = noteState.value,
-                    sizeX = sizeXState.value.value,
-                    sizeY = sizeYState.value.value,
+                    sizeX = sizeXState.value,
+                    sizeY = sizeYState.value,
+                    isNew = false
                 )
             }
 
-        override fun mapToUi(noteModel: NoteModel) = with(noteModel){
-            NoteModel(
-                id = id,
-                timestamp = timestamp,
-                text = text,
-                noteState = mutableStateOf(text),
-                sizeXState = mutableStateOf(sizeX.toFloat().dp),
-                sizeYState = mutableStateOf(sizeY.toFloat().dp),
-                isChanged = mutableStateOf(false)
-            )
-        }
 
         override fun data(stateFlow: Flow<RemoteLoadStates>) = flow {
                 stateFlow.collect { state ->
@@ -126,6 +95,9 @@ interface NotesMapper {
             private val DataSnapshot.getNoteModel get() =
             (getValue(NoteModel::class.java)?: NoteModel()).apply {
                 noteState = mutableStateOf(text)
+                sizeXState = mutableStateOf(sizeX)
+                sizeYState = mutableStateOf(sizeY)
+                isChanged = mutableStateOf(false)
             }
         }
     }
