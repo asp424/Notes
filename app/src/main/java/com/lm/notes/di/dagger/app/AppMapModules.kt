@@ -9,10 +9,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Module(
     includes = [
         ViewModelFactoryModule::class,
-        ViewModelsModule::class,
-        ScreensModule::class,
-        ComposeDependenciesModule::class,
-        ComposeValuesModule::class,
         FBAuthInstanceModule::class,
         FirebaseRepositoryModule::class,
         FirebaseSourceModule::class,
@@ -22,10 +18,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         NotesMapperModule::class,
         NotesDataBaseDaoModule::class,
         NotesRepositoryModule::class,
-        TopBarModule::class,
-        MainColumnModule::class,
-        NotesModule::class,
-        BottomBarModule::class,
         RoomRepositoryModule::class,
         NotesListDataModule::class,
         CoroutinesDispatcherModule::class

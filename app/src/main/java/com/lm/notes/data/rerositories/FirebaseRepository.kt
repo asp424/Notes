@@ -14,7 +14,7 @@ interface FirebaseRepository {
 
     fun notesList(): Flow<NoteModel>
 
-    fun saveNoteById(noteModel: NoteModel)
+    fun saveNote(noteModel: NoteModel)
 
     val randomId: String
 
@@ -29,9 +29,9 @@ interface FirebaseRepository {
             firebaseSource.runListener(NOTES, ListenerMode.SINGLE)
         )
 
-        override fun saveNoteById(noteModel: NoteModel) = with(noteModel) {
-            firebaseSource.saveStringById(text, NOTES, TEXT, id, sizeXState.value, sizeYState.value,
-            timestamp)
+        override fun saveNote(noteModel: NoteModel) = with(noteModel) {
+            firebaseSource.saveNote(
+                noteState.value, id, sizeXState.value, sizeYState.value, timestampCreate, timestampChange)
         }
 
         override val randomId get() = firebaseSource.randomId

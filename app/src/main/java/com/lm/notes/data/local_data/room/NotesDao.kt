@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface NotesDao {
 
     @Query("delete from notes where id = :id")
-    fun deleteById(id: Int)
+    fun deleteById(id: String)
 
     @Delete
     fun delete(item: NoteModelRoom)

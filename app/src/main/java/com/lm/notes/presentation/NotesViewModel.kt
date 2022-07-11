@@ -17,11 +17,12 @@ class NotesViewModel @Inject constructor(
     fun addNewNote(coroutineScope: CoroutineScope)
     = coroutineScope.launch(coroutineDispatcher) { notesRepository.addNewNote() }
 
+    fun deleteNoteById(coroutineScope: CoroutineScope, id: String)
+            = coroutineScope.launch(coroutineDispatcher) { notesRepository.deleteNoteById(id) }
+
     fun synchronize(coroutineScope: CoroutineScope)
     = coroutineScope.launch(coroutineDispatcher) { notesRepository.synchronize() }
 
-    override fun onCleared() {
-        super.onCleared()
-        notesRepository.autoUpdateNotes()
-    }
+    suspend fun updateChangedNotes() = notesRepository.autoUpdateNotes()
+
 }

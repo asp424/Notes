@@ -3,7 +3,6 @@ package com.lm.notes.data.sources
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ServerValue
 import com.lm.notes.data.remote_data.RemoteLoadStates
 import com.lm.notes.data.remote_data.firebase.ChildListener
 import com.lm.notes.data.remote_data.firebase.ListenerMode
@@ -30,16 +29,9 @@ interface FirebaseSource {
 
     suspend fun <T> runSuspendCoroutine(task: Task<T>): Flow<RemoteLoadStates>
 
-    fun saveString(value: String, node: String, key: String): Flow<RemoteLoadStates>
-
-    fun saveStringById(
-        value: String,
-        node: String,
-        key: String,
-        id: String,
-        sizeX: Float,
-        sizeY: Float,
-        timestamp: Long
+    fun saveNote(
+        text: String, id: String, sizeX: Float, sizeY: Float, timestampCreate: Long,
+        timestampChange: Long
     )
 
     val randomId: String
@@ -57,20 +49,18 @@ interface FirebaseSource {
             callbackFlow { successFlow(task, this) }.flowOn(IO)
 
         override suspend fun <T> successFlow(
-            task: Task<T>,
-            scope: ProducerScope<RemoteLoadStates>
-        ) =
-            with(scope) {
-                task.apply {
-                    addOnSuccessListener(Executors.newSingleThreadExecutor())
-                    { trySendBlocking(RemoteLoadStates.Success(it)) }
-                    addOnCompleteListener(Executors.newSingleThreadExecutor())
-                    { trySendBlocking(RemoteLoadStates.Complete) }
-                    addOnCanceledListener { trySendBlocking(RemoteLoadStates.Cancelled) }
-                    addOnFailureListener { trySendBlocking(RemoteLoadStates.Failure(it)) }
-                    awaitClose { trySendBlocking(RemoteLoadStates.EndLoading) }
-                }
+            task: Task<T>, scope: ProducerScope<RemoteLoadStates>
+        ) = with(scope) {
+            task.apply {
+                addOnSuccessListener(Executors.newSingleThreadExecutor())
+                { trySendBlocking(RemoteLoadStates.Success(it)) }
+                addOnCompleteListener(Executors.newSingleThreadExecutor())
+                { trySendBlocking(RemoteLoadStates.Complete) }
+                addOnCanceledListener { trySendBlocking(RemoteLoadStates.Cancelled) }
+                addOnFailureListener { trySendBlocking(RemoteLoadStates.Failure(it)) }
+                awaitClose { trySendBlocking(RemoteLoadStates.EndLoading) }
             }
+        }
 
         override suspend fun <T> runSuspendCoroutine(task: Task<T>) =
             suspendCoroutine<Flow<RemoteLoadStates>> { it.resume(runTask(task)) }
@@ -95,35 +85,18 @@ interface FirebaseSource {
                         }
                 }
             }
-
         }.flowOn(IO)
 
-        override fun saveString(value: String, node: String, key: String) =
-            with(randomId) {
-                runTask(
-                    node.path.child(this).updateChildren(
-                        mapOf(key to value, TIMESTAMP to actualTimestamp, ID to this)
-                    )
-                )
-            }
-
-        override fun saveStringById(
-            value: String,
-            node: String,
-            key: String,
-            id: String,
-            sizeX: Float,
-            sizeY: Float,
-            timestamp: Long
+        override fun saveNote(
+            text: String, id: String, sizeX: Float, sizeY: Float, timestampCreate: Long,
+            timestampChange: Long
         ) {
             if (isAuth) runTask(
-                node.path.child(id).updateChildren(
+                NOTES.path.child(id).updateChildren(
                     mapOf(
-                        key to value,
-                        TIMESTAMP to timestamp,
-                        ID to id,
-                        "sizeX" to sizeX,
-                        "sizeY" to sizeY
+                        TEXT to text, TIMESTAMP_CREATE to timestampCreate,
+                        TIMESTAMP_CHANGE to timestampChange, ID to id,
+                        SIZE_X to sizeX, SIZE_Y to sizeY
                     )
                 )
             )
@@ -133,17 +106,18 @@ interface FirebaseSource {
             get() = fireBaseDatabase
                 .child(firebaseAuth.currentUser?.uid.toString()).child(this)
 
-        private val actualTimestamp get() = ServerValue.TIMESTAMP
-
         override val randomId get() = fireBaseDatabase.push().key.toString()
 
         override val isAuth: Boolean get() = firebaseAuth.currentUser?.uid != null
 
         companion object {
-            const val TIMESTAMP = "timestamp"
+            const val TIMESTAMP_CREATE = "timestampCreate"
+            const val TIMESTAMP_CHANGE = "timestampChange"
             const val ID = "id"
             const val NOTES = "notes"
             const val TEXT = "text"
+            const val SIZE_X = "sizeX"
+            const val SIZE_Y = "sizeY"
         }
     }
 }

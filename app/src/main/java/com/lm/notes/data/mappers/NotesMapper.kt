@@ -59,12 +59,13 @@ interface NotesMapper {
             noteModelRoom?.apply {
                 return NoteModel(
                     id = id,
-                    timestamp = timestamp,
+                    timestampChange = timestampChange,
+                    timestampCreate = timestampCreate,
                     text = text,
-                    noteState = mutableStateOf(text),
-                    sizeXState = mutableStateOf(sizeX),
-                    sizeYState = mutableStateOf(sizeY),
-                    isChanged = mutableStateOf(isNew)
+                    noteState = text.toMutableState(),
+                    sizeXState = sizeX.toMutableState(),
+                    sizeYState = sizeY.toMutableState(),
+                    isChanged = false.toMutableState()
                 )
             }
             return NoteModel()
@@ -74,11 +75,11 @@ interface NotesMapper {
             with(noteModel) {
                 NoteModelRoom(
                     id = id,
-                    timestamp = timestamp,
+                    timestampChange = timestampChange,
+                    timestampCreate = timestampCreate,
                     text = noteState.value,
                     sizeX = sizeXState.value,
-                    sizeY = sizeYState.value,
-                    isNew = false
+                    sizeY = sizeYState.value
                 )
             }
 
@@ -94,10 +95,13 @@ interface NotesMapper {
 
             private val DataSnapshot.getNoteModel get() =
             (getValue(NoteModel::class.java)?: NoteModel()).apply {
-                noteState = mutableStateOf(text)
-                sizeXState = mutableStateOf(sizeX)
-                sizeYState = mutableStateOf(sizeY)
-                isChanged = mutableStateOf(false)
+                noteState = text.toMutableState()
+                sizeXState = sizeX.toMutableState()
+                sizeYState = sizeY.toMutableState()
+                isChanged = false.toMutableState()
             }
+
+        private fun <T: Any> T.toMutableState() = mutableStateOf(this)
+
         }
     }

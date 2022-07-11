@@ -1,26 +1,27 @@
 package com.lm.notes.data.rerositories
 
-import com.lm.notes.data.mappers.NotesMapper
+import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel
-import com.lm.notes.data.sources.RoomRepository
-import com.lm.notes.domain.NotesListData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface NotesRepository {
 
     suspend fun addNewNote()
 
+    suspend fun deleteNoteById(id: String): NoteModel?
+
     fun notesListAsState(): StateFlow<List<NoteModel>>
 
-    fun autoUpdateNotes(): Job
+    suspend fun autoUpdateNotes()
 
     suspend fun synchronize()
 
     class Base @Inject constructor(
         private val firebaseRepository: FirebaseRepository,
-        private val roomRepository: RoomRepository,
         private val coroutineDispatcher: CoroutineDispatcher,
         private val notesListData: NotesListData
     ) : NotesRepository {
@@ -28,33 +29,29 @@ interface NotesRepository {
         override suspend fun synchronize() =
             with(firebaseRepository) {
                 if (isAuth) withContext(coroutineDispatcher) {
+                    notesListData.notesList().forEach {
+                        firebaseRepository.saveNote(it)
+                    }
                     notesList().collect {
-                        with(notesListData) {
-                            if (checkForNotContainsById(it))
-                                roomRepository.addNewNoteFromRemote(it)
-                            notesListData.addNoteToList(it)
-                            notesListData.sortByTime()
-                        }
+                        notesListData.addToListIfNotContainsItemById(it)
                     }
                 }
             }
 
         override suspend fun addNewNote() = withContext(coroutineDispatcher) {
-            with(notesListData) {
-                addNoteToList(roomRepository.addNewNote(firebaseRepository.randomId))
-                sortByTime()
-            }
+            firebaseRepository
+                .saveNote(notesListData.addNewNoteToList(firebaseRepository.randomId))
         }
+
+        override suspend fun deleteNoteById(id: String) = notesListData.deleteNoteById(id)
 
         override fun notesListAsState() = notesListData.notesListAsStateFlow()
 
-        override fun autoUpdateNotes() = CoroutineScope(coroutineDispatcher).launch {
+        override suspend fun autoUpdateNotes() =
             with(notesListData) {
-                filterByChangedNote {
-                    roomRepository.updateNote(it)
-                    firebaseRepository.saveNoteById(it)
+                coroutineScope {
+                    filterByChangedNote { firebaseRepository.saveNote(it) }
                 }
             }
-        }
     }
 }
