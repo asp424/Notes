@@ -18,6 +18,9 @@ interface AppComponent {
         @BindsInstance
         fun application(application: Application): Builder
 
+        @BindsInstance
+        fun windowWidth(width: Float): Builder
+
         fun create(): AppComponent
     }
 

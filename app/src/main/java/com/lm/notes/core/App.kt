@@ -2,6 +2,8 @@ package com.lm.notes.core
 
 import android.app.Application
 import android.content.Context
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.di.dagger.app.AppComponent
 import com.lm.notes.di.dagger.app.DaggerAppComponent
@@ -9,12 +11,15 @@ import com.lm.notes.di.dagger.app.DaggerAppComponent
 class App : Application() {
 
     val appComponent: AppComponent by lazy {
-        DaggerAppComponent.builder().application(this)
-            .sPreferences(
-            SPreferences.Base(
-                getSharedPreferences("user", MODE_PRIVATE)
-            )
-        ).create()
+        with(DisplayMetrics()){
+            (getSystemService(WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(this)
+            DaggerAppComponent.builder().application(this@App)
+                .sPreferences(
+                    SPreferences.Base(
+                        getSharedPreferences("user", MODE_PRIVATE)
+                    )
+                ).windowWidth(widthPixels / density).create()
+        }
     }
 }
 

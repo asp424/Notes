@@ -1,6 +1,9 @@
 package com.lm.notes.presentation
 
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.view.Display
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 class MainActivity : BaseActivity() {
 
@@ -34,15 +38,16 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appComponent.inject(this)
+        DisplayMetrics().apply {
+            appComponent.inject(this@MainActivity)
+            if (intent.action.toString() == IS_AUTH_ACTION)
+                notesViewModel.synchronize(lifecycleScope)
 
-        if (intent.action.toString() == IS_AUTH_ACTION)
-            notesViewModel.synchronize(lifecycleScope)
-
-        setContent {
-            NotesTheme() {
-                MainScreenDependencies(sPreferences, viewModelFactory, firebaseAuth) {
-                    MainScreen()
+            setContent {
+                NotesTheme() {
+                    MainScreenDependencies(sPreferences, viewModelFactory, firebaseAuth) {
+                        MainScreen()
+                    }
                 }
             }
         }

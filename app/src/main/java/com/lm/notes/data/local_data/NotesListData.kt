@@ -1,108 +1,66 @@
 package com.lm.notes.data.local_data
 
 import com.lm.notes.data.models.NoteModel
-import com.lm.notes.data.rerositories.RoomRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface NotesListData {
 
-    fun notesListAsStateFlow(): StateFlow<List<NoteModel>>
+    fun notesList(): MutableStateFlow<List<NoteModel>>
 
-    suspend fun notesList(): List<NoteModel>
+    fun isChangedText(noteModel: NoteModel): Boolean
 
     fun sortByCreate()
 
     fun sortByChange()
 
-    suspend fun addNewNoteToList(id: String): NoteModel
+    fun isEmpty(): Boolean
 
-    suspend fun deleteNoteById(id: String): NoteModel?
+    fun filterByIsChanged(): List<NoteModel>
 
-    suspend fun addNoteToList(noteModel: NoteModel)
+    fun remove(noteModel: NoteModel)
 
-    suspend fun CoroutineScope.filterByChangedNote(
-        onEach: suspend CoroutineScope.(NoteModel) -> Unit
-    )
+    fun add(noteModel: NoteModel)
 
-    suspend fun addToListIfNotContainsItemById(noteModel: NoteModel)
+    fun find(id: String): NoteModel?
 
-    suspend fun checkForNotContainsById(noteModel: NoteModel): Boolean
+    fun replace(targetNoteModel: NoteModel, newNoteModel: NoteModel)
 
-    class Base @Inject constructor(
-        private val roomRepository: RoomRepository,
-        private val coroutineDispatcher: CoroutineDispatcher
-    ) : NotesListData {
+    class Base @Inject constructor() : NotesListData {
 
-        private val mutableStateFlowOfNotesList = MutableStateFlow<List<NoteModel>>(emptyList())
-            .apply {
-                CoroutineScope(coroutineDispatcher).launch {
-                    value = roomRepository.notesList()
-                }
-            }
+        private val mSFOfNotesList = MutableStateFlow<List<NoteModel>>(emptyList())
 
-        override fun notesListAsStateFlow() = mutableStateFlowOfNotesList.asStateFlow()
+        override fun notesList() = mSFOfNotesList
 
-        override suspend fun notesList() = roomRepository.notesList()
-
-        override fun sortByCreate() = with(mutableStateFlowOfNotesList) {
+        override fun sortByCreate() = with(mSFOfNotesList) {
             value = value.sortedByDescending { l -> l.timestampCreate }
         }
 
-        override fun sortByChange() = with(mutableStateFlowOfNotesList) {
-            value = value.sortedByDescending { l -> l.timestampChange }
-        }
-
-        override suspend fun addNewNoteToList(id: String) = with(mutableStateFlowOfNotesList) {
-            roomRepository.addNewNote(id).also { newNote ->
-                value = value + newNote
+        override fun sortByChange() = with(mSFOfNotesList) {
+            value = value.sortedByDescending { l ->
+                l.timestampChangeState.value
             }
         }
 
-        override suspend fun deleteNoteById(id: String) = with(mutableStateFlowOfNotesList) {
-            value.find { it.id == id }?.apply {
-                value = value - this
-                roomRepository.deleteNoteById(id)
-            }
-        }
+        override fun isEmpty() = mSFOfNotesList.value.isEmpty()
 
-        override suspend fun addNoteToList(noteModel: NoteModel) =
-            with(mutableStateFlowOfNotesList) { value = value + noteModel }
+        override fun filterByIsChanged() = mSFOfNotesList.value.filter { it.isChanged }
 
-        override suspend fun CoroutineScope.filterByChangedNote(
-            onEach: suspend CoroutineScope.(NoteModel) -> Unit
-        ) = with(mutableStateFlowOfNotesList) {
-            value.filter { it.isChanged.value }.forEach { m ->
-                    m.resetChanged
-                    roomRepository.updateNote(m); onEach(this@filterByChangedNote, m)
-                }
-        }
+        override fun remove(noteModel: NoteModel) =
+            with(mSFOfNotesList) { value = value - noteModel }
 
-        private val NoteModel.resetChanged
-            get() = run {
-                with(mutableStateFlowOfNotesList) {
-                    if (text != noteState.value) timestampChange = roomRepository.actualTime
-                    value = value - this@run
-                    text = noteState.value
-                    value = value + this@run
+        override fun add(noteModel: NoteModel) = with(mSFOfNotesList) { value = value + noteModel }
+
+        override fun find(id: String) = mSFOfNotesList.value.find { it.id == id }
+
+        override fun replace(targetNoteModel: NoteModel, newNoteModel: NoteModel) =
+            with(mSFOfNotesList) {
+                value = value.map {
+                    if (it == targetNoteModel) newNoteModel else it
                 }
             }
 
-        override suspend fun addToListIfNotContainsItemById(noteModel: NoteModel) {
-            if (checkForNotContainsById(noteModel)) {
-                roomRepository.addNewNoteFromRemote(noteModel)
-                addNoteToList(noteModel)
-            }
-        }
-
-        override suspend fun checkForNotContainsById(noteModel: NoteModel) =
-            roomRepository.notesList().all {
-                it.id != noteModel.id
-            } || mutableStateFlowOfNotesList.value.isEmpty()
+        override fun isChangedText(noteModel: NoteModel) =
+            with(noteModel) { text != textState.value }
     }
 }

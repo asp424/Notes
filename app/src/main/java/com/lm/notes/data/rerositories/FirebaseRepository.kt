@@ -5,9 +5,7 @@ import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.remote_data.firebase.ListenerMode
 import com.lm.notes.data.sources.FirebaseSource
 import com.lm.notes.data.sources.FirebaseSource.Base.Companion.NOTES
-import com.lm.notes.data.sources.FirebaseSource.Base.Companion.TEXT
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import javax.inject.Inject
 
 interface FirebaseRepository {
@@ -31,7 +29,7 @@ interface FirebaseRepository {
 
         override fun saveNote(noteModel: NoteModel) = with(noteModel) {
             firebaseSource.saveNote(
-                noteState.value, id, sizeXState.value, sizeYState.value, timestampCreate, timestampChange)
+                textState.value, id, sizeXState.value, sizeYState.value, timestampCreate, timestampChangeState.value)
         }
 
         override val randomId get() = firebaseSource.randomId

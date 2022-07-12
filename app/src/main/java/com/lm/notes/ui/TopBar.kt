@@ -86,7 +86,7 @@ fun TopBar() {
                                     if (!infoVisibility.value) {
                                         coroutine.launch {
                                             infoVisibility.value = !infoVisibility.value
-                                            delay(10000)
+                                            delay(1000)
                                             infoVisibility.value = !infoVisibility.value
                                         }
                                     }

@@ -1,7 +1,6 @@
 package com.lm.notes.data.mappers
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.unit.dp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.lm.notes.core.Mapper
@@ -9,7 +8,6 @@ import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.remote_data.RemoteLoadStates
 import com.lm.notes.data.remote_data.firebase.FBDataStates
-import com.lm.notes.ui.UiStates
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -59,13 +57,13 @@ interface NotesMapper {
             noteModelRoom?.apply {
                 return NoteModel(
                     id = id,
-                    timestampChange = timestampChange,
+                    timestampChangeState = timestampChange.toMutableState(),
                     timestampCreate = timestampCreate,
                     text = text,
-                    noteState = text.toMutableState(),
+                    textState = text.toMutableState(),
                     sizeXState = sizeX.toMutableState(),
                     sizeYState = sizeY.toMutableState(),
-                    isChanged = false.toMutableState()
+                    isChanged = false
                 )
             }
             return NoteModel()
@@ -75,9 +73,9 @@ interface NotesMapper {
             with(noteModel) {
                 NoteModelRoom(
                     id = id,
-                    timestampChange = timestampChange,
+                    timestampChange = timestampChangeState.value,
                     timestampCreate = timestampCreate,
-                    text = noteState.value,
+                    text = textState.value,
                     sizeX = sizeXState.value,
                     sizeY = sizeYState.value
                 )
@@ -95,10 +93,12 @@ interface NotesMapper {
 
             private val DataSnapshot.getNoteModel get() =
             (getValue(NoteModel::class.java)?: NoteModel()).apply {
-                noteState = text.toMutableState()
+                textState = text.toMutableState()
                 sizeXState = sizeX.toMutableState()
                 sizeYState = sizeY.toMutableState()
-                isChanged = false.toMutableState()
+                timestampChangeState = timestampChange.toMutableState()
+                timestampCreate = timestampCreate
+                isChanged = false
             }
 
         private fun <T: Any> T.toMutableState() = mutableStateOf(this)

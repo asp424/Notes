@@ -22,6 +22,6 @@ interface NotesDao {
     fun update(item: NoteModelRoom)
 
     @Query("SELECT * FROM notes WHERE id=:id ")
-    fun getById(id: String): NoteModelRoom
+    fun getById(id: String): NoteModelRoom?
 
 }
