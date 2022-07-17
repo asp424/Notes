@@ -14,6 +14,8 @@ interface NotesListData {
 
     fun sortByChange()
 
+    fun findById(id: String): NoteModel?
+
     fun isEmpty(): Boolean
 
     fun filterByIsChanged(): List<NoteModel>
@@ -37,10 +39,12 @@ interface NotesListData {
         }
 
         override fun sortByChange() = with(mSFOfNotesList) {
-            value = value.sortedByDescending { l ->
-                l.timestampChangeState.value
-            }
+            value = value.sortedByDescending { l -> l.timestampChangeState.value }
         }
+
+        override fun findById(id: String) =
+            mSFOfNotesList.value.find { it.id == id }
+
 
         override fun isEmpty() = mSFOfNotesList.value.isEmpty()
 

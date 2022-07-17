@@ -12,7 +12,7 @@ interface RoomRepository {
 
     suspend fun updateNote(noteModel: NoteModel)
 
-    suspend fun addNewNote(id: String): NoteModel
+    suspend fun addNewNote(id: String, width: Float, height: Float): NoteModel
 
     suspend fun addNewNote(noteModel: NoteModel)
 
@@ -24,14 +24,15 @@ interface RoomRepository {
 
     suspend fun getById(id: String): NoteModelRoom?
 
-    fun newNote(id: String): NoteModel
+    fun newNote(id: String, width: Float, height: Float): NoteModel
+
+    fun createNew(width: Float, height: Float, id: String): NoteModelRoom
 
     val actualTime: Long
 
     class Base @Inject constructor(
         private val notesDao: NotesDao,
-        private val notesMapper: NotesMapper,
-        private val windowWidth: Float
+        private val notesMapper: NotesMapper
     ) : RoomRepository {
 
         override suspend fun updateNote(noteModel: NoteModel) = with(noteModel) {
@@ -40,7 +41,9 @@ interface RoomRepository {
             else notesDao.update(notesMapper.map(this))
         }
 
-        override suspend fun addNewNote(id: String) = with(id.new) {
+        override suspend fun addNewNote(id: String, width: Float, height: Float)
+        = with(createNew(width, height, id)
+        ) {
             notesDao.insert(this)
             notesMapper.map(this)
         }
@@ -57,12 +60,13 @@ interface RoomRepository {
 
         override suspend fun getById(id: String) = notesDao.getById(id)
 
-        override fun newNote(id: String) = notesMapper.map(id.new)
+        override fun newNote(id: String, width: Float, height: Float) = notesMapper.map(
+            createNew(width, height, id)
+        )
 
-        private val String.new
-            get() = NoteModelRoom(
-                this, actualTime, actualTime,"", windowWidth - 40f, 100f
-            ).apply { windowWidth.log }
+        override fun createNew(width: Float, height: Float, id: String) = NoteModelRoom(
+            id, actualTime, actualTime, "", width - 40f, height / 6
+        )
 
         override val actualTime get() = Calendar.getInstance().time.time
     }

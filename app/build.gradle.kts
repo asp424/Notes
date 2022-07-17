@@ -7,7 +7,6 @@ plugins {
 }
 
 val composeVersion = "1.2.0-rc02"
-val deComposeVersion = "0.7.0-native-compose-01"
 val roomVersion = "2.4.2"
 
 android {
@@ -16,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = appId
-        minSdk = 26
+        minSdk = 24
         targetSdk = 32
         versionCode = 1
         versionName = appVersion
@@ -63,8 +62,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.0.0-alpha14")
     implementation("androidx.activity:activity-compose:1.5.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0")
-    implementation("com.arkivanov.decompose:decompose:$deComposeVersion")
-    implementation("com.arkivanov.decompose:extensions-compose-jetpack:0.7.0")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.24.1-alpha")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -81,7 +79,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:21.0.6")
     implementation ("com.google.android.gms:play-services-auth:20.2.0")
 
-    //Koil
+    //Coil
     implementation("io.coil-kt:coil-compose:2.1.0")
 }
 

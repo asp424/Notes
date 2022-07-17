@@ -63,11 +63,7 @@ fun TopBar() {
 
             Canvas(
                 Modifier.offset(width - 55.dp + infoOffset.value, 28.dp)
-            ) {
-                drawCircle(
-                    Color.White, 46f, Offset.Zero
-                )
-            }
+            ) { drawCircle(Color.White, 15.dp.toPx(), Offset.Zero) }
 
             Box(
                 modifier = Modifier.offset(width - 70.dp + infoOffset.value, 13.dp)

@@ -2,29 +2,24 @@ package com.lm.notes.core
 
 import android.app.Application
 import android.content.Context
-import android.util.DisplayMetrics
-import android.view.WindowManager
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.di.dagger.app.AppComponent
 import com.lm.notes.di.dagger.app.DaggerAppComponent
 
 class App : Application() {
 
-    val appComponent: AppComponent by lazy {
-        with(DisplayMetrics()){
-            (getSystemService(WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(this)
-            DaggerAppComponent.builder().application(this@App)
-                .sPreferences(
-                    SPreferences.Base(
-                        getSharedPreferences("user", MODE_PRIVATE)
-                    )
-                ).windowWidth(widthPixels / density).create()
-        }
+    val appComponentBuilder: AppComponent.Builder by lazy {
+        DaggerAppComponent.builder().application(this@App)
+            .sPreferences(
+                SPreferences.Base(
+                    getSharedPreferences("user", MODE_PRIVATE)
+                )
+            ).filesDir(filesDir)
     }
 }
 
-val Context.appComponent: AppComponent
+val Context.appComponentBuilder: AppComponent.Builder
     get() = when (this) {
-        is App -> appComponent
-        else -> (applicationContext as App).appComponent
+        is App -> appComponentBuilder
+        else -> (applicationContext as App).appComponentBuilder
     }
