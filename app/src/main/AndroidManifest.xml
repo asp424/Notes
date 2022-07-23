@@ -21,12 +21,15 @@
             android:theme="@style/Theme.Notes">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
         </activity>
         <activity android:name=".presentation.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.DeviceDefault.Dialog.NoActionBar"
+
             />
         <provider
             android:name="androidx.core.content.FileProvider"

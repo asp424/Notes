@@ -21,7 +21,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         RoomRepositoryModule::class,
         NotesListDataModule::class,
         CoroutinesDispatcherModule::class,
-        FilesProviderModule::class
+        FilesProviderModule::class,
+        ShortcutsModule::class
     ]
 )
 interface AppMapModules

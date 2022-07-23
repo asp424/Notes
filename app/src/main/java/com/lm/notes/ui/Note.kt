@@ -5,10 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material.icons.rounded.Remove
@@ -18,17 +15,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
@@ -41,7 +43,6 @@ import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.theme.bar
 import com.lm.notes.utils.formatTimestamp
-import com.lm.notes.utils.log
 import com.lm.notes.utils.longToast
 import com.lm.notes.utils.noRippleClickable
 
@@ -58,8 +59,6 @@ fun Note(noteModel: NoteModel) {
 
                 var isFullScreen by remember { mutableStateOf(false) }
 
-                val initTimeStampChange = remember { timestampChangeState.value }
-
                 val fullScreenSize by animateOffsetAsState(
                     if (isFullScreen) Offset(
                         width.value - sizeXState.value, height.value -
@@ -75,25 +74,13 @@ fun Note(noteModel: NoteModel) {
                             .padding(bottom = 10.dp)
                             .background(bar, RoundedCornerShape(10.dp))
                     ) {
-                        TextField(
-                            value = textState.value,
-                            onValueChange = { str ->
-                                notesViewModel.updateTextAndDate(
-                                    noteModel, initTimeStampChange, str, lifecycleScope
-                                )
-                            },
-                            colors = TextFieldDefaults.textFieldColors(
-                                backgroundColor = White
-                            ), modifier = Modifier
-                                .fillMaxSize()
-                                .padding(28.dp)
-                        )
+                        CustomTextField(noteModel)
                         Text(
                             text = formatTimestamp(timestampChangeState.value),
                             fontStyle = FontStyle.Italic, fontSize = 11.sp,
                             modifier = Modifier
                                 .padding(2.dp)
-                                .offset(0.dp, sizeYState.value.dp - 30.dp),
+                                .offset(2.dp, sizeYState.value.dp - 32.dp),
                             style = TextStyle(fontWeight = FontWeight.Bold), color = White
                         )
                         Image(

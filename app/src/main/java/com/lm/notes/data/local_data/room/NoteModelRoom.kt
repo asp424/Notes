@@ -10,6 +10,7 @@ class NoteModelRoom(
     val id: String = "",
     val timestampCreate: Long = 0,
     val timestampChange: Long = 0,
+    var transformMap: String = "",
     val text: String = "",
     val sizeX: Float = 0f,
     val sizeY: Float = 0f,

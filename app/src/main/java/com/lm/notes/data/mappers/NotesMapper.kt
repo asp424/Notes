@@ -63,7 +63,8 @@ interface NotesMapper {
                     textState = text.toMutableState(),
                     sizeXState = sizeX.toMutableState(),
                     sizeYState = sizeY.toMutableState(),
-                    isChanged = false
+                    isChanged = false,
+                    transformMap = transformMap
                 )
             }
             return NoteModel()
@@ -77,7 +78,8 @@ interface NotesMapper {
                     timestampCreate = timestampCreate,
                     text = textState.value,
                     sizeX = sizeXState.value,
-                    sizeY = sizeYState.value
+                    sizeY = sizeYState.value,
+                    transformMap = transformMap
                 )
             }
 
@@ -97,7 +99,6 @@ interface NotesMapper {
                 sizeXState = sizeX.toMutableState()
                 sizeYState = sizeY.toMutableState()
                 timestampChangeState = timestampChange.toMutableState()
-                timestampCreate = timestampCreate
                 isChanged = false
             }
 

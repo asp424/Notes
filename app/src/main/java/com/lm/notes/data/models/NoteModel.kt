@@ -8,6 +8,7 @@ data class NoteModel(
     var text: String = "",
     var sizeX: Float = 0f,
     var sizeY: Float = 0f,
+    var transformMap: String = "",
     var timestampChange: Long = 0,
     var textState: MutableState<String> = mutableStateOf(""),
     var sizeXState: MutableState<Float> = mutableStateOf(200f),
