@@ -46,6 +46,7 @@ import com.lm.notes.ui.theme.bar
 import com.lm.notes.ui.theme.gray
 import com.lm.notes.ui.theme.green
 import com.lm.notes.utils.formatTimestamp
+import com.lm.notes.utils.log
 import com.lm.notes.utils.longToast
 import com.lm.notes.utils.noRippleClickable
 
@@ -90,6 +91,7 @@ fun Note(noteModel: NoteModel) {
                                 .offset(2.dp, sizeYState.value.dp - 32.dp),
                             style = TextStyle(fontWeight = FontWeight.Bold), color = Black
                         )
+                        underlinedMap.log
                         Image(
                             painter = painterResource(id = R.drawable.hand), null,
                             modifier = Modifier
@@ -153,9 +155,9 @@ fun Note(noteModel: NoteModel) {
                                 .noRippleClickable {
                                     if (!checkForIntersects(selectedTextRange, underlinedMap.value)) {
                                         underlinedMap.value =
-                                            "start${selectedTextRange.start}u${selectedTextRange.end}end"
+                                            "s${selectedTextRange.start}u${selectedTextRange.end}e"
                                     } else
-                                        underlinedMap.value = "startEu0end"
+                                        underlinedMap.value = "sEu0e"
                                 }, tint = if (checkForIntersects(selectedTextRange, underlinedMap.value))
                                     green else Black
                         )

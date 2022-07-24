@@ -103,6 +103,5 @@ interface NotesMapper {
             }
 
         private fun <T: Any> T.toMutableState() = mutableStateOf(this)
-
         }
     }
