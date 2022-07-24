@@ -1,14 +1,15 @@
 package com.lm.notes.presentation
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.ViewModel
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.rerositories.NotesRepository
-import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,12 +25,12 @@ class NotesViewModel @Inject constructor(
     fun addNewNote(coroutineScope: CoroutineScope, width: Float, height: Float) =
         coroutineScope.launch(coroutineDispatcher) { notesRepository.addNewNote(width, height) }
 
-    fun updateTextAndDate(
+    fun updateData(
         noteModel: NoteModel,
         initTimeStampChange: Long,
         text: String,
         coroutineScope: CoroutineScope
-    ) = notesRepository.updateTextAndDate(noteModel, initTimeStampChange, text, coroutineScope)
+    ) = notesRepository.updateData(noteModel, initTimeStampChange, text, coroutineScope)
 
     fun updateCoordinates(
         noteModel: NoteModel,

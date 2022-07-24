@@ -16,7 +16,7 @@ interface NotesRepository {
 
     suspend fun deleteNoteById(id: String)
 
-    fun updateTextAndDate(
+    fun updateData(
         noteModel: NoteModel,
         initTimeStampChange: Long,
         newText: String, coroutineScope: CoroutineScope
@@ -68,7 +68,7 @@ interface NotesRepository {
             with(notesListData) { find(id)?.apply { remove(this) } }
         }
 
-        override fun updateTextAndDate(
+        override fun updateData(
             noteModel: NoteModel,
             initTimeStampChange: Long,
             newText: String, coroutineScope: CoroutineScope

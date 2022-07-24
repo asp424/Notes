@@ -64,7 +64,7 @@ interface NotesMapper {
                     sizeXState = sizeX.toMutableState(),
                     sizeYState = sizeY.toMutableState(),
                     isChanged = false,
-                    transformMap = transformMap
+                    underlinedMap = transformMap.toMutableState()
                 )
             }
             return NoteModel()
@@ -79,7 +79,7 @@ interface NotesMapper {
                     text = textState.value,
                     sizeX = sizeXState.value,
                     sizeY = sizeYState.value,
-                    transformMap = transformMap
+                    transformMap = underlinedMap.value
                 )
             }
 

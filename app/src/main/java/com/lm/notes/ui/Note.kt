@@ -1,12 +1,16 @@
 package com.lm.notes.ui
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FormatUnderlined
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.Share
@@ -14,23 +18,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
@@ -42,6 +43,8 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.theme.bar
+import com.lm.notes.ui.theme.gray
+import com.lm.notes.ui.theme.green
 import com.lm.notes.utils.formatTimestamp
 import com.lm.notes.utils.longToast
 import com.lm.notes.utils.noRippleClickable
@@ -59,6 +62,10 @@ fun Note(noteModel: NoteModel) {
 
                 var isFullScreen by remember { mutableStateOf(false) }
 
+                val visibilityUnderlineButtonOffset by animateFloatAsState(
+                    if (isSelected.value) 1f else 0f, tween(400)
+                )
+
                 val fullScreenSize by animateOffsetAsState(
                     if (isFullScreen) Offset(
                         width.value - sizeXState.value, height.value -
@@ -72,7 +79,7 @@ fun Note(noteModel: NoteModel) {
                             .width(sizeXState.value.dp + fullScreenSize.x.dp)
                             .height(sizeYState.value.dp + fullScreenSize.y.dp)
                             .padding(bottom = 10.dp)
-                            .background(bar, RoundedCornerShape(10.dp))
+                            .background(gray, RoundedCornerShape(10.dp))
                     ) {
                         CustomTextField(noteModel)
                         Text(
@@ -81,7 +88,7 @@ fun Note(noteModel: NoteModel) {
                             modifier = Modifier
                                 .padding(2.dp)
                                 .offset(2.dp, sizeYState.value.dp - 32.dp),
-                            style = TextStyle(fontWeight = FontWeight.Bold), color = White
+                            style = TextStyle(fontWeight = FontWeight.Bold), color = Black
                         )
                         Image(
                             painter = painterResource(id = R.drawable.hand), null,
@@ -116,7 +123,7 @@ fun Note(noteModel: NoteModel) {
                                                 )
                                             }
                                         } else longToast("The note is empty")
-                                    }, tint = White
+                                    }, tint = Black
                             )
                         }
                         Icon(
@@ -126,7 +133,7 @@ fun Note(noteModel: NoteModel) {
                                 .noRippleClickable {
                                     notesViewModel.noteId = id
                                     navController.navigate("fullScreenNote")
-                                }, tint = White
+                                }, tint = Black
                         )
 
                         Icon(
@@ -135,7 +142,22 @@ fun Note(noteModel: NoteModel) {
                                 .size(20.dp)
                                 .noRippleClickable {
                                     notesViewModel.deleteNoteById(lifecycleScope, id)
-                                }, tint = White
+                                }, tint = Black
+                        )
+                        Icon(
+                            Icons.Rounded.FormatUnderlined, null, modifier = Modifier
+                                .offset(
+                                    sizeXState.value.dp - 24.dp, 40.dp
+                                )
+                                .size(20.dp).scale(visibilityUnderlineButtonOffset)
+                                .noRippleClickable {
+                                    if (!checkForIntersects(selectedTextRange, underlinedMap.value)) {
+                                        underlinedMap.value =
+                                            "start${selectedTextRange.start}u${selectedTextRange.end}end"
+                                    } else
+                                        underlinedMap.value = "startEu0end"
+                                }, tint = if (checkForIntersects(selectedTextRange, underlinedMap.value))
+                                    green else Black
                         )
                     }
                 }

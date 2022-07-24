@@ -22,9 +22,11 @@ import com.lm.notes.di.compose.CustomTextToolbar
 import com.lm.notes.di.compose.MainScreenDependencies
 import com.lm.notes.ui.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
+import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import okhttp3.internal.parseHexDigit
 import javax.inject.Inject
 
 
@@ -50,11 +52,8 @@ class MainActivity : BaseActivity() {
 
     private val notesViewModel by viewModels<NotesViewModel> { viewModelFactory }
 
-    @SuppressLint("WrongThread")
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         appComponentBuilder.intentBuilder(ShareCompat.IntentBuilder(this))
             .create().inject(this)
 

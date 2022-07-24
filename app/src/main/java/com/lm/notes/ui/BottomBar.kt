@@ -59,12 +59,6 @@ fun BottomBar(visibleBottomBar: Boolean) {
                             Offset(0f, height.value * density - 50.dp.toPx()),
                             size = Size(width.value * density, 50.dp.toPx())
                         )
-                        drawCircle(
-                            White, 3f, Offset(
-                                (width.value.dp.toPx() - 27.dp.toPx()), (
-                                        height.value.dp.toPx() - 49.dp.toPx())
-                            )
-                        )
                     }
                     Button(
                         onClick = {}, modifier = Modifier
