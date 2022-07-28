@@ -61,10 +61,9 @@ interface NotesMapper {
                     timestampCreate = timestampCreate,
                     text = text,
                     textState = text.toMutableState(),
-                    sizeXState = sizeX.toMutableState(),
-                    sizeYState = sizeY.toMutableState(),
                     isChanged = false,
-                    underlinedMap = transformMap.toMutableState()
+                    boldMap = underlinedMap.toMutableState(),
+                    headerState = header.toMutableState()
                 )
             }
             return NoteModel()
@@ -77,9 +76,8 @@ interface NotesMapper {
                     timestampChange = timestampChangeState.value,
                     timestampCreate = timestampCreate,
                     text = textState.value,
-                    sizeX = sizeXState.value,
-                    sizeY = sizeYState.value,
-                    transformMap = underlinedMap.value
+                    underlinedMap = boldMap.value,
+                    header = headerState.value
                 )
             }
 
@@ -96,9 +94,8 @@ interface NotesMapper {
             private val DataSnapshot.getNoteModel get() =
             (getValue(NoteModel::class.java)?: NoteModel()).apply {
                 textState = text.toMutableState()
-                sizeXState = sizeX.toMutableState()
-                sizeYState = sizeY.toMutableState()
                 timestampChangeState = timestampChange.toMutableState()
+                headerState = header.toMutableState()
                 isChanged = false
             }
 

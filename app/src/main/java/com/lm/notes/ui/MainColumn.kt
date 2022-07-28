@@ -41,9 +41,9 @@ fun MainColumn(omMainColumn: (Boolean) -> Unit) {
                                         modifier = Modifier.size(width, height - 80.dp),
                                         contentAlignment = Alignment.TopCenter
                                     ) {
-                                        Note(get(it))
+                                        Note1(get(it))
                                     }
-                                } else Note(get(it))
+                                } else Note1(get(it))
                             }
                         )
                     },

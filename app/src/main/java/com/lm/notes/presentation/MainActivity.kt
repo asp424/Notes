@@ -1,12 +1,9 @@
 package com.lm.notes.presentation
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.LocalView
@@ -22,11 +19,9 @@ import com.lm.notes.di.compose.CustomTextToolbar
 import com.lm.notes.di.compose.MainScreenDependencies
 import com.lm.notes.ui.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
-import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import okhttp3.internal.parseHexDigit
 import javax.inject.Inject
 
 
@@ -60,17 +55,22 @@ class MainActivity : BaseActivity() {
         if (intent.action.toString() == IS_AUTH_ACTION) {
             notesViewModel.synchronize(lifecycleScope)
         }
+
         setContent {
-                NotesTheme() {
-                    MainScreenDependencies(
-                        sPreferences,
-                        viewModelFactory,
-                        firebaseAuth,
-                        filesProvider
+            NotesTheme() {
+                MainScreenDependencies(
+                    sPreferences,
+                    viewModelFactory,
+                    firebaseAuth,
+                    filesProvider
+                ) {
+                    CompositionLocalProvider(
+                        LocalTextToolbar provides CustomTextToolbar(LocalView.current)
                     ) {
                         MainScreen()
                     }
                 }
+            }
         }
 
         shortcuts.disableShortcut("ass")
@@ -79,7 +79,6 @@ class MainActivity : BaseActivity() {
             Intent(this, MainActivity::class.java).apply { action = "ass" },
             R.drawable.notebook_list
         )
-
     }
 
     override fun onPause() {

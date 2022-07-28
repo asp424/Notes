@@ -1,105 +1,81 @@
 package com.lm.notes.ui
 
-import android.net.Uri
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.Logout
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.End
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import com.lm.notes.R
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.presentation.MainActivity
+import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.theme.bar
-import com.lm.notes.utils.noRippleClickable
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
-fun TopBar() {
+fun TopBar(isAuthIconVisibility: Boolean) {
     with(mainDep) {
         Box(Modifier.background(Color.White)) {
-            TopAppBar(
-                backgroundColor = bar
-            ) {
-
-            }
-
-            Canvas(
-                Modifier.offset(width - 55.dp - infoOffset.value, 28.dp)
-            ) { drawCircle(Color.Red, infoOffset.value.value + 20f, Offset.Zero) }
-
             Box(
-                Modifier.offset(width - 63.dp - infoOffset.value, 18.dp)
-            ) {
-                Icon(
-                    Icons.Sharp.Logout, null, modifier = Modifier
-                        .size(20.dp)
-                        .noRippleClickable {
-                            firebaseAuth.signOut()
-                            if (firebaseAuth.currentUser?.uid == null) {
-                                sPreferences.saveIconUri(Uri.EMPTY)
-                                iconUri.value = Uri.EMPTY
-                            }
-                        }, tint = Color.White
-                )
-            }
-
-            Canvas(
-                Modifier.offset(width - 55.dp + infoOffset.value, 28.dp)
-            ) { drawCircle(Color.White, 15.dp.toPx(), Offset.Zero) }
-
-            Box(
-                modifier = Modifier.offset(width - 70.dp + infoOffset.value, 13.dp)
-            ) {
-                (LocalContext.current as MainActivity).apply {
-                    AsyncImage(model = if (iconUri.value.toString() != "") iconUri.value
-                    else R.drawable.face,
-                        contentDescription = null,
-                        placeholder = painterResource(id = R.drawable.face),
-                        modifier = Modifier
-                            .size(if (!progressVisibility.value) 30.dp else 0.dp)
-                            .noRippleClickable {
-                                if (!firebaseAuth.isAuth) {
-                                    progressVisibility.value = true; startLoginActivity
-                                } else {
-                                    if (!infoVisibility.value) {
-                                        coroutine.launch {
-                                            infoVisibility.value = !infoVisibility.value
-                                            delay(1000)
-                                            infoVisibility.value = !infoVisibility.value
-                                        }
-                                    }
-                                }
-                            }
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop,
-                        onLoading = {
-                            if (iconUri.toString().isNotEmpty()) progressVisibility.value = true
-                        },
-                        onSuccess = { progressVisibility.value = false })
+                Modifier
+                    .height(60.dp)
+                    .fillMaxWidth()
+                    .background(bar)
+            )
+            DefaultBar(animateFloatAsState(
+                if (isAuthIconVisibility) 1f else 0f, tween(350)
+            ).value)
+            LocalViewModelStoreOwner.current?.also { ownerVM ->
+                val notesViewModel = remember {
+                    ViewModelProvider(ownerVM, viewModelFactory)[NotesViewModel::class.java]
                 }
-                if (progressVisibility.value) CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .alpha(0.5f), color = Color.Blue
-                )
+
+                notesViewModel.notesList.collectAsState().value.also { list ->
+                    list.find { it.id == notesViewModel.noteId }?.apply {
+                        Box(
+                            modifier = Modifier.scale(animateFloatAsState(
+                                if (isAuthIconVisibility) 0f else 1f, tween(350)
+                            ).value), contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .scale(
+                                        animateFloatAsState(
+                                            if (
+                                                isSelected.value || textState.value.isEmpty()
+                                            ) 0f else 1f, tween(350)
+                                        ).value
+                                    ).padding(end = 20.dp, top = 15.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                                , horizontalArrangement = End
+                            ) {
+                                FullScreenBar(this@apply)
+                            }
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .scale(
+                                        animateFloatAsState(
+                                            if (isSelected.value) 1f else 0f, tween(350)
+                                        ).value
+                                    ).padding(end = 20.dp, top = 15.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                                , horizontalArrangement = End
+                            ) {
+                                FormatBar(this@apply)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -1,13 +1,19 @@
 package com.lm.notes.utils
 
 import android.content.Context
+import android.graphics.Rect
 import android.util.Log
+import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,9 +39,9 @@ fun formatTimestamp(timestamp: Long): String {
     val dayOfYearWas = formatDate("D", timestamp)
     val yearNow = dateNow.get(Calendar.YEAR)
     return when (dateNow.get(Calendar.DAY_OF_YEAR) - dayOfYearWas.toInt()) {
-        1 -> " yesterday $timeWas"
-        2 -> " the day before yesterday $timeWas"
-        0 -> " $timeWas"
+        1 -> "yesterday $timeWas"
+        2 -> "the day before yesterday $timeWas"
+        0 -> timeWas
         else -> {
             when (yearNow - yearWas.toInt()) {
                 1 -> " $dayOfMonthWas.$monthNumWas.$yearWasSmall at $timeWas"

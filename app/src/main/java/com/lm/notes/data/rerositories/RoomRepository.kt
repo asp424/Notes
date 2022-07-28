@@ -65,8 +65,7 @@ interface RoomRepository {
         )
 
         override fun createNew(width: Float, height: Float, id: String) = NoteModelRoom(
-            id, actualTime, actualTime, "sEu0e", "",
-            width - 40f, height / 6
+            id, actualTime, actualTime, "", "", ""
         )
 
         override val actualTime get() = Calendar.getInstance().time.time

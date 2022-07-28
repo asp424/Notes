@@ -7,19 +7,19 @@ import androidx.navigation.NavBackStackEntry
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.enterUpToDown
-    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Down, tween(500))
+    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Down, tween(350))
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.enterDownToUp
-    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Up, tween(500))
+    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Up, tween(350))
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.enterLeftToRight
-    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Right, tween(500))
+    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Right, tween(350))
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.enterRightToLeft
-    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(500))
+    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(350))
 
 
 

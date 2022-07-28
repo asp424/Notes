@@ -1,7 +1,6 @@
 package com.lm.notes.ui
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -14,7 +13,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -44,13 +42,14 @@ fun BottomBar(visibleBottomBar: Boolean) {
             }
             val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
             val bottomBarOffset by animateDpAsState(
-                if (visibleBottomBar) 0.dp else 100.dp, tween(700)
+                if (visibleBottomBar) 0.dp else 100.dp, tween(350)
             )
 
             LocalDensity.current.apply {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize().offset(0.dp, bottomBarOffset)
+                        .fillMaxSize()
+                        .offset(0.dp, bottomBarOffset)
                         .alpha(0.8f)
                 ) {
                     Canvas(Modifier) {
@@ -80,8 +79,9 @@ fun BottomBar(visibleBottomBar: Boolean) {
                             coroutine.launch {
                                 delay(200); listState.animateScrollBy(
                                 (sumHeight * density) + 60 * density * notesViewModel.notesList.value.size,
-                                tween(1000)
+                                tween(300)
                             )
+                                navController.navigate("fullScreenNote")
                             }
                         }, modifier = Modifier
                             .offset((width - 89.dp), (height - 79.dp))

@@ -2,6 +2,7 @@ package com.lm.notes.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.lm.notes.R
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.presentation.NotesViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -33,6 +35,8 @@ fun MainScreen() {
         LocalViewModelStoreOwner.current?.also { ownerVM ->
 
             var visibleBottomBar by remember { mutableStateOf(true) }
+
+            var isAuthIconVisibility by remember { mutableStateOf(true) }
 
             val notesViewModel = remember {
                 ViewModelProvider(ownerVM, viewModelFactory)[NotesViewModel::class.java]
@@ -44,9 +48,13 @@ fun MainScreen() {
             )
 
             Column {
-                TopBar()
+                TopBar(isAuthIconVisibility)
                 NavController{
-                    visibleBottomBar = it
+                    coroutine.launch {
+                        visibleBottomBar = it
+                        delay(350)
+                        isAuthIconVisibility = it
+                    }
                 }
             }
 

@@ -29,7 +29,10 @@ interface FirebaseRepository {
 
         override fun saveNote(noteModel: NoteModel) = with(noteModel) {
             firebaseSource.saveNote(
-                textState.value, id, sizeXState.value, sizeYState.value, timestampCreate, timestampChangeState.value)
+                textState.value, id,
+                sizeXState.value, sizeYState.value, timestampCreate, timestampChangeState.value,
+            header = headerState.value
+            )
         }
 
         override val randomId get() = firebaseSource.randomId

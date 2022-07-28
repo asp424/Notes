@@ -32,7 +32,7 @@ interface FilesProvider {
     ) : FilesProvider {
 
         override fun saveText(date: Long, text: String) = date.newFileName.file.apply {
-            runCatching { createNewFile() }.onSuccess { writeText(text); log }
+            runCatching { createNewFile() }.onSuccess { writeText(text) }
         }
 
         override fun takeAllFiles() = absPath.walkTopDown().toMutableList()

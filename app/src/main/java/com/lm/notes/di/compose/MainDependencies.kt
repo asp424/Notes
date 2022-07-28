@@ -106,22 +106,18 @@ class TextActionModeCallback(
 ) : ActionMode.Callback {
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-        mode?.title  .log
         return true
     }
 
     override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        mode?.title  .log
         return false
     }
 
     override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        mode?.title  .log
         return true
     }
 
     override fun onDestroyActionMode(mode: ActionMode?) {
-        mode?.title  .log
     }
 }
 

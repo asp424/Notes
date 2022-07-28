@@ -31,7 +31,7 @@ interface FirebaseSource {
 
     fun saveNote(
         text: String, id: String, sizeX: Float, sizeY: Float, timestampCreate: Long,
-        timestampChange: Long
+        timestampChange: Long, header: String
     )
 
     val randomId: String
@@ -89,14 +89,14 @@ interface FirebaseSource {
 
         override fun saveNote(
             text: String, id: String, sizeX: Float, sizeY: Float, timestampCreate: Long,
-            timestampChange: Long
+            timestampChange: Long, header: String
         ) {
             if (isAuth) runTask(
                 NOTES.path.child(id).updateChildren(
                     mapOf(
                         TEXT to text, TIMESTAMP_CREATE to timestampCreate,
                         TIMESTAMP_CHANGE to timestampChange, ID to id,
-                        SIZE_X to sizeX, SIZE_Y to sizeY
+                        HEADER to header
                     )
                 )
             )
@@ -116,8 +116,7 @@ interface FirebaseSource {
             const val ID = "id"
             const val NOTES = "notes"
             const val TEXT = "text"
-            const val SIZE_X = "sizeX"
-            const val SIZE_Y = "sizeY"
+            const val HEADER = "header"
         }
     }
 }
