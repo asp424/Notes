@@ -30,7 +30,7 @@ fun NavController(onFullScreenNote: (Boolean) -> Unit) {
             }, exitTransition = {
                 exitLeftToRight
             }) {
-                FullScreenNote {
+                FullScreenNote() {
                     onFullScreenNote(false)
                 }
             }

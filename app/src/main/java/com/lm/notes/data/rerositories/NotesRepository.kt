@@ -1,8 +1,6 @@
 package com.lm.notes.data.rerositories
 
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,12 +23,7 @@ interface NotesRepository {
     fun updateData(
         noteModel: NoteModel,
         initTimeStampChange: Long,
-        newText: String
-    )
-
-    fun updateCoordinates(
-        noteModel: NoteModel,
-        width: Dp, height: Dp, dragAmount: Offset
+        newText: TextFieldValue
     )
 
     fun notesListAsState(): StateFlow<List<NoteModel>>
@@ -90,27 +83,13 @@ interface NotesRepository {
         override fun updateData(
             noteModel: NoteModel,
             initTimeStampChange: Long,
-            newText: String
+            newText: TextFieldValue
         ) = with(noteModel) {
             if (!isChanged) isChanged = true
             textState.value = newText
             timestampChangeState.value =
-                if (text != textState.value) roomRepository.actualTime
+                if (text != textState.value.text) roomRepository.actualTime
                 else initTimeStampChange
-        }
-
-        override fun updateCoordinates(
-            noteModel: NoteModel,
-            width: Dp,
-            height: Dp,
-            dragAmount: Offset
-        ) = with(noteModel) {
-            if (!isChanged) isChanged = true
-            if (sizeXState.value.dp + dragAmount.x.dp in width - 200.dp..width - 40.dp
-            ) sizeXState.value += dragAmount.x
-
-            if (sizeYState.value.dp + dragAmount.y.dp in 127.dp..height - 170.dp
-            ) sizeYState.value += dragAmount.y
         }
 
         override fun notesListAsState() = notesListData.notesList().apply {
@@ -121,7 +100,7 @@ interface NotesRepository {
             with(notesListData) {
                 with(roomRepository) {
                     filterByIsChanged().forEach {
-                        if (it.textState.value.replace(" ", "").isNotEmpty() ||
+                        if (it.textState.value.text.replace(" ", "").isNotEmpty() ||
                             it.timestampChangeState.value != it.timestampCreate
                         ) {
                             withContext(coroutineDispatcher) { firebaseRepository.saveNote(it) }

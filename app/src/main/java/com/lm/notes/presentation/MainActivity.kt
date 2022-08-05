@@ -16,7 +16,7 @@ import com.lm.notes.core.appComponentBuilder
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.di.compose.CustomTextToolbar
-import com.lm.notes.di.compose.MainScreenDependencies
+import com.lm.notes.di.compose.mainScreenDependencies
 import com.lm.notes.ui.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
 import kotlinx.coroutines.CoroutineDispatcher
@@ -58,7 +58,7 @@ class MainActivity : BaseActivity() {
 
         setContent {
             NotesTheme() {
-                MainScreenDependencies(
+                mainScreenDependencies(
                     sPreferences,
                     viewModelFactory,
                     firebaseAuth,

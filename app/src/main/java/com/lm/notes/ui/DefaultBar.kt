@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.lm.notes.R
-import com.lm.notes.di.compose.MainDep
+import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.utils.noRippleClickable
 import kotlinx.coroutines.delay
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DefaultBar(iconAuthScale: Float) {
-    with(MainDep.mainDep) {
+    with(mainDep) {
 
         Canvas(
             Modifier

@@ -1,6 +1,7 @@
 package com.lm.notes.data.mappers
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.TextFieldValue
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.lm.notes.core.Mapper
@@ -60,9 +61,11 @@ interface NotesMapper {
                     timestampChangeState = timestampChange.toMutableState(),
                     timestampCreate = timestampCreate,
                     text = text,
-                    textState = text.toMutableState(),
+                    textState = TextFieldValue(text).toMutableState(),
                     isChanged = false,
-                    boldMap = underlinedMap.toMutableState(),
+                    boldMap = boldMap.toMutableState(),
+                    underlinedMap = underlinedMap.toMutableState(),
+                    italicMap = italicMap.toMutableState(),
                     headerState = header.toMutableState()
                 )
             }
@@ -75,8 +78,10 @@ interface NotesMapper {
                     id = id,
                     timestampChange = timestampChangeState.value,
                     timestampCreate = timestampCreate,
-                    text = textState.value,
-                    underlinedMap = boldMap.value,
+                    text = textState.value.text,
+                    boldMap = boldMap.value,
+                    italicMap = italicMap.value,
+                    underlinedMap = underlinedMap.value,
                     header = headerState.value
                 )
             }
@@ -93,7 +98,7 @@ interface NotesMapper {
 
             private val DataSnapshot.getNoteModel get() =
             (getValue(NoteModel::class.java)?: NoteModel()).apply {
-                textState = text.toMutableState()
+                textState = TextFieldValue(text).toMutableState()
                 timestampChangeState = timestampChange.toMutableState()
                 headerState = header.toMutableState()
                 isChanged = false

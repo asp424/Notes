@@ -1,6 +1,7 @@
 package com.lm.notes.di.dagger.app
 
 import android.app.Application
+import android.content.ClipboardManager
 import androidx.core.app.ShareCompat
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.MainActivity
@@ -22,6 +23,9 @@ interface AppComponent {
 
         @BindsInstance
         fun intentBuilder(intentBuilder: ShareCompat.IntentBuilder): Builder
+
+        @BindsInstance
+        fun clipboardManager(clipboardManager: ClipboardManager): Builder
 
         @BindsInstance
         fun filesDir(filesDir: File): Builder

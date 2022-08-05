@@ -65,6 +65,6 @@ interface NotesListData {
             }
 
         override fun isChangedText(noteModel: NoteModel) =
-            with(noteModel) { text != textState.value}
+            with(noteModel) { text != textState.value.text}
     }
 }

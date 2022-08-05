@@ -10,6 +10,8 @@ class NoteModelRoom(
     val timestampCreate: Long = 0,
     val timestampChange: Long = 0,
     var underlinedMap: String = "",
+    var boldMap: String = "",
+    var italicMap: String = "",
     val text: String = "",
     val header: String = ""
 )

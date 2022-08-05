@@ -4,7 +4,6 @@ import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.local_data.room.NotesDao
 import com.lm.notes.data.mappers.NotesMapper
 import com.lm.notes.data.models.NoteModel
-import com.lm.notes.utils.log
 import java.util.*
 import javax.inject.Inject
 
@@ -36,13 +35,13 @@ interface RoomRepository {
     ) : RoomRepository {
 
         override suspend fun updateNote(noteModel: NoteModel) = with(noteModel) {
-            text = textState.value
+            text = textState.value.text
             if (getById(id) == null) addNewNote(this)
             else notesDao.update(notesMapper.map(this))
         }
 
-        override suspend fun addNewNote(id: String, width: Float, height: Float)
-        = with(createNew(width, height, id)
+        override suspend fun addNewNote(id: String, width: Float, height: Float) = with(
+            createNew(width, height, id)
         ) {
             notesDao.insert(this)
             notesMapper.map(this)

@@ -1,6 +1,7 @@
 package com.lm.notes.core
 
 import android.app.Application
+import android.content.ClipboardManager
 import android.content.Context
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.di.dagger.app.AppComponent
@@ -14,6 +15,8 @@ class App : Application() {
                 SPreferences.Base(
                     getSharedPreferences("user", MODE_PRIVATE)
                 )
+            ).clipboardManager(
+                getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             ).filesDir(filesDir)
     }
 }

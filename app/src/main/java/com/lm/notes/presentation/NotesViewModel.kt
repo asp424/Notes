@@ -1,32 +1,37 @@
 package com.lm.notes.presentation
 
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.rerositories.NotesRepository
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-class NotesViewModel @Inject constructor(private val notesRepository: NotesRepository)
-    : ViewModel() {
+class NotesViewModel @Inject constructor(private val notesRepository: NotesRepository) :
+    ViewModel() {
 
     val notesList = notesRepository.notesListAsState()
 
-    var noteId = ""
+    private val _noteModelFullScreen = MutableStateFlow(NoteModel())
+
+    val noteModelFullScreen = _noteModelFullScreen.asStateFlow()
+
+    fun setFullscreenNoteModel(id: String){
+        _noteModelFullScreen.value = findFullscreenNoteModelInList(id)
+    }
 
     fun addNewNote(coroutineScope: CoroutineScope, width: Float, height: Float) =
-        notesRepository.addNewNote(width, height, coroutineScope){
-            noteId = it.id
+        notesRepository.addNewNote(width, height, coroutineScope) { noteModel ->
+            setFullscreenNoteModel(noteModel.id)
         }
 
-    fun updateData(noteModel: NoteModel, initTimeStampChange: Long, text: String) =
-        notesRepository.updateData(noteModel, initTimeStampChange, text)
+    private fun findFullscreenNoteModelInList(id: String) = notesList.value.find { it.id == id }
+        ?: NoteModel()
 
-    fun updateCoordinates(noteModel: NoteModel, width: Dp, height: Dp, dragAmount: Offset) =
-        notesRepository.updateCoordinates(noteModel, width, height, dragAmount)
+    fun updateData(noteModel: NoteModel, initTimeStampChange: Long, text: TextFieldValue) =
+        notesRepository.updateData(noteModel, initTimeStampChange, text)
 
     fun deleteNoteById(coroutineScope: CoroutineScope, id: String) =
         notesRepository.deleteNoteById(id, coroutineScope)

@@ -2,7 +2,6 @@ package com.lm.notes.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,11 +19,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.lm.notes.R
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.presentation.NotesViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -32,52 +28,46 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen() {
     with(mainDep) {
-        LocalViewModelStoreOwner.current?.also { ownerVM ->
+        var visibleBottomBar by remember { mutableStateOf(true) }
 
-            var visibleBottomBar by remember { mutableStateOf(true) }
+        var isAuthIconVisibility by remember { mutableStateOf(true) }
 
-            var isAuthIconVisibility by remember { mutableStateOf(true) }
+        Image(
+            painter = painterResource(id = R.drawable.notebook_list), null,
+            modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
+        )
 
-            val notesViewModel = remember {
-                ViewModelProvider(ownerVM, viewModelFactory)[NotesViewModel::class.java]
-            }
-
-            Image(
-                painter = painterResource(id = R.drawable.notebook_list), null,
-                modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
-            )
-
-            Column {
-                TopBar(isAuthIconVisibility)
-                NavController{
-                    coroutine.launch {
-                        visibleBottomBar = it
-                        delay(350)
-                        isAuthIconVisibility = it
-                    }
+        Column {
+            TopBar(isAuthIconVisibility)
+            NavController {
+                coroutine.launch {
+                    visibleBottomBar = it
+                    delay(350)
+                    isAuthIconVisibility = it
                 }
             }
+        }
 
-            BottomBar(visibleBottomBar)
-            var isLarge by remember { mutableStateOf(false) }
+        BottomBar(visibleBottomBar)
+        val isLarge by remember { mutableStateOf(false) }
 
-            val scale by animateFloatAsState(if (isLarge) 1f else 0f)
+        val scale by animateFloatAsState(if (isLarge) 1f else 0f)
 
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 60.dp, end = 60.dp)
-                    .scale(scale),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                FloatingActionButton(
-                    onClick = {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(bottom = 60.dp, end = 60.dp)
+                .scale(scale),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            FloatingActionButton(
+                onClick = {
                     coroutine.launch {
                         listState.animateScrollToItem(notesViewModel.notesList.value.lastIndex)
                     }
-                }, shape = CircleShape) {
-                    Icon(Icons.Sharp.ArrowDownward, contentDescription = null)
-                }
+                }, shape = CircleShape
+            ) {
+                Icon(Icons.Sharp.ArrowDownward, contentDescription = null)
             }
         }
     }
