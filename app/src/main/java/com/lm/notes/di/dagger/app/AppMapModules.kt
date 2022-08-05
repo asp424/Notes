@@ -22,7 +22,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         NotesListDataModule::class,
         CoroutinesDispatcherModule::class,
         FilesProviderModule::class,
-        ShortcutsModule::class
+        ShortcutsModule::class,
+        NoteDataModule::class,
+        TextFormatterModule::class
     ]
 )
 interface AppMapModules

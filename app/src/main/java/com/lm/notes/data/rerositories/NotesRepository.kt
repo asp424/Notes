@@ -3,30 +3,23 @@ package com.lm.notes.data.rerositories
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface NotesRepository {
 
-    fun addNewNote(
-        width: Float, height: Float, coroutineScope: CoroutineScope,
-        onCreate: (NoteModel) -> Unit
-    )
+    fun addNewNote(coroutineScope: CoroutineScope)
 
-    fun deleteNoteById(id: String, coroutineScope: CoroutineScope)
+    val noteModelFullScreen: StateFlow<NoteModel>
 
-    fun updateData(
-        noteModel: NoteModel,
-        initTimeStampChange: Long,
-        newText: TextFieldValue
-    )
+    val notesList: StateFlow<List<NoteModel>>
 
-    fun notesListAsState(): StateFlow<List<NoteModel>>
+    fun deleteNote(id: String, coroutineScope: CoroutineScope)
+
+    fun updateNote(newText: TextFieldValue): Job
+
+    fun setFullscreenNoteModel(id: String)
 
     suspend fun updateChangedNotes()
 
@@ -47,7 +40,7 @@ interface NotesRepository {
                             firebaseRepository.saveNote(it)
                         }
                         notesList().collect {
-                            if (roomRepository.checkForNotContainsById(it.id)
+                            if (roomRepository.checkForNotContains(it.id)
                                 || notesListData.isEmpty()
                             ) {
                                 roomRepository.addNewNote(it)
@@ -59,55 +52,39 @@ interface NotesRepository {
             }
         }
 
-        override fun addNewNote(
-            width: Float,
-            height: Float,
-            coroutineScope: CoroutineScope,
-            onCreate: (NoteModel) -> Unit
-        ) {
+        override fun addNewNote(coroutineScope: CoroutineScope) {
             coroutineScope.launch(coroutineDispatcher) {
-                with(roomRepository.newNote(firebaseRepository.randomId, width, height)) {
-                    notesListData.add(this)
-                    onCreate(this)
+                with(roomRepository.newNote(firebaseRepository.randomId)) {
+                        notesListData.add(this@with)
+                        notesListData.setFullscreenNoteModel(id)
                 }
             }
         }
 
-        override fun deleteNoteById(id: String, coroutineScope: CoroutineScope) {
+        override fun deleteNote(id: String, coroutineScope: CoroutineScope) {
             coroutineScope.launch(coroutineDispatcher) {
-                roomRepository.deleteNoteById(id)
-                with(notesListData) { find(id)?.apply { remove(this) } }
+                roomRepository.deleteNote(id)
+                notesListData.remove(id)
             }
         }
 
-        override fun updateData(
-            noteModel: NoteModel,
-            initTimeStampChange: Long,
-            newText: TextFieldValue
-        ) = with(noteModel) {
-            if (!isChanged) isChanged = true
-            textState.value = newText
-            timestampChangeState.value =
-                if (text != textState.value.text) roomRepository.actualTime
-                else initTimeStampChange
-        }
+        override fun updateNote(newText: TextFieldValue)
+        = notesListData.updateFromUi(newText, roomRepository.actualTime)
 
-        override fun notesListAsState() = notesListData.notesList().apply {
-            CoroutineScope(coroutineDispatcher).launch { value = roomRepository.notesList() }
-        }.asStateFlow()
+        override val notesList = notesListData.notesList.apply {
+            CoroutineScope(coroutineDispatcher).launch {
+                notesListData.initList(roomRepository.notesList())
+            }
+        }
 
         override suspend fun updateChangedNotes() =
-            with(notesListData) {
-                with(roomRepository) {
-                    filterByIsChanged().forEach {
-                        if (it.textState.value.text.replace(" ", "").isNotEmpty() ||
-                            it.timestampChangeState.value != it.timestampCreate
-                        ) {
-                            withContext(coroutineDispatcher) { firebaseRepository.saveNote(it) }
-                            updateNote(it)
-                        }
-                    }
-                }
+            notesListData.filterByMustSave().forEach {
+                withContext(coroutineDispatcher) { firebaseRepository.saveNote(it) }
+                roomRepository.updateNote(it)
             }
+
+        override fun setFullscreenNoteModel(id: String) = notesListData.setFullscreenNoteModel(id)
+
+        override val noteModelFullScreen = notesListData.noteModelFullScreen
     }
 }

@@ -62,18 +62,16 @@ fun BottomBar(visibleBottomBar: Boolean) {
                 }
                 Button(
                     onClick = {
-                        notesViewModel.addNewNote(lifecycleScope, width.value, height.value)
-                        var sumHeight = 0f
-                        notesViewModel.notesList.value
-                            .forEach {
-                                sumHeight += it.sizeYState.value
-                            }
+                        notesViewModel.addNewNote(lifecycleScope)
+
                         coroutine.launch {
                             delay(200); listState.animateScrollBy(
-                            (sumHeight * density) + 60 * density * notesViewModel.notesList.value.size,
+                            60 * density * notesViewModel.notesList.value.size,
                             tween(300)
                         )
-                            navController.navigate("fullScreenNote")
+                            navController.navigate("fullScreenNote"){
+                                popUpTo("mainList")
+                            }
                         }
                     }, modifier = Modifier
                         .offset((width - 89.dp), (height - 79.dp))

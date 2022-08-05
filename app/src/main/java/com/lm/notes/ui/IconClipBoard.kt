@@ -22,11 +22,7 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
-fun IconClipBoard(
-    source: ImageVector,
-    visibility: Boolean,
-    color: Color = White
-) {
+fun IconClipBoard(source: ImageVector, visibility: Boolean, color: Color = White) {
     with(mainDep) {
         with(clipboardProvider) {
             notesViewModel.noteModelFullScreen.collectAsState().value.apply {

@@ -10,13 +10,12 @@ data class NoteModel(
     var timestampChange: Long = 0,
     var timestampCreate: Long = 0,
     var header: String = "",
+    var initTime: Long = 0,
     var headerState: MutableState<String> = mutableStateOf(""),
     var boldMap: MutableState<String> = mutableStateOf(""),
     var underlinedMap: MutableState<String> = mutableStateOf(""),
     var italicMap: MutableState<String> = mutableStateOf(""),
     var textState: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue("")),
-    var sizeXState: MutableState<Float> = mutableStateOf(200f),
-    var sizeYState: MutableState<Float> = mutableStateOf(60f),
     var timestampChangeState: MutableState<Long> = mutableStateOf(0),
     var isChanged: Boolean = false
 )

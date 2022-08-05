@@ -62,8 +62,3 @@ private fun String.asTime(): String {
     return timeFormat.format(time)
 }
 
-private fun String.asDate(): String {
-    val time = Date(this.toLong())
-    val timeFormat = SimpleDateFormat("dd:MM:yy", Locale.getDefault())
-    return timeFormat.format(time)
-}

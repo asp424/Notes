@@ -28,7 +28,9 @@ fun Note(noteModel: NoteModel) {
                     .fillMaxWidth()
                     .noRippleClickable {
                         notesViewModel.setFullscreenNoteModel(id)
-                        navController.navigate("fullScreenNote")
+                        navController.navigate("fullScreenNote"){
+                            popUpTo("mainList")
+                        }
                     }
                     .height(
                         if (textState.value.text.isNotEmpty())

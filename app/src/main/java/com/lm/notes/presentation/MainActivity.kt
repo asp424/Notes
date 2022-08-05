@@ -14,11 +14,13 @@ import com.lm.notes.R
 import com.lm.notes.core.Shortcuts
 import com.lm.notes.core.appComponentBuilder
 import com.lm.notes.data.local_data.FilesProvider
+import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.di.compose.CustomTextToolbar
 import com.lm.notes.di.compose.mainScreenDependencies
 import com.lm.notes.ui.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
+import com.lm.notes.utils.format_text.TextFormatter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -45,6 +47,12 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var shortcuts: Shortcuts
 
+    @Inject
+    lateinit var textFormatter: TextFormatter
+
+    @Inject
+    lateinit var noteData: NoteData
+
     private val notesViewModel by viewModels<NotesViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +70,9 @@ class MainActivity : BaseActivity() {
                     sPreferences,
                     viewModelFactory,
                     firebaseAuth,
-                    filesProvider
+                    filesProvider,
+                    textFormatter,
+                    noteData
                 ) {
                     CompositionLocalProvider(
                         LocalTextToolbar provides CustomTextToolbar(LocalView.current)

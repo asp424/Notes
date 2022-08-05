@@ -62,11 +62,11 @@ interface NotesMapper {
                     timestampCreate = timestampCreate,
                     text = text,
                     textState = TextFieldValue(text).toMutableState(),
-                    isChanged = false,
                     boldMap = boldMap.toMutableState(),
                     underlinedMap = underlinedMap.toMutableState(),
                     italicMap = italicMap.toMutableState(),
-                    headerState = header.toMutableState()
+                    headerState = header.toMutableState(),
+                    initTime = timestampChange
                 )
             }
             return NoteModel()
@@ -101,7 +101,6 @@ interface NotesMapper {
                 textState = TextFieldValue(text).toMutableState()
                 timestampChangeState = timestampChange.toMutableState()
                 headerState = header.toMutableState()
-                isChanged = false
             }
 
         private fun <T: Any> T.toMutableState() = mutableStateOf(this)

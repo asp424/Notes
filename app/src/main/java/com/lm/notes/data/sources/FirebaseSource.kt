@@ -30,7 +30,7 @@ interface FirebaseSource {
     suspend fun <T> runSuspendCoroutine(task: Task<T>): Flow<RemoteLoadStates>
 
     fun saveNote(
-        text: String, id: String, sizeX: Float, sizeY: Float, timestampCreate: Long,
+        text: String, id: String, timestampCreate: Long,
         timestampChange: Long, header: String
     )
 
@@ -88,7 +88,7 @@ interface FirebaseSource {
         }.flowOn(IO)
 
         override fun saveNote(
-            text: String, id: String, sizeX: Float, sizeY: Float, timestampCreate: Long,
+            text: String, id: String, timestampCreate: Long,
             timestampChange: Long, header: String
         ) {
             if (isAuth) runTask(

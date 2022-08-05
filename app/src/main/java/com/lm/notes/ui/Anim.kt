@@ -21,11 +21,6 @@ val AnimatedContentScope<NavBackStackEntry>.enterLeftToRight
 val AnimatedContentScope<NavBackStackEntry>.enterRightToLeft
     get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(350))
 
-
-
-
-
-
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.exitDownToUp
     get() = slideOutOfContainer(AnimatedContentScope.SlideDirection.Down, animationSpec = tween(500))

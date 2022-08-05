@@ -2,39 +2,26 @@ package com.lm.notes.presentation
 
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
-import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.rerositories.NotesRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-class NotesViewModel @Inject constructor(private val notesRepository: NotesRepository) :
-    ViewModel() {
+class NotesViewModel @Inject constructor(
+    private val notesRepository: NotesRepository
+    ) : ViewModel() {
 
-    val notesList = notesRepository.notesListAsState()
+    val notesList = notesRepository.notesList
 
-    private val _noteModelFullScreen = MutableStateFlow(NoteModel())
+    val noteModelFullScreen = notesRepository.noteModelFullScreen
 
-    val noteModelFullScreen = _noteModelFullScreen.asStateFlow()
+    fun addNewNote(coroutineScope: CoroutineScope) = notesRepository.addNewNote(coroutineScope)
 
-    fun setFullscreenNoteModel(id: String){
-        _noteModelFullScreen.value = findFullscreenNoteModelInList(id)
-    }
+    fun setFullscreenNoteModel(id: String) = notesRepository.setFullscreenNoteModel(id)
 
-    fun addNewNote(coroutineScope: CoroutineScope, width: Float, height: Float) =
-        notesRepository.addNewNote(width, height, coroutineScope) { noteModel ->
-            setFullscreenNoteModel(noteModel.id)
-        }
+    fun updateNote(text: TextFieldValue) = notesRepository.updateNote(text)
 
-    private fun findFullscreenNoteModelInList(id: String) = notesList.value.find { it.id == id }
-        ?: NoteModel()
-
-    fun updateData(noteModel: NoteModel, initTimeStampChange: Long, text: TextFieldValue) =
-        notesRepository.updateData(noteModel, initTimeStampChange, text)
-
-    fun deleteNoteById(coroutineScope: CoroutineScope, id: String) =
-        notesRepository.deleteNoteById(id, coroutineScope)
+    fun deleteNote(coroutineScope: CoroutineScope, id: String) =
+        notesRepository.deleteNote(id, coroutineScope)
 
     fun synchronize(coroutineScope: CoroutineScope) = notesRepository.synchronize(coroutineScope)
 

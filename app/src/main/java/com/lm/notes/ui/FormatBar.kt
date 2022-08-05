@@ -13,25 +13,21 @@ fun FormatBar(isAuthIconVisibility: Boolean) {
         notesViewModel.noteModelFullScreen.collectAsState().value.apply {
 
             with(mainDep.clipboardProvider) {
+
                 IconClipBoard(
                     Icons.Rounded.ContentPaste,
-                    isSelected() == true && !isAuthIconVisibility
+                    clipBoardIsNotEmpty() == true && !isAuthIconVisibility
                 )
+                with(textState.value) {
+                    IconClipBoard(
+                        Icons.Rounded.SelectAll,
+                        text.isNotEmpty() && !isAuthIconVisibility
+                    )
 
-                IconClipBoard(
-                    Icons.Rounded.SelectAll,
-                    textState.value.text.isNotEmpty() && !isAuthIconVisibility
-                )
+                    IconClipBoard(Icons.Rounded.ContentCopy, selection.length != 0)
 
-                IconClipBoard(
-                    Icons.Rounded.ContentCopy,
-                    textState.value.selection.length != 0
-                )
-
-                IconClipBoard(
-                    Icons.Rounded.ContentCut,
-                    textState.value.selection.length != 0
-                )
+                    IconClipBoard(Icons.Rounded.ContentCut, selection.length != 0)
+                }
 
                 IconFormat(Icons.Rounded.FormatBold)
 

@@ -11,21 +11,17 @@ interface RoomRepository {
 
     suspend fun updateNote(noteModel: NoteModel)
 
-    suspend fun addNewNote(id: String, width: Float, height: Float): NoteModel
-
     suspend fun addNewNote(noteModel: NoteModel)
 
     suspend fun notesList(): List<NoteModel>
 
-    suspend fun deleteNoteById(id: String)
+    suspend fun deleteNote(id: String)
 
-    suspend fun checkForNotContainsById(id: String): Boolean
+    suspend fun checkForNotContains(id: String): Boolean
 
-    suspend fun getById(id: String): NoteModelRoom?
+    suspend fun getNote(id: String): NoteModelRoom?
 
-    fun newNote(id: String, width: Float, height: Float): NoteModel
-
-    fun createNew(width: Float, height: Float, id: String): NoteModelRoom
+    fun newNote(id: String): NoteModel
 
     val actualTime: Long
 
@@ -36,15 +32,8 @@ interface RoomRepository {
 
         override suspend fun updateNote(noteModel: NoteModel) = with(noteModel) {
             text = textState.value.text
-            if (getById(id) == null) addNewNote(this)
+            if (getNote(id) == null) addNewNote(this)
             else notesDao.update(notesMapper.map(this))
-        }
-
-        override suspend fun addNewNote(id: String, width: Float, height: Float) = with(
-            createNew(width, height, id)
-        ) {
-            notesDao.insert(this)
-            notesMapper.map(this)
         }
 
         override suspend fun addNewNote(noteModel: NoteModel) =
@@ -52,20 +41,14 @@ interface RoomRepository {
 
         override suspend fun notesList() = notesMapper.map(notesDao.getAllItems())
 
-        override suspend fun deleteNoteById(id: String) = notesDao.deleteById(id)
+        override suspend fun deleteNote(id: String) = notesDao.deleteById(id)
 
-        override suspend fun checkForNotContainsById(id: String) =
-            notesList().all { it.id != id }
+        override suspend fun checkForNotContains(id: String) = notesList().all { it.id != id }
 
-        override suspend fun getById(id: String) = notesDao.getById(id)
+        override suspend fun getNote(id: String) = notesDao.getById(id)
 
-        override fun newNote(id: String, width: Float, height: Float) = notesMapper.map(
-            createNew(width, height, id)
-        )
-
-        override fun createNew(width: Float, height: Float, id: String) = NoteModelRoom(
-            id, actualTime, actualTime, "", "", ""
-        )
+        override fun newNote(id: String)
+        = notesMapper.map(NoteModelRoom(id, actualTime, actualTime))
 
         override val actualTime get() = Calendar.getInstance().time.time
     }

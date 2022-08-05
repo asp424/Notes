@@ -36,7 +36,6 @@ fun FullScreenNote(onFullScreenNote: (Boolean) -> Unit) {
                     TextField(value = headerState.value,
                         onValueChange = {
                             headerState.value = it
-                            if (!isChanged) isChanged = true
                         },
                         colors = TextFieldDefaults.textFieldColors(
                             disabledTextColor = Color.Transparent,
@@ -54,7 +53,7 @@ fun FullScreenNote(onFullScreenNote: (Boolean) -> Unit) {
                         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                         placeholder = { Text(text = "Header", color = Color.LightGray) }
                     )
-                    CustomTextField(this@apply, 0.dp)
+                    CustomTextField(this@apply)
                 }
             }
         }

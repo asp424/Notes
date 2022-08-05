@@ -14,25 +14,14 @@ fun NavController(onFullScreenNote: (Boolean) -> Unit) {
             navController = navController,
             startDestination = "mainList"
         ) {
-            composable("mainList", enterTransition = {
-                enterLeftToRight
-            },
-                exitTransition = {
-                    exitRightToLeft
-                }) {
-                MainColumn {
-                    onFullScreenNote(it)
-                }
+            composable("mainList", enterTransition = { enterLeftToRight },
+                exitTransition = { exitRightToLeft }) {
+                MainColumn { onFullScreenNote(it) }
             }
 
-            composable("fullScreenNote", enterTransition = {
-                enterRightToLeft
-            }, exitTransition = {
-                exitLeftToRight
-            }) {
-                FullScreenNote() {
-                    onFullScreenNote(false)
-                }
+            composable("fullScreenNote", enterTransition = { enterRightToLeft },
+                exitTransition = { exitLeftToRight }) {
+                FullScreenNote() { onFullScreenNote(false) }
             }
         }
     }

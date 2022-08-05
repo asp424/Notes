@@ -17,9 +17,11 @@ import com.lm.notes.di.compose.MainDep.mainDep
 @Composable
 fun MainColumn(omMainColumn: (Boolean) -> Unit) {
     with(mainDep) {
+
         LaunchedEffect(true) {
             omMainColumn(true)
         }
+
         val notesList by notesViewModel.notesList.collectAsState()
 
         with(notesList) {

@@ -41,12 +41,13 @@ fun FullScreenBar() {
             Icon(
                 Icons.Rounded.Delete, null, modifier = Modifier
                     .noRippleClickable {
-                        notesViewModel.deleteNoteById(coroutine, id)
+                        notesViewModel.deleteNote(coroutine, id)
                         navController.navigate("mainList") {
                             popUpTo("mainList")
                         }
                     }, tint = Color.White
             )
         }
+
     }
 }

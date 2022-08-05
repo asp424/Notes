@@ -24,6 +24,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.data.local_data.FilesProvider
+import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModelFactory
@@ -56,6 +57,8 @@ fun mainScreenDependencies(
     viewModelFactory: ViewModelFactory,
     firebaseAuth: FirebaseAuth,
     filesProvider: FilesProvider,
+    textFormatter: TextFormatter,
+    noteData: NoteData,
     content: @Composable () -> Unit
 ) = with(LocalConfiguration.current) {
 
@@ -84,9 +87,9 @@ fun mainScreenDependencies(
                 listState = rememberLazyListState(),
                 filesProvider = filesProvider,
                 navController = rememberAnimatedNavController(),
-                textFormatter = TextFormatter.Base(notesViewModel),
+                textFormatter = textFormatter,
                 clipboardProvider = ClipboardProvider.Base(
-                    LocalClipboardManager.current, notesViewModel
+                    LocalClipboardManager.current, noteData
                 )
             ), content = content
         )

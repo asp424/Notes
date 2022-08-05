@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration.Companion.None
 import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.text.withStyle
+import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.theme.green
 import javax.inject.Inject
@@ -37,7 +38,7 @@ interface TextFormatter {
     fun isHaveFormattedSymbol(map: List<Int>): Boolean
 
     class Base @Inject constructor(
-        private val notesViewModel: NotesViewModel
+        private val noteData: NoteData
     ) : TextFormatter {
 
         override fun translate(map: MutableState<String>, tag: Char) {
@@ -86,7 +87,7 @@ interface TextFormatter {
 
         private val TextRange.selectedIndices get() = (start until end)
 
-        private val noteModel get() = notesViewModel.noteModelFullScreen.value
+        private val noteModel get() = noteData.noteModelFullScreen.value
 
         companion object {
             const val UNDERLINE = '@'
