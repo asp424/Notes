@@ -25,7 +25,7 @@ import com.lm.notes.utils.noRippleClickable
 fun FullScreenBar(animScale: Float) {
     with(mainDep) {
         notesViewModel.noteModelFullScreen.value.apply {
-            var isExpand = remember { mutableStateOf(false) }
+            val isExpand = remember { mutableStateOf(false) }
             val asHtmlDp =
                 animDp(
                     target = isExpand.value,

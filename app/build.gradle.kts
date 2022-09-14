@@ -66,6 +66,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.24.1-alpha")
     implementation ("com.google.accompanist:accompanist-pager:0.26.0-alpha")
+    implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")

@@ -32,6 +32,7 @@ inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier
         onClick()
     }
 }
+
 @Composable
 fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int) = animateDpAsState(
     if (target) first else second, tween(delay)
@@ -46,6 +47,7 @@ fun animFloat(target: Boolean, first: Float, second: Float) = animateFloatAsStat
 fun animScale(target: Boolean) = animateFloatAsState(
     if (target) 1f else 0f, tween(100)
 ).value
+
 fun formatTimestamp(timestamp: Long): String {
     val timeWas = timestamp.toString().asTime()
     val dateNow = Calendar.getInstance(Locale.getDefault())
@@ -72,6 +74,7 @@ fun formatTimestamp(timestamp: Long): String {
 
 private fun formatDate(value: String, date: Long) =
     SimpleDateFormat(value, Locale.getDefault()).format(date)
+
 fun nowDate(date: Long): String = "$NEW_TAG${formatDate("d-MM-yyyy H:mm", date)}"
 
 private fun String.asTime(): String {
@@ -88,11 +91,12 @@ fun MainActivity.backPressHandle(
 ) {
     if (navController.currentDestination?.route == "mainList") finish()
     else {
+        navController.navigate("mainList")
         with(notesViewModel) {
             if (isMustRemoveFromList())
                 notesViewModel.deleteNote(coroutine, noteModel.id)
-            navController.navigate("mainList")
             editTextProvider.hideFormatPanel()
+            editTextProvider.hideColorPicker()
         }
     }
 }

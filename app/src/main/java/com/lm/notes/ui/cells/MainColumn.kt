@@ -63,12 +63,13 @@ fun MainColumn() {
                                 .fillMaxWidth()
                                 .wrapContentHeight()
                                 .noRippleClickable {
-                                    notesViewModel.setFullscreenNoteModel(it.id)
-                                    notesViewModel.noteModelFullScreen.value.textState.value = it.text
-                                    editTextProvider.setText(it.text)
                                     navController.navigate("fullScreenNote") {
                                         popUpTo("mainList")
                                     }
+                                    notesViewModel.setFullscreenNoteModel(it.id)
+                                    notesViewModel.noteModelFullScreen.value.textState.value = it.text
+                                    editTextProvider.setText(it.text)
+
                                 }
                         )
                     }

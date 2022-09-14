@@ -25,9 +25,7 @@ fun MainScreen() {
 
     Image(
         painter = painterResource(id = R.drawable.notebook_list), null,
-        modifier = Modifier
-            .fillMaxSize()
-            .alpha(0.5f), contentScale = ContentScale.Crop
+        modifier = Modifier.fillMaxSize().alpha(0.5f), contentScale = ContentScale.Crop
     )
 
     with(mainDep) {
@@ -40,7 +38,7 @@ fun MainScreen() {
                 NavHost(noteModel, isFormatMode) { isFullScreen = it }
             }
 
-            BottomBar(isFullScreen)
+                  BottomBar(isFullScreen)
 
             (LocalContext.current as MainActivity).apply {
                 BackHandler {
