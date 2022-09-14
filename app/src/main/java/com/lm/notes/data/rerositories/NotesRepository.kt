@@ -4,27 +4,29 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 interface NotesRepository {
-
-    fun addNewNote(coroutineScope: CoroutineScope)
+    fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit)
 
     val noteModelFullScreen: StateFlow<NoteModel>
 
     val notesList: StateFlow<List<NoteModel>>
-
     fun deleteNote(id: String, coroutineScope: CoroutineScope)
+    fun updateNoteFromUi(newText: String)
 
-    fun updateNote(newText: TextFieldValue): Job
+    fun updateHeaderFromUi(text: TextFieldValue)
 
     fun setFullscreenNoteModel(id: String)
-
     suspend fun updateChangedNotes()
-
     fun synchronize(coroutineScope: CoroutineScope)
+    fun isMustRemoveFromList(): Boolean
 
+    fun isNewHeader(text: String): Boolean
+
+    suspend fun getItems(page: Int, pageSize: Int): Result<List<NoteModel>>
     class Base @Inject constructor(
         private val firebaseRepository: FirebaseRepository,
         private val coroutineDispatcher: CoroutineDispatcher,
@@ -40,8 +42,7 @@ interface NotesRepository {
                             firebaseRepository.saveNote(it)
                         }
                         notesList().collect {
-                            if (roomRepository.checkForNotContains(it.id)
-                                || notesListData.isEmpty()
+                            if (roomRepository.checkForNotContains(it.id) || notesListData.isEmpty()
                             ) {
                                 roomRepository.addNewNote(it)
                                 notesListData.add(it)
@@ -52,11 +53,15 @@ interface NotesRepository {
             }
         }
 
-        override fun addNewNote(coroutineScope: CoroutineScope) {
+        override fun isMustRemoveFromList() = notesListData.isMustRemoveFromList()
+        override fun isNewHeader(text: String) = notesListData.isNewHeader(text)
+
+        override fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) {
             coroutineScope.launch(coroutineDispatcher) {
                 with(roomRepository.newNote(firebaseRepository.randomId)) {
-                        notesListData.add(this@with)
-                        notesListData.setFullscreenNoteModel(id)
+                    notesListData.add(this@with)
+                    notesListData.setFullscreenNoteModel(id)
+                    withContext(Main) { onAdd() }
                 }
             }
         }
@@ -68,13 +73,31 @@ interface NotesRepository {
             }
         }
 
-        override fun updateNote(newText: TextFieldValue)
-        = notesListData.updateFromUi(newText, roomRepository.actualTime)
+        override fun updateNoteFromUi(newText: String) =
+            notesListData.updateNoteFromUi(newText, roomRepository.actualTime)
+
+        override fun updateHeaderFromUi(text: TextFieldValue) = notesListData.updateHeaderFromUi(text)
 
         override val notesList = notesListData.notesList.apply {
             CoroutineScope(coroutineDispatcher).launch {
                 notesListData.initList(roomRepository.notesList())
             }
+        }
+
+        private val list = mutableListOf<NoteModel>().apply {
+            CoroutineScope(coroutineDispatcher).launch {
+                roomRepository.notesList().forEach { m -> add(m) }
+            }
+        }
+
+        override suspend fun getItems(page: Int, pageSize: Int): Result<List<NoteModel>> {
+            if (notesList.value.isEmpty()) delay(1000)
+            val startingIndex = page * pageSize
+            return if (startingIndex + pageSize <= notesList.value.size) {
+                Result.success(
+                    notesList.value.slice(startingIndex until startingIndex + pageSize)
+                )
+            } else Result.success(emptyList())
         }
 
         override suspend fun updateChangedNotes() =
@@ -85,6 +108,6 @@ interface NotesRepository {
 
         override fun setFullscreenNoteModel(id: String) = notesListData.setFullscreenNoteModel(id)
 
-        override val noteModelFullScreen = notesListData.noteModelFullScreen
+        override val noteModelFullScreen get() = notesListData.noteModelFullScreen
     }
 }

@@ -28,8 +28,8 @@ import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModelFactory
+import com.lm.notes.ui.cells.EditTextProvider
 import com.lm.notes.utils.format_text.ClipboardProvider
-import com.lm.notes.utils.format_text.TextFormatter
 import kotlinx.coroutines.CoroutineScope
 
 data class MainDependencies(
@@ -46,8 +46,8 @@ data class MainDependencies(
     val listState: LazyListState,
     val filesProvider: FilesProvider,
     val navController: NavHostController,
-    val textFormatter: TextFormatter,
-    val clipboardProvider: ClipboardProvider
+    val clipboardProvider: ClipboardProvider,
+    val editTextProvider: EditTextProvider
 )
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -57,17 +57,13 @@ fun mainScreenDependencies(
     viewModelFactory: ViewModelFactory,
     firebaseAuth: FirebaseAuth,
     filesProvider: FilesProvider,
-    textFormatter: TextFormatter,
     noteData: NoteData,
+    editTextProvider: EditTextProvider,
     content: @Composable () -> Unit
 ) = with(LocalConfiguration.current) {
 
     val infoVisibility = remember { mutableStateOf(false) }
-    LocalViewModelStoreOwner.current?.also { ownerVM ->
-
-        val notesViewModel = remember {
-            ViewModelProvider(ownerVM, viewModelFactory)[NotesViewModel::class.java]
-        }
+    LocalViewModelStoreOwner.current?.also { owner ->
 
         CompositionLocalProvider(
             Local provides MainDependencies(
@@ -80,17 +76,18 @@ fun mainScreenDependencies(
                 infoOffset = animateDpAsState(
                     if (infoVisibility.value) 20.dp else 0.dp, tween(500)
                 ),
-
-                notesViewModel = notesViewModel,
+                notesViewModel = remember {
+                    ViewModelProvider(owner, viewModelFactory)[NotesViewModel::class.java]
+                },
                 firebaseAuth = firebaseAuth,
                 sPreferences = sPreferences,
                 listState = rememberLazyListState(),
                 filesProvider = filesProvider,
                 navController = rememberAnimatedNavController(),
-                textFormatter = textFormatter,
                 clipboardProvider = ClipboardProvider.Base(
                     LocalClipboardManager.current, noteData
-                )
+                ),
+                editTextProvider = editTextProvider
             ), content = content
         )
     }

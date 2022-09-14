@@ -2,8 +2,6 @@ package com.lm.notes.data.local_data
 
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.models.NoteModel
-import com.lm.notes.utils.log
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +12,6 @@ interface NotesListData {
     val notesList: StateFlow<List<NoteModel>>
 
     val noteModelFullScreen: StateFlow<NoteModel>
-
     fun sortByCreate()
 
     fun sortByChange()
@@ -33,9 +30,15 @@ interface NotesListData {
 
     fun initList(notesModelList: List<NoteModel>)
 
-    fun updateFromUi(newText: TextFieldValue, actualTime: Long): Job
+    fun updateNoteFromUi(newText: String, actualTime: Long)
+
+    fun updateHeaderFromUi(text: TextFieldValue)
 
     fun setFullscreenNoteModel(id: String)
+
+    fun isMustRemoveFromList(): Boolean
+
+    fun isNewHeader(text: String): Boolean
 
     class Base @Inject constructor(private val noteData: NoteData) : NotesListData {
 
@@ -71,11 +74,15 @@ interface NotesListData {
         override fun initList(notesModelList: List<NoteModel>) {
             mSFOfNotesList.value = notesModelList
         }
+        override fun updateNoteFromUi(newText: String, actualTime: Long)
+        = noteData.updateNoteFromUi(newText, actualTime)
 
-        override fun updateFromUi(newText: TextFieldValue, actualTime: Long)
-        = noteData.updateFromUi(newText, actualTime)
+        override fun updateHeaderFromUi(text: TextFieldValue) = noteData.updateHeaderFromUi(text)
 
         override fun setFullscreenNoteModel(id: String) =
             noteData.setFullscreenNoteModel(findById(id))
+
+        override fun isMustRemoveFromList() = noteData.isMustRemoveFromList()
+        override fun isNewHeader(text: String) = noteData.isNewHeader(text)
     }
 }

@@ -45,8 +45,9 @@ interface FirebaseSource {
         private val childListener: ChildListener
     ) : FirebaseSource {
 
-        override fun <T> runTask(task: Task<T>): Flow<RemoteLoadStates> =
-            callbackFlow { successFlow(task, this) }.flowOn(IO)
+        override fun <T> runTask(task: Task<T>) = callbackFlow {
+            successFlow(task, this)
+        }.flowOn(IO)
 
         override suspend fun <T> successFlow(
             task: Task<T>, scope: ProducerScope<RemoteLoadStates>
@@ -63,7 +64,7 @@ interface FirebaseSource {
         }
 
         override suspend fun <T> runSuspendCoroutine(task: Task<T>) =
-            suspendCoroutine<Flow<RemoteLoadStates>> { it.resume(runTask(task)) }
+            suspendCoroutine { it.resume(runTask(task)) }
 
         override fun runListener(node: String, mode: ListenerMode) = callbackFlow {
             node.path.apply {

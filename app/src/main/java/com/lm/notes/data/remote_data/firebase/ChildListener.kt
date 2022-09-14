@@ -48,6 +48,6 @@ interface ChildListener {
                 is DatabaseError -> RemoteLoadStates.Failure(snapshot)
                 else -> RemoteLoadStates.Loading
             }
-        )
+        );
     }
 }

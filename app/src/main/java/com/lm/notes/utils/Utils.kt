@@ -1,19 +1,24 @@
 package com.lm.notes.utils
 
 import android.content.Context
-import android.graphics.Rect
 import android.util.Log
-import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.Toast
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.focus.onFocusEvent
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Dp
+import androidx.navigation.NavController
+import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
+import com.lm.notes.data.models.NoteModel
+import com.lm.notes.presentation.MainActivity
+import com.lm.notes.presentation.NotesViewModel
+import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,7 +32,20 @@ inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier
         onClick()
     }
 }
+@Composable
+fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int) = animateDpAsState(
+    if (target) first else second, tween(delay)
+).value
 
+@Composable
+fun animFloat(target: Boolean, first: Float, second: Float) = animateFloatAsState(
+    if (target) first else second, tween(100)
+).value
+
+@Composable
+fun animScale(target: Boolean) = animateFloatAsState(
+    if (target) 1f else 0f, tween(100)
+).value
 fun formatTimestamp(timestamp: Long): String {
     val timeWas = timestamp.toString().asTime()
     val dateNow = Calendar.getInstance(Locale.getDefault())
@@ -52,13 +70,30 @@ fun formatTimestamp(timestamp: Long): String {
     }
 }
 
-private fun formatDate(value: String, date: Long): String {
-    return SimpleDateFormat(value, Locale.getDefault()).format(date)
-}
+private fun formatDate(value: String, date: Long) =
+    SimpleDateFormat(value, Locale.getDefault()).format(date)
+fun nowDate(date: Long): String = "$NEW_TAG${formatDate("d-MM-yyyy H:mm", date)}"
 
 private fun String.asTime(): String {
     val time = Date(this.toLong())
     val timeFormat = SimpleDateFormat("H:mm", Locale.getDefault())
     return timeFormat.format(time)
+}
+
+fun MainActivity.backPressHandle(
+    navController: NavController,
+    notesViewModel: NotesViewModel,
+    coroutine: CoroutineScope,
+    noteModel: NoteModel
+) {
+    if (navController.currentDestination?.route == "mainList") finish()
+    else {
+        with(notesViewModel) {
+            if (isMustRemoveFromList())
+                notesViewModel.deleteNote(coroutine, noteModel.id)
+            navController.navigate("mainList")
+            editTextProvider.hideFormatPanel()
+        }
+    }
 }
 

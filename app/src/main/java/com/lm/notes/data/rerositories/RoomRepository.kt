@@ -1,9 +1,11 @@
 package com.lm.notes.data.rerositories
 
+import androidx.paging.PagingSource
 import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.local_data.room.NotesDao
 import com.lm.notes.data.mappers.NotesMapper
 import com.lm.notes.data.models.NoteModel
+import com.lm.notes.utils.nowDate
 import java.util.*
 import javax.inject.Inject
 
@@ -16,6 +18,8 @@ interface RoomRepository {
     suspend fun notesList(): List<NoteModel>
 
     suspend fun deleteNote(id: String)
+
+    fun pagingSource(): PagingSource<Int, NoteModelRoom>
 
     suspend fun checkForNotContains(id: String): Boolean
 
@@ -31,7 +35,6 @@ interface RoomRepository {
     ) : RoomRepository {
 
         override suspend fun updateNote(noteModel: NoteModel) = with(noteModel) {
-            text = textState.value.text
             if (getNote(id) == null) addNewNote(this)
             else notesDao.update(notesMapper.map(this))
         }
@@ -42,13 +45,16 @@ interface RoomRepository {
         override suspend fun notesList() = notesMapper.map(notesDao.getAllItems())
 
         override suspend fun deleteNote(id: String) = notesDao.deleteById(id)
+        override fun pagingSource() = notesDao.getAllImages()
 
         override suspend fun checkForNotContains(id: String) = notesList().all { it.id != id }
 
         override suspend fun getNote(id: String) = notesDao.getById(id)
 
         override fun newNote(id: String)
-        = notesMapper.map(NoteModelRoom(id, actualTime, actualTime))
+        = with(actualTime){
+            notesMapper.map(NoteModelRoom(id, this, this, header = nowDate(actualTime)))
+        }
 
         override val actualTime get() = Calendar.getInstance().time.time
     }

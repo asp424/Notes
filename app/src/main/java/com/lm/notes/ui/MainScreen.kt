@@ -6,44 +6,46 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.lm.notes.R
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.presentation.MainActivity
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.lm.notes.ui.bars.BottomBar
+import com.lm.notes.ui.bars.TopBar
+import com.lm.notes.ui.cells.NavHost
+import com.lm.notes.utils.backPressHandle
 
 @Composable
 fun MainScreen() {
+
+    var isFullScreen by remember { mutableStateOf(false) }
+
+    Image(
+        painter = painterResource(id = R.drawable.notebook_list), null,
+        modifier = Modifier
+            .fillMaxSize()
+            .alpha(0.5f), contentScale = ContentScale.Crop
+    )
+
     with(mainDep) {
+        val isFormatMode by editTextProvider.longClickState.collectAsState()
 
-        var isNotFullScreenNote by remember { mutableStateOf(true) }
+        notesViewModel.noteModelFullScreen.value.also { noteModel ->
 
-        Image(
-            painter = painterResource(id = R.drawable.notebook_list), null,
-            modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
-        )
-
-        Column {
-
-            TopBar(isNotFullScreenNote)
-
-            NavController {
-                coroutine.launch {
-                    delay(100)
-                    isNotFullScreenNote = it
-                }
+            Column {
+                TopBar(isFullScreen)
+                NavHost(noteModel, isFormatMode) { isFullScreen = it }
             }
-        }
 
-        BottomBar(isNotFullScreenNote)
+            BottomBar(isFullScreen)
 
-        (LocalContext.current as MainActivity).apply {
-            BackHandler {
-                if (navController.currentDestination?.route == "mainList") finish()
-                else navController.navigate("mainList")
+            (LocalContext.current as MainActivity).apply {
+                BackHandler {
+                    backPressHandle(navController, notesViewModel, coroutine, noteModel)
+                }
             }
         }
     }

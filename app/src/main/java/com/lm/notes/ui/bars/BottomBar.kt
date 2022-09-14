@@ -1,9 +1,8 @@
-package com.lm.notes.ui
+package com.lm.notes.ui.bars
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -13,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
@@ -26,22 +26,29 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.theme.bar
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.lm.notes.utils.animDp
+import com.lm.notes.utils.animFloat
 
 @Composable
-fun BottomBar(visibleBottomBar: Boolean) {
+fun BottomBar(isFullScreen: Boolean) {
     with(mainDep) {
         val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
-        val bottomBarOffset by animateDpAsState(
-            if (visibleBottomBar) 0.dp else 100.dp, tween(350)
-        )
+        val click = remember {
+            {
+                notesViewModel.addNewNote(lifecycleScope) {
+                    editTextProvider.setText("")
+                    navController.navigate("fullScreenNote") {
+                        popUpTo("mainList")
+                    }
+                }
+            }
+        }
 
         LocalDensity.current.apply {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .offset(0.dp, bottomBarOffset)
+                    .offset(0.dp, animDp(!isFullScreen, 0.dp, 100.dp, 100))
                     .alpha(0.8f)
             ) {
                 Canvas(Modifier) {
@@ -58,24 +65,13 @@ fun BottomBar(visibleBottomBar: Boolean) {
                         .size(60.dp), colors = ButtonDefaults.buttonColors(
                         containerColor = White
                     )
-                ) {
-                }
+                ) {}
                 Button(
-                    onClick = {
-                        notesViewModel.addNewNote(lifecycleScope)
-
-                        coroutine.launch {
-                            delay(200); listState.animateScrollBy(
-                            60 * density * notesViewModel.notesList.value.size,
-                            tween(300)
-                        )
-                            navController.navigate("fullScreenNote"){
-                                popUpTo("mainList")
-                            }
-                        }
-                    }, modifier = Modifier
+                    onClick = click, modifier = Modifier
                         .offset((width - 89.dp), (height - 79.dp))
-                        .size(60.dp)
+                        .size(60.dp), colors = ButtonDefaults.buttonColors(
+                        containerColor = bar
+                    )
                 ) {
                     Text(
                         text = "+", fontSize = 25.sp, modifier = Modifier.offset(

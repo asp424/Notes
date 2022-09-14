@@ -2,6 +2,7 @@ package com.lm.notes.presentation
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.CompositionLocalProvider
@@ -16,11 +17,12 @@ import com.lm.notes.core.appComponentBuilder
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.SPreferences
+import com.lm.notes.databinding.EditTextBinding
 import com.lm.notes.di.compose.CustomTextToolbar
 import com.lm.notes.di.compose.mainScreenDependencies
 import com.lm.notes.ui.MainScreen
+import com.lm.notes.ui.cells.EditTextProvider
 import com.lm.notes.ui.theme.NotesTheme
-import com.lm.notes.utils.format_text.TextFormatter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -48,16 +50,17 @@ class MainActivity : BaseActivity() {
     lateinit var shortcuts: Shortcuts
 
     @Inject
-    lateinit var textFormatter: TextFormatter
+    lateinit var noteData: NoteData
 
     @Inject
-    lateinit var noteData: NoteData
+    lateinit var editTextProvider: EditTextProvider
 
     private val notesViewModel by viewModels<NotesViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        appComponentBuilder.intentBuilder(ShareCompat.IntentBuilder(this))
+        appComponentBuilder.intentBuilder { ShareCompat.IntentBuilder(this) }
+            .editText(EditTextBinding.inflate(LayoutInflater.from(this)).root)
             .create().inject(this)
 
         if (intent.action.toString() == IS_AUTH_ACTION) {
@@ -71,14 +74,12 @@ class MainActivity : BaseActivity() {
                     viewModelFactory,
                     firebaseAuth,
                     filesProvider,
-                    textFormatter,
-                    noteData
+                    noteData,
+                    editTextProvider,
                 ) {
                     CompositionLocalProvider(
                         LocalTextToolbar provides CustomTextToolbar(LocalView.current)
-                    ) {
-                        MainScreen()
-                    }
+                    ) { MainScreen() }
                 }
             }
         }

@@ -37,7 +37,7 @@ interface OneTapGoogleAuth {
                         if (token.isNullOrEmpty()) trySendBlocking(FBRegStates.OnError("null"))
                         else launch {
                             fbAuth.startAuthWithGoogleId(token).collect {
-                                trySendBlocking(
+                                trySend(
                                     when (it) {
                                         is FBRegStates.OnSuccess -> FBRegStates.OnSuccess(
                                             profilePictureUri
@@ -46,17 +46,19 @@ interface OneTapGoogleAuth {
                                         is FBRegStates.OnClose -> FBRegStates.OnClose("close")
                                     }
                                 )
+                                close()
                             }
                         }
                     }
                 } catch(e: ApiException){
-                    trySendBlocking(
+                    trySend(
                         when (e.statusCode) {
                             CANCELED ->  FBRegStates.OnClose(e.message?: "cancelled")
                             NETWORK_ERROR ->  FBRegStates.OnClose(e.message?: "network error")
                             else -> FBRegStates.OnError(e.message?: "error")
                         }
                     )
+                    close(e)
                 }
             }
             awaitClose()

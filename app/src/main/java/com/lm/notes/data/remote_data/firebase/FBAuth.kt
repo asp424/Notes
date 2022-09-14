@@ -23,12 +23,15 @@ interface FBAuth {
             val credential = GoogleAuthProvider.getCredential(googleIdToken, null)
             firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener { task ->
-                    trySendBlocking(
+                    trySend(
                     if (task.isSuccessful) FBRegStates.OnSuccess(Uri.EMPTY)
                     else FBRegStates.OnError(task.exception?.message ?: "null")
                     )
-                }.addOnFailureListener { trySendBlocking(FBRegStates.OnError(it.message ?: "null")) }
-                .addOnCanceledListener { trySendBlocking(FBRegStates.OnError("cancelled")) }
+                    close()
+                }.addOnFailureListener { trySend(FBRegStates.OnError(it.message ?: "null"))
+                    close() }
+                .addOnCanceledListener { trySend(FBRegStates.OnError("cancelled"))
+                    close() }
             awaitClose()
         }.flowOn(IO)
     }

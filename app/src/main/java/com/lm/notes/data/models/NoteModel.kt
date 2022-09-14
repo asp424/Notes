@@ -1,9 +1,13 @@
 package com.lm.notes.data.models
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 
+@Immutable
+@Stable
 data class NoteModel(
     val id: String = "",
     var text: String = "",
@@ -11,11 +15,8 @@ data class NoteModel(
     var timestampCreate: Long = 0,
     var header: String = "",
     var initTime: Long = 0,
-    var headerState: MutableState<String> = mutableStateOf(""),
-    var boldMap: MutableState<String> = mutableStateOf(""),
-    var underlinedMap: MutableState<String> = mutableStateOf(""),
-    var italicMap: MutableState<String> = mutableStateOf(""),
-    var textState: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue("")),
+    var headerState: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue("")),
+    var textState: MutableState<String> = mutableStateOf(""),
     var timestampChangeState: MutableState<Long> = mutableStateOf(0),
-    var isChanged: Boolean = false
+    var isChanged: Boolean = false,
 )

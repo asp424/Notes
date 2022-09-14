@@ -61,11 +61,8 @@ interface NotesMapper {
                     timestampChangeState = timestampChange.toMutableState(),
                     timestampCreate = timestampCreate,
                     text = text,
-                    textState = TextFieldValue(text).toMutableState(),
-                    boldMap = boldMap.toMutableState(),
-                    underlinedMap = underlinedMap.toMutableState(),
-                    italicMap = italicMap.toMutableState(),
-                    headerState = header.toMutableState(),
+                    headerState = TextFieldValue(header).toMutableState(),
+                    textState = text.toMutableState(),
                     initTime = timestampChange
                 )
             }
@@ -78,14 +75,10 @@ interface NotesMapper {
                     id = id,
                     timestampChange = timestampChangeState.value,
                     timestampCreate = timestampCreate,
-                    text = textState.value.text,
-                    boldMap = boldMap.value,
-                    italicMap = italicMap.value,
-                    underlinedMap = underlinedMap.value,
-                    header = headerState.value
+                    header = headerState.value.text,
+                    text = text
                 )
             }
-
 
         override fun data(stateFlow: Flow<RemoteLoadStates>) = flow {
                 stateFlow.collect { state ->
@@ -98,9 +91,8 @@ interface NotesMapper {
 
             private val DataSnapshot.getNoteModel get() =
             (getValue(NoteModel::class.java)?: NoteModel()).apply {
-                textState = TextFieldValue(text).toMutableState()
                 timestampChangeState = timestampChange.toMutableState()
-                headerState = header.toMutableState()
+                headerState = TextFieldValue(header).toMutableState()
             }
 
         private fun <T: Any> T.toMutableState() = mutableStateOf(this)

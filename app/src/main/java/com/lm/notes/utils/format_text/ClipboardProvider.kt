@@ -22,6 +22,8 @@ interface ClipboardProvider {
 
     fun cutSelected()
 
+    fun clearClipBoard()
+
     class Base @Inject constructor(
         private val clipboardManager: ClipboardManager,
         private val noteData: NoteData
@@ -30,30 +32,29 @@ interface ClipboardProvider {
         override fun clipBoardIsNotEmpty() = clipboardManager.getText()?.isNotEmpty()
 
         override fun paste() {
-            textState.value = textState.value.copy(textState.value.text + readText)
         }
 
-        override fun copyAll() = textState.value.annotatedString.saveText
+        override fun copyAll() = Unit
 
         override fun selectAll() {
-            textState.value = textState.value.copy(
-                annotatedString = textState.value.annotatedString,
-                selection = TextRange(0, textState.value.text.length)
-            )
+
         }
 
-        override fun copySelected() = textState.value.getSelectedText().saveText
+        override fun copySelected() = Unit
 
-        override fun cutSelected() = with(textState.value)
+        override fun cutSelected() = with(text)
         {
-            textState.value = TextFieldValue(text.replace(getSelectedText().text, ""))
-            getSelectedText().saveText
+
+        }
+
+        override fun clearClipBoard() {
+            AnnotatedString("").saveText
         }
 
         private val AnnotatedString.saveText get() = clipboardManager.setText(this)
 
         private val readText get() = clipboardManager.getText()
 
-        private val textState get() = noteData.noteModelFullScreen.value.textState
+        private val text get() = noteData.noteModelFullScreen.value.text
     }
 }

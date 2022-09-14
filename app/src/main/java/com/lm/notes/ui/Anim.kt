@@ -11,15 +11,15 @@ val AnimatedContentScope<NavBackStackEntry>.enterUpToDown
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.enterDownToUp
-    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Up, tween(350))
+    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Up, tween(100))
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.enterLeftToRight
-    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Right, tween(350))
+    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Right, tween(100))
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.enterRightToLeft
-    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(350))
+    get() = slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(100))
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.exitDownToUp
@@ -31,8 +31,8 @@ val AnimatedContentScope<NavBackStackEntry>.exitUpToDown
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.exitLeftToRight
-    get() = slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(500))
+    get() = slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(100))
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.exitRightToLeft
-    get() = slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(500))
+    get() = slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(100))
