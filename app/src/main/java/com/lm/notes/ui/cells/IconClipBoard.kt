@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.utils.animFloat
 import com.lm.notes.utils.animScale
 import com.lm.notes.utils.noRippleClickable
 

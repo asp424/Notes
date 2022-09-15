@@ -21,6 +21,7 @@ fun TopBar(isFullScreen: Boolean) {
                         )?.isNotEmpty() ?: false
                     )
                 )
+              //  DeleteBar(animScale(notesViewModel.isDeleteMode))
             }
         }
     }

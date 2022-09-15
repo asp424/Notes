@@ -2,16 +2,18 @@ package com.lm.notes.utils
 
 import android.content.Context
 import android.util.Log
+import android.view.MotionEvent
 import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
@@ -19,6 +21,9 @@ import com.lm.notes.data.models.NoteModel
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,12 +31,13 @@ val <T> T.log get() = Log.d("My", toString())
 
 fun Context.longToast(text: String) = Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 
-inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier = composed {
-    clickable(indication = null,
-        interactionSource = remember { MutableInteractionSource() }) {
-        onClick()
+inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier =
+    composed {
+        clickable(indication = null,
+            interactionSource = remember { MutableInteractionSource() }) {
+            onClick()
+        }
     }
-}
 
 @Composable
 fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int) = animateDpAsState(
@@ -78,7 +84,7 @@ private fun formatDate(value: String, date: Long) =
 fun nowDate(date: Long): String = "$NEW_TAG${formatDate("d-MM-yyyy H:mm", date)}"
 
 private fun String.asTime(): String {
-    val time = Date(this.toLong())
+    val time = Date(toLong())
     val timeFormat = SimpleDateFormat("H:mm", Locale.getDefault())
     return timeFormat.format(time)
 }

@@ -22,7 +22,7 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
-fun IconFormat(source: ImageVector, onClick: () -> Unit) {
+fun IconFormat(source: ImageVector) {
     with(mainDep) {
         with(editTextProvider) {
 
@@ -35,7 +35,13 @@ fun IconFormat(source: ImageVector, onClick: () -> Unit) {
 
                         Icons.Rounded.FormatUnderlined -> setSpan(UnderlineSpan())
 
-                        Icons.Rounded.FormatColorText -> { onClick() }
+                        Icons.Rounded.FormatColorText -> {
+                            if (isHaveBackgroundSpans()) removeBackgroundSpan()
+                            else {
+                                if (!colorPickerIsShow) showColorPicker()
+                                else hideColorPicker()
+                            }
+                        }
                     }
                 }
             }
@@ -44,7 +50,7 @@ fun IconFormat(source: ImageVector, onClick: () -> Unit) {
                 Icon(
                     source, null,
                     modifier = Modifier.noRippleClickable(click),
-                    tint = Black
+                    tint = if (source == Icons.Rounded.FormatColorText) colorButton else Black
                 )
             }
         }

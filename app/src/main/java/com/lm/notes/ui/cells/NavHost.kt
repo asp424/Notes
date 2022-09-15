@@ -32,7 +32,7 @@ fun NavHost(
 
             composable("fullScreenNote", enterTransition = { enterRightToLeft },
                 exitTransition = { exitLeftToRight }) {
-                FullScreenNote(noteModel, isFormatMode)
+                FullScreenNote(noteModel)
                 onNavigate(true)
             }
         }

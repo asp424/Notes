@@ -21,6 +21,8 @@ class NotesViewModel @Inject constructor(
 
     var paginatedList by mutableStateOf(ScreenState())
 
+    var isDeleteMode by mutableStateOf(false)
+
     private val paginator = Paginator.Base(initialKey = paginatedList.page,
         onLoadUpdated = { paginatedList = paginatedList.copy(isLoading = it) },
         onRequest = { nextPage -> notesRepository.getItems(nextPage, 10) },
@@ -44,7 +46,7 @@ class NotesViewModel @Inject constructor(
     fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) =
         notesRepository.addNewNote(coroutineScope) { onAdd() }
 
-    fun setFullscreenNoteModel(id: String) = notesRepository.setFullscreenNoteModel(id)
+    fun setFullscreenNoteModel(id: String, text: String) = notesRepository.setFullscreenNoteModel(id, text)
     fun updateNoteFromUi(newText: String) = notesRepository.updateNoteFromUi(newText)
 
     fun updateHeaderFromUi(text: TextFieldValue) = notesRepository.updateHeaderFromUi(text)

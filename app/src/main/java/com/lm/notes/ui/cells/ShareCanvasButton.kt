@@ -4,6 +4,7 @@ import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -37,5 +38,8 @@ fun ShareCanvasButton(
         drawCircle(Color.White, 15.dp.toPx(), Offset.Zero)
         paint.apply { textSize = textS }
         drawIntoCanvas { it.nativeCanvas.drawText(text, textX, 15f, paint) }
+    }
+    DisposableEffect(true) {
+        onDispose { isExpand.value = false }
     }
 }

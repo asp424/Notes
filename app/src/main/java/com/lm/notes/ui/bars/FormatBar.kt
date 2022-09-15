@@ -13,8 +13,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.godaddy.android.colorpicker.ClassicColorPicker
 import com.godaddy.android.colorpicker.harmony.ColorHarmonyMode
 import com.godaddy.android.colorpicker.harmony.HarmonyColorPicker
 import com.godaddy.android.colorpicker.toColorInt
@@ -26,67 +29,58 @@ import com.lm.notes.utils.animDp
 @Composable
 fun FormatBar(isFormatMode: Boolean) {
     with(mainDep) {
-        val isShowPicker by editTextProvider.colorPickerIsShow.collectAsState()
-        Column(
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .height(animDp(isFormatMode, 20.dp, 0.dp, 100)),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Bottom
+                .fillMaxWidth()
+                .offset(0.dp, animDp(
+                    isFormatMode, first = height - 45.dp, second = height, 100)
+                )
+                .height(45.dp)
+                .padding(1.dp),
+            border = BorderStroke(1.dp, Color.Black), shape = RoundedCornerShape(20.dp)
         ) {
-            if (isShowPicker) {
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    HarmonyColorPicker(
-                        harmonyMode = ColorHarmonyMode.SHADES,
-                        modifier = Modifier.size(250.dp),
-                        onColorChanged = { hsvColor ->
-                            hsvColor.toColorInt().also {
-                                editTextProvider.setSpan(BackgroundColorSpan(it))
-                            }
-                        })
-                }
-            }
-            Card(
-                modifier = Modifier
+            Box(
+                contentAlignment = Alignment.Center, modifier = Modifier
                     .fillMaxWidth()
-                    .offset(0.dp, animDp(isFormatMode, first = 0.dp, second = 60.dp, 100))
-                    .padding(1.dp),
-                border = BorderStroke(1.dp, Color.Black), shape = RoundedCornerShape(20.dp)
+                    .padding(10.dp)
             ) {
-                Box(
-                    contentAlignment = Alignment.Center, modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        Row {
+                    Row {
 
-                            IconFormat(Icons.Rounded.FormatBold) {
+                        IconFormat(Icons.Rounded.FormatBold)
 
-                            }
+                        IconFormat(Icons.Rounded.FormatItalic)
 
-                            IconFormat(Icons.Rounded.FormatItalic) {
+                        IconFormat(Icons.Rounded.FormatUnderlined)
 
-                            }
+                        IconFormat(Icons.Rounded.FormatColorText)
 
-                            IconFormat(Icons.Rounded.FormatUnderlined) {
-
-                            }
-
-                            IconFormat(Icons.Rounded.FormatColorText) {
-                                editTextProvider.showColorPicker()
-                            }
-
-                            IconFormat(Icons.Rounded.FormatColorFill) {
-
-                            }
-                        }
+                        IconFormat(Icons.Rounded.FormatColorFill)
                     }
                 }
             }
         }
+
+            Box(Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center) {
+                HarmonyColorPicker(
+                    modifier = Modifier.size(150.dp)
+                        .offset(0.dp, animDp(
+                            editTextProvider.colorPickerIsShow,
+                            first = height - 200.dp,
+                            second = height,
+                            100)
+                        ),
+                    onColorChanged = { hsvColor ->
+                        hsvColor.toColorInt().also {
+                            editTextProvider.setSpan(BackgroundColorSpan(it))
+                            editTextProvider.colorButton = Color(it)
+                        }
+                    }, harmonyMode = ColorHarmonyMode.SHADES
+                )
+            }
+        }
     }
-}

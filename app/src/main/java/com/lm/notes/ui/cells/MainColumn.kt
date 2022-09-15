@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.ui.bars.header
 import com.lm.notes.utils.formatTimestamp
 import com.lm.notes.utils.noRippleClickable
 
@@ -32,9 +33,8 @@ fun MainColumn() {
                 mutableListOf<String>().apply {
                     notesList.forEach {
                         add(
-                            with(it.headerState.value.text) {
-                                if (notesViewModel.isNewHeader(this)) substringAfter(NEW_TAG)
-                                else this
+                            with(it.headerState.value.text){
+                                header(notesViewModel.isNewHeader(this))
                             }
                         )
                     }
@@ -52,26 +52,23 @@ fun MainColumn() {
             }
         }
 
-
         val cardModifier by remember {
             derivedStateOf {
                 mutableListOf<Modifier>().apply {
                     notesList.forEach {
+
                         add(
                             Modifier
                                 .padding(bottom = 10.dp)
                                 .fillMaxWidth()
                                 .wrapContentHeight()
                                 .noRippleClickable {
+                                    notesViewModel.setFullscreenNoteModel(it.id, it.text)
+                                    editTextProvider.setText(it.text)
                                     navController.navigate("fullScreenNote") {
                                         popUpTo("mainList")
                                     }
-                                    notesViewModel.setFullscreenNoteModel(it.id)
-                                    notesViewModel.noteModelFullScreen.value.textState.value = it.text
-                                    editTextProvider.setText(it.text)
-
-                                }
-                        )
+                                })
                     }
                 }
             }

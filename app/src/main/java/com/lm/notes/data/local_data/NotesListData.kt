@@ -34,7 +34,7 @@ interface NotesListData {
 
     fun updateHeaderFromUi(text: TextFieldValue)
 
-    fun setFullscreenNoteModel(id: String)
+    fun setFullscreenNoteModel(id: String, text: String)
 
     fun isMustRemoveFromList(): Boolean
 
@@ -79,8 +79,10 @@ interface NotesListData {
 
         override fun updateHeaderFromUi(text: TextFieldValue) = noteData.updateHeaderFromUi(text)
 
-        override fun setFullscreenNoteModel(id: String) =
-            noteData.setFullscreenNoteModel(findById(id))
+        override fun setFullscreenNoteModel(id: String, text: String) =
+            noteData.setFullscreenNoteModel(findById(id).apply {
+                textState.value = text
+            })
 
         override fun isMustRemoveFromList() = noteData.isMustRemoveFromList()
         override fun isNewHeader(text: String) = noteData.isNewHeader(text)

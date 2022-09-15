@@ -19,7 +19,7 @@ interface NotesRepository {
 
     fun updateHeaderFromUi(text: TextFieldValue)
 
-    fun setFullscreenNoteModel(id: String)
+    fun setFullscreenNoteModel(id: String, text: String)
     suspend fun updateChangedNotes()
     fun synchronize(coroutineScope: CoroutineScope)
     fun isMustRemoveFromList(): Boolean
@@ -60,7 +60,7 @@ interface NotesRepository {
             coroutineScope.launch(coroutineDispatcher) {
                 with(roomRepository.newNote(firebaseRepository.randomId)) {
                     notesListData.add(this@with)
-                    notesListData.setFullscreenNoteModel(id)
+                    notesListData.setFullscreenNoteModel(id, "")
                     withContext(Main) { onAdd() }
                 }
             }
@@ -76,7 +76,8 @@ interface NotesRepository {
         override fun updateNoteFromUi(newText: String) =
             notesListData.updateNoteFromUi(newText, roomRepository.actualTime)
 
-        override fun updateHeaderFromUi(text: TextFieldValue) = notesListData.updateHeaderFromUi(text)
+        override fun updateHeaderFromUi(text: TextFieldValue) =
+            notesListData.updateHeaderFromUi(text)
 
         override val notesList = notesListData.notesList.apply {
             CoroutineScope(coroutineDispatcher).launch {
@@ -106,7 +107,8 @@ interface NotesRepository {
                 roomRepository.updateNote(it)
             }
 
-        override fun setFullscreenNoteModel(id: String) = notesListData.setFullscreenNoteModel(id)
+        override fun setFullscreenNoteModel(id: String, text: String) =
+            notesListData.setFullscreenNoteModel(id, text)
 
         override val noteModelFullScreen get() = notesListData.noteModelFullScreen
     }

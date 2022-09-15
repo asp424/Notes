@@ -35,4 +35,4 @@ val AnimatedContentScope<NavBackStackEntry>.exitLeftToRight
 
 @OptIn(ExperimentalAnimationApi::class)
 val AnimatedContentScope<NavBackStackEntry>.exitRightToLeft
-    get() = slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(100))
+    get() = slideOutOfContainer(AnimatedContentScope.SlideDirection.Left)
