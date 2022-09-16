@@ -1,15 +1,13 @@
 package com.lm.notes.ui.cells
 
-import android.graphics.Typeface
-import android.text.style.StyleSpan
+import android.graphics.Color
+import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FormatBold
-import androidx.compose.material.icons.rounded.FormatColorText
-import androidx.compose.material.icons.rounded.FormatItalic
-import androidx.compose.material.icons.rounded.FormatUnderlined
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -29,18 +27,41 @@ fun IconFormat(source: ImageVector) {
             val click by derivedStateOf {
                 {
                     when (source) {
-                        Icons.Rounded.FormatBold -> setSpan(StyleSpan(Typeface.BOLD))
+                        Icons.Rounded.FormatBold -> {}
+                            //setSpan(StyleSpan(Typeface.BOLD))
 
-                        Icons.Rounded.FormatItalic -> setSpan(StyleSpan(Typeface.ITALIC))
+                        Icons.Rounded.FormatItalic ->{}
+                           // setSpan(StyleSpan(Typeface.ITALIC))
 
-                        Icons.Rounded.FormatUnderlined -> setSpan(UnderlineSpan())
+                        Icons.Rounded.FormatUnderlined -> if (
+                            isHaveSpans(ColoredUnderlineSpan::class.java)
+                        ) { removeUnderlinedSpan()
+                            colorButtonUnderlined = Black
+                        } else {
+                            if (!colorPickerUnderlinedIsShow) showColorPickerUnderlined()
+                            else hideColorPickerUnderlined()
+                        }
 
                         Icons.Rounded.FormatColorText -> {
-                            if (isHaveBackgroundSpans()) removeBackgroundSpan()
-                            else {
-                                if (!colorPickerIsShow) showColorPicker()
-                                else hideColorPicker()
+                                if (
+                                    isHaveSpans(ForegroundColorSpan::class.java)
+                                ) { removeForegroundSpan()
+                                    colorButtonForeground = Black
+                                } else {
+                                    if (!colorPickerForegroundIsShow) showColorPickerForeground()
+                                    else hideColorPickerForeground()
+                                }
                             }
+
+                        Icons.Rounded.FormatColorFill -> {
+                                if (
+                                    isHaveSpans(BackgroundColorSpan::class.java)
+                                ) { removeBackgroundSpan()
+                                    colorButtonBackground = Black
+                                } else {
+                                    if (!colorPickerBackgroundIsShow) showColorPickerBackground()
+                                    else hideColorPickerBackground()
+                                }
                         }
                     }
                 }
@@ -50,7 +71,12 @@ fun IconFormat(source: ImageVector) {
                 Icon(
                     source, null,
                     modifier = Modifier.noRippleClickable(click),
-                    tint = if (source == Icons.Rounded.FormatColorText) colorButton else Black
+                    tint = when (source) {
+                        Icons.Rounded.FormatColorFill -> colorButtonBackground
+                        Icons.Rounded.FormatColorText -> colorButtonForeground
+                        Icons.Rounded.FormatUnderlined -> colorButtonUnderlined
+                        else -> Black
+                    }
                 )
             }
         }

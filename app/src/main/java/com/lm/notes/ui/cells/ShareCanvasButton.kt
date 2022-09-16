@@ -1,6 +1,5 @@
 package com.lm.notes.ui.cells
 
-import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
@@ -33,7 +32,8 @@ fun ShareCanvasButton(
             .noRippleClickable {
                 click()
                 isExpand.value = false
-            }.scale(scale)
+            }
+            .scale(scale)
     ) {
         drawCircle(Color.White, 15.dp.toPx(), Offset.Zero)
         paint.apply { textSize = textS }

@@ -2,7 +2,6 @@ package com.lm.notes.utils
 
 import android.content.Context
 import android.util.Log
-import android.view.MotionEvent
 import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -10,10 +9,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
@@ -21,9 +18,6 @@ import com.lm.notes.data.models.NoteModel
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -102,7 +96,7 @@ fun MainActivity.backPressHandle(
             if (isMustRemoveFromList())
                 notesViewModel.deleteNote(coroutine, noteModel.id)
             editTextProvider.hideFormatPanel()
-            editTextProvider.hideColorPicker()
+            editTextProvider.hideColorPickerBackground()
         }
     }
 }
