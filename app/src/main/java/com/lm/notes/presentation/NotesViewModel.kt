@@ -46,7 +46,8 @@ class NotesViewModel @Inject constructor(
     fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) =
         notesRepository.addNewNote(coroutineScope) { onAdd() }
 
-    fun setFullscreenNoteModel(id: String, text: String) = notesRepository.setFullscreenNoteModel(id, text)
+    fun setFullscreenNoteModel(id: String, text: String)
+    = notesRepository.setFullscreenNoteModel(id, text)
     fun updateNoteFromUi(newText: String) = notesRepository.updateNoteFromUi(newText)
 
     fun updateHeaderFromUi(text: TextFieldValue) = notesRepository.updateHeaderFromUi(text)

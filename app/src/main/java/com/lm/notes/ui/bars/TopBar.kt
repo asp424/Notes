@@ -16,7 +16,7 @@ fun TopBar(isFullScreen: Boolean) {
                 DefaultBar(animScale(!isFullScreen))
                 FullScreenBar(
                     animScale(
-                        isFullScreen && editTextProvider.fromHtml(
+                        isFullScreen && spansProvider.fromHtml(
                             replace(" ", "", false)
                         )?.isNotEmpty() ?: false
                     )

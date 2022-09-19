@@ -25,7 +25,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         ShortcutsModule::class,
         NoteDataModule::class,
         EditTextProviderModule::class,
-        InputMethodManagerModule::class
+        InputMethodManagerModule::class,
+        SpansProviderModule::class,
+        UiStatesModule::class
     ]
 )
 interface AppMapModules

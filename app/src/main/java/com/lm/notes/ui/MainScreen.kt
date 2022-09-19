@@ -17,7 +17,6 @@ import com.lm.notes.ui.bars.BottomBar
 import com.lm.notes.ui.bars.FormatBar
 import com.lm.notes.ui.bars.TopBar
 import com.lm.notes.ui.cells.NavHost
-import com.lm.notes.utils.animDp
 import com.lm.notes.utils.backPressHandle
 
 @Composable
@@ -33,19 +32,27 @@ fun MainScreen() {
     )
 
     with(mainDep) {
-
         notesViewModel.noteModelFullScreen.value.also { noteModel ->
+            with(spansProvider.uiStates) {
+                Column {
+                    TopBar(isFullScreen)
+                    NavHost(
+                        noteModel, getLongClickState
+                    ) { isFullScreen = it }
+                }
 
-            Column {
-                TopBar(isFullScreen)
-                NavHost(noteModel, editTextProvider.longClickState) { isFullScreen = it }
-            }
-
-            BottomBar(isFullScreen)
-            FormatBar(editTextProvider.longClickState)
-            (LocalContext.current as MainActivity).apply {
-                BackHandler {
-                    backPressHandle(navController, notesViewModel, coroutine, noteModel)
+                BottomBar(isFullScreen)
+                FormatBar(getLongClickState)
+                (LocalContext.current as MainActivity).apply {
+                    BackHandler {
+                        backPressHandle(
+                            navController,
+                            notesViewModel,
+                            coroutine,
+                            noteModel,
+                            spansProvider.uiStates
+                        )
+                    }
                 }
             }
         }

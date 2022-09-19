@@ -19,7 +19,7 @@ import com.lm.notes.di.compose.MainDep.mainDep
 @Composable
 fun EditText() {
     mainDep.apply {
-        editTextProvider.apply {
+        spansProvider.apply {
 
             val listener = remember {
                 editText.run {

@@ -31,7 +31,8 @@ interface FirebaseSource {
 
     fun saveNote(
         text: String, id: String, timestampCreate: Long,
-        timestampChange: Long, header: String
+        timestampChange: Long, header: String, underlinedColor: Int,
+        underlinedThickness: Float
     )
 
     val randomId: String
@@ -90,14 +91,16 @@ interface FirebaseSource {
 
         override fun saveNote(
             text: String, id: String, timestampCreate: Long,
-            timestampChange: Long, header: String
+            timestampChange: Long, header: String, underlinedColor: Int,
+            underlinedThickness: Float
         ) {
             if (isAuth) runTask(
                 NOTES.path.child(id).updateChildren(
                     mapOf(
                         TEXT to text, TIMESTAMP_CREATE to timestampCreate,
                         TIMESTAMP_CHANGE to timestampChange, ID to id,
-                        HEADER to header
+                        HEADER to header, UNDERLINED_COLOR to underlinedColor,
+                        UNDERLINED_THICKNESS to underlinedThickness
                     )
                 )
             )
@@ -118,6 +121,8 @@ interface FirebaseSource {
             const val NOTES = "notes"
             const val TEXT = "text"
             const val HEADER = "header"
+            const val UNDERLINED_COLOR = "underlinedColor"
+            const val UNDERLINED_THICKNESS = "underlinedThickness"
         }
     }
 }

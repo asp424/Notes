@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavController
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
 import com.lm.notes.data.models.NoteModel
+import com.lm.notes.data.models.UiStates
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -87,7 +88,8 @@ fun MainActivity.backPressHandle(
     navController: NavController,
     notesViewModel: NotesViewModel,
     coroutine: CoroutineScope,
-    noteModel: NoteModel
+    noteModel: NoteModel,
+    uiStates: UiStates
 ) {
     if (navController.currentDestination?.route == "mainList") finish()
     else {
@@ -95,8 +97,12 @@ fun MainActivity.backPressHandle(
         with(notesViewModel) {
             if (isMustRemoveFromList())
                 notesViewModel.deleteNote(coroutine, noteModel.id)
-            editTextProvider.hideFormatPanel()
-            editTextProvider.hideColorPickerBackground()
+            with(uiStates) {
+                editTextProvider.hideFormatPanel()
+                false.setColorPickerBackgroundIsShow
+                false.setColorPickerUnderlinedIsShow
+                false.setColorPickerForegroundIsShow
+            }
         }
     }
 }

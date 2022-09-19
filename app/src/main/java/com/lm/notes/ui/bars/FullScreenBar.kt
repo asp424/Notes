@@ -15,14 +15,17 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
 import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.presentation.MainActivity
 import com.lm.notes.ui.cells.ShareCanvasButton
 import com.lm.notes.ui.theme.bar
 import com.lm.notes.utils.animDp
+import com.lm.notes.utils.log
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
@@ -75,20 +78,17 @@ fun FullScreenBar(animScale: Float) {
                             with(headerState.value.text) {
                                 header(notesViewModel.isNewHeader(this))
                             }
-                        }\n\n${editTextProvider.fromHtml(text).toString()}",
+                        }\n\n${spansProvider.fromHtml(text).toString()}",
                         ShareType.AsTxt,
                         timestampChangeState.value
                     )
                 }, isExpand, animScale, paint, ".txt", -35f, 14.dp.toPx())
 
-                ShareCanvasButton(txtDp, click = {
-                    filesProvider.shareAsText(
-                        editTextProvider
-                            .fromHtml(text)
-                            .toString()
-                    )
-                }, isExpand, animScale, paint, "txt", -26f, 14.dp.toPx())
-
+                (LocalContext.current as MainActivity).apply {
+                    ShareCanvasButton(txtDp, click = {
+                        filesProvider.shareAsText(text)
+                    }, isExpand, animScale, paint, "txt", -26f, 14.dp.toPx())
+                }
                 Canvas(
                     Modifier
                         .offset(width - 106.dp, 0.dp)
@@ -98,7 +98,8 @@ fun FullScreenBar(animScale: Float) {
                 Box(
                     Modifier
                         .offset(width - 120.dp, 0.dp)
-                        .scale(animScale)) {
+                        .scale(animScale)
+                ) {
                     Icon(
                         Icons.Rounded.Share,
                         null,

@@ -1,8 +1,6 @@
 package com.lm.notes.ui.bars
 
 import android.annotation.SuppressLint
-import android.text.style.BackgroundColorSpan
-import android.text.style.ForegroundColorSpan
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,138 +17,122 @@ import com.godaddy.android.colorpicker.harmony.ColorHarmonyMode
 import com.godaddy.android.colorpicker.harmony.HarmonyColorPicker
 import com.godaddy.android.colorpicker.toColorInt
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.ui.cells.ColoredUnderlineSpan
 import com.lm.notes.ui.cells.IconFormat
+import com.lm.notes.ui.cells.view.SpanType
 import com.lm.notes.utils.animDp
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun FormatBar(isFormatMode: Boolean) {
     with(mainDep) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(
-                    0.dp, animDp(
-                        isFormatMode, first = height - 45.dp, second = height, 100
-                    )
-                )
-                .height(45.dp)
-                .padding(1.dp),
-            border = BorderStroke(1.dp, Color.Black), shape = RoundedCornerShape(20.dp)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center, modifier = Modifier
+        with(spansProvider) {
+            Card(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .offset(
+                        0.dp, animDp(
+                            isFormatMode, first = height - 45.dp, second = height, 100
+                        )
+                    )
+                    .height(45.dp)
+                    .padding(1.dp),
+                border = BorderStroke(1.dp, Color.Black), shape = RoundedCornerShape(20.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.Start
+                Box(
+                    contentAlignment = Alignment.Center, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
                 ) {
-                    Row {
-                        listOf(
-                            Icons.Rounded.FormatBold,
-                            Icons.Rounded.FormatItalic,
-                            Icons.Rounded.FormatUnderlined,
-                            Icons.Rounded.FormatColorText,
-                            Icons.Rounded.FormatColorFill
-                        ).forEach { IconFormat(it) }
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Row {
+                            listOf(
+                                Icons.Rounded.FormatBold,
+                                Icons.Rounded.FormatItalic,
+                                Icons.Rounded.FormatUnderlined,
+                                Icons.Rounded.FormatStrikethrough,
+                                Icons.Rounded.FormatColorText,
+                                Icons.Rounded.FormatColorFill,
+                                Icons.Rounded.FormatClear,
+                            ).forEach { IconFormat(it) }
+                        }
                     }
                 }
             }
-        }
-        with(editTextProvider) {
-
-            Box(
-                Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Box(contentAlignment = Alignment.Center) {
-                        HarmonyColorPicker(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .offset(
-                                    0.dp,
-                                    animDp(
-                                        colorPickerUnderlinedIsShow,
-                                        height - 150.dp,
-                                        height,
-                                        100
-                                    )
-                                ),
-                            onColorChanged = { hsvColor ->
-                                hsvColor.toColorInt().also { setSpan(ColoredUnderlineSpan(it, 10f)) }
-                            }, harmonyMode = ColorHarmonyMode.SHADES
-                        )
-                        Icon(
-                            Icons.Rounded.FormatUnderlined, null, modifier =
-                            Modifier.offset(
-                                0.dp,
-                                animDp(
-                                    colorPickerUnderlinedIsShow,
-                                    height - 155.dp,
-                                    height,
-                                    100
-                                )
-                            ).size(15.dp), tint = colorButtonUnderlined
-                        )
-                    }
-                    Box(contentAlignment = Alignment.Center) {
-                    HarmonyColorPicker(
-                        modifier = Modifier
-                            .size(100.dp)
-                            .offset(
-                                0.dp,
-                                animDp(colorPickerForegroundIsShow, height - 150.dp, height, 100)
-                            ),
-                        onColorChanged = { hsvColor ->
-                            hsvColor.toColorInt().also { setSpan(ForegroundColorSpan(it)) }
-                        }, harmonyMode = ColorHarmonyMode.SHADES
-                    )
-                    Icon(
-                        Icons.Rounded.FormatColorText, null, modifier =
-                        Modifier.offset(
-                            0.dp,
-                            animDp(
-                                colorPickerForegroundIsShow,
-                                height - 155.dp,
-                                height,
-                                100
+            with(uiStates) {
+                Box(
+                    Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        Box(contentAlignment = Alignment.Center) {
+                            HarmonyColorPicker(
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .offset(
+                                        0.dp,
+                                        animDp(
+                                            getColorPickerForegroundIsShow,
+                                            height - 200.dp,
+                                            height,
+                                            100
+                                        )
+                                    ),
+                                onColorChanged = { hsvColor ->
+                                    hsvColor.toColorInt()
+                                        .also { SpanType.Foreground(it).setSpan() }
+                                }, harmonyMode = ColorHarmonyMode.SHADES
                             )
-                        ).size(15.dp), tint = colorButtonForeground
-                    )
-                }
-                    Box(contentAlignment = Alignment.Center) {
-                        HarmonyColorPicker(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .offset(
-                                    0.dp,
-                                    animDp(
-                                        colorPickerBackgroundIsShow,
-                                        height - 150.dp,
-                                        height,
-                                        100
+                            Icon(
+                                Icons.Rounded.FormatColorText, null, modifier =
+                                Modifier
+                                    .offset(
+                                        0.dp,
+                                        animDp(
+                                            getColorPickerForegroundIsShow,
+                                            height - 210.dp,
+                                            height,
+                                            100
+                                        )
                                     )
-                                ),
-                            onColorChanged = { hsvColor ->
-                                hsvColor.toColorInt().also { setSpan(BackgroundColorSpan(it)) }
-                            }, harmonyMode = ColorHarmonyMode.SHADES
-                        )
-                        Icon(
-                            Icons.Rounded.FormatColorFill, null, modifier =
-                            Modifier.offset(
-                                0.dp,
-                                animDp(
-                                    colorPickerBackgroundIsShow,
-                                    height - 155.dp,
-                                    height,
-                                    100
-                                )
-                            ).size(15.dp), tint = colorButtonBackground
-                        )
+                                    .size(20.dp)
+                            )
+                        }
+                        Box(contentAlignment = Alignment.Center) {
+                            HarmonyColorPicker(
+                                modifier = Modifier
+                                    .size(150.dp)
+                                    .offset(
+                                        0.dp,
+                                        animDp(
+                                            getColorPickerBackgroundIsShow,
+                                            height - 200.dp,
+                                            height,
+                                            100
+                                        )
+                                    ),
+                                onColorChanged = { hsvColor ->
+                                    hsvColor.toColorInt()
+                                        .also { SpanType.Background(it).setSpan() }
+                                }, harmonyMode = ColorHarmonyMode.SHADES
+                            )
+                            Icon(
+                                Icons.Rounded.FormatColorFill, null, modifier =
+                                Modifier
+                                    .offset(
+                                        0.dp,
+                                        animDp(
+                                            getColorPickerBackgroundIsShow,
+                                            height - 210.dp,
+                                            height,
+                                            100
+                                        )
+                                    )
+                                    .size(20.dp)
+                            )
+                        }
                     }
                 }
             }

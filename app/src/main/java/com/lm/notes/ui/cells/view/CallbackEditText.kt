@@ -1,4 +1,4 @@
-package com.lm.notes.ui.cells
+package com.lm.notes.ui.cells.view
 
 import android.view.ActionMode
 import android.view.Menu

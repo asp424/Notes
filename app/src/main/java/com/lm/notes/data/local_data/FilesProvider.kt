@@ -3,7 +3,6 @@ package com.lm.notes.data.local_data
 import android.app.Application
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
-import com.lm.notes.ui.cells.EditTextProvider
 import java.io.File
 import java.net.URLConnection
 import java.text.SimpleDateFormat
@@ -28,7 +27,7 @@ interface FilesProvider {
 
     class Base @Inject constructor(
         private val context: Application,
-        private val intentBuilder: () -> ShareCompat.IntentBuilder,
+        private val intentBuilder: IntentBorn,
         private val filesDir: File
     ) : FilesProvider {
 
@@ -56,7 +55,7 @@ interface FilesProvider {
         }
 
         override fun shareAsText(text: String)
-        = intentBuilder.invoke().setText(text).setType("text/*").startChooser()
+        = intentBuilder.invoke().setType("text/html").setHtmlText(text).startChooser()
 
         private val String.file get() = File(filesDir, this)
 
@@ -69,6 +68,8 @@ interface FilesProvider {
         private val authority by lazy { "com.lm.notes.fileProvider" }
 
         private fun Long.newFileName(shareType: ShareType) =
-            "${SimpleDateFormat(pattern, Locale.getDefault()).format(this)}${shareType.type()}"
+            "${SimpleDateFormat(pattern, Locale.getDefault()).format(this)}${shareType.type}"
     }
 }
+
+typealias IntentBorn = () -> ShareCompat.IntentBuilder

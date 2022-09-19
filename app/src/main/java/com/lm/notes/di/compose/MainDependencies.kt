@@ -28,7 +28,8 @@ import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModelFactory
-import com.lm.notes.ui.cells.EditTextProvider
+import com.lm.notes.ui.cells.view.EditTextProvider
+import com.lm.notes.ui.cells.view.SpansProvider
 import com.lm.notes.utils.format_text.ClipboardProvider
 import kotlinx.coroutines.CoroutineScope
 
@@ -47,7 +48,8 @@ data class MainDependencies(
     val filesProvider: FilesProvider,
     val navController: NavHostController,
     val clipboardProvider: ClipboardProvider,
-    val editTextProvider: EditTextProvider
+    val editTextProvider: EditTextProvider,
+    val spansProvider: SpansProvider
 )
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -59,6 +61,7 @@ fun mainScreenDependencies(
     filesProvider: FilesProvider,
     noteData: NoteData,
     editTextProvider: EditTextProvider,
+    spansProvider: SpansProvider,
     content: @Composable () -> Unit
 ) = with(LocalConfiguration.current) {
 
@@ -87,7 +90,8 @@ fun mainScreenDependencies(
                 clipboardProvider = ClipboardProvider.Base(
                     LocalClipboardManager.current, noteData
                 ),
-                editTextProvider = editTextProvider
+                editTextProvider = editTextProvider,
+                spansProvider = spansProvider
             ), content = content
         )
     }

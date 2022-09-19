@@ -1,7 +1,7 @@
 package com.lm.notes.di.dagger.app.modules
 
 import com.lm.notes.di.dagger.app.AppScope
-import com.lm.notes.ui.cells.EditTextProvider
+import com.lm.notes.ui.cells.view.EditTextProvider
 import dagger.Binds
 import dagger.Module
 

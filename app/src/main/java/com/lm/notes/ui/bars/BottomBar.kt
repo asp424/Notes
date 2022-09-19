@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
+import com.lm.notes.data.models.NoteModel
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.theme.bar
 import com.lm.notes.utils.animDp
@@ -36,7 +37,7 @@ fun BottomBar(isFullScreen: Boolean) {
         val click = remember {
             {
                 notesViewModel.addNewNote(lifecycleScope) {
-                    editTextProvider.setText("")
+                    editTextProvider.setText(NoteModel())
                     navController.navigate("fullScreenNote") {
                         popUpTo("mainList")
                     }
