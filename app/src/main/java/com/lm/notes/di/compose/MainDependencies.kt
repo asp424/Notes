@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.SPreferences
+import com.lm.notes.data.models.UiStates
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModelFactory
 import com.lm.notes.ui.cells.view.EditTextProvider
@@ -49,7 +50,8 @@ data class MainDependencies(
     val navController: NavHostController,
     val clipboardProvider: ClipboardProvider,
     val editTextProvider: EditTextProvider,
-    val spansProvider: SpansProvider
+    val spansProvider: SpansProvider,
+    val uiStates: UiStates
 )
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -62,6 +64,7 @@ fun mainScreenDependencies(
     noteData: NoteData,
     editTextProvider: EditTextProvider,
     spansProvider: SpansProvider,
+    uiStates: UiStates,
     content: @Composable () -> Unit
 ) = with(LocalConfiguration.current) {
 
@@ -91,7 +94,8 @@ fun mainScreenDependencies(
                     LocalClipboardManager.current, noteData
                 ),
                 editTextProvider = editTextProvider,
-                spansProvider = spansProvider
+                spansProvider = spansProvider,
+                uiStates = uiStates
             ), content = content
         )
     }

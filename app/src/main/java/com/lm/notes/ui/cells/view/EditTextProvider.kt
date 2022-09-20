@@ -1,47 +1,36 @@
 package com.lm.notes.ui.cells.view
 
-import android.text.Html
-import android.text.Html.FROM_HTML_MODE_LEGACY
+import android.os.IBinder
+import android.text.Html.*
 import android.widget.EditText
-import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.models.UiStates
 import javax.inject.Inject
 
 interface EditTextProvider {
 
-    val editText: EditText
+    fun setText(text: String)
 
-    fun hideFormatPanel()
-
-    fun setText(noteModel: NoteModel)
+    fun setEditMode()
 
     class Base @Inject constructor(
-        override val editText: EditText,
+        private val editText: EditText,
         private val uiStates: UiStates,
         private val accessibilityDelegateIns: AccessibilityDelegate
     ) : EditTextProvider {
 
         init { editText.initEditText() }
 
-        override fun hideFormatPanel() {
-            with(uiStates) { false.setLongClickState }
+        override fun setText(text: String) = editText.setText(fromHtml(text, htmlMode).trim())
+        override fun setEditMode() =
             with(editText) { showSoftInputOnFocus = true; isCursorVisible = true }
-        }
-
-        override fun setText(noteModel: NoteModel) = with(noteModel) {
-            editText.setText(Html.fromHtml(text, FROM_HTML_MODE_LEGACY).trim())
-        }
 
         private fun EditText.initEditText() {
-            setOnClickListener {
-                with(uiStates) {
-                    if (getLongClickState) hideFormatPanel()
-                    false.setAllColorPickerIsShow
-                }
-            }
+            setOnClickListener { uiStates.onClickEditText(); setEditMode() }
             customSelectionActionModeCallback = CallbackEditText()
             // customInsertionActionModeCallback = this
             accessibilityDelegate = accessibilityDelegateIns
         }
+
+        private val htmlMode by lazy { FROM_HTML_MODE_LEGACY }
     }
 }

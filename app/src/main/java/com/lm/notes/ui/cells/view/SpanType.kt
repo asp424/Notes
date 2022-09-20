@@ -8,11 +8,12 @@ import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.toArgb
+import com.lm.notes.utils.log
 
 sealed class SpanType {
-    class ColoredUnderlined(var color: Int) : SpanType()
-    class Background(var color: Int) : SpanType()
-    class Foreground(var color: Int) : SpanType()
+    class ColoredUnderlined(var color: Int = 0) : SpanType()
+    class Background(var color: Int = 0) : SpanType()
+    class Foreground(var color: Int = 0) : SpanType()
     object Bold : SpanType()
     object Italic : SpanType()
     object Underlined : SpanType()
@@ -39,7 +40,7 @@ sealed class SpanType {
             is StrikeThrough -> StrikethroughSpan()
         }
 
-    val getTypeFace get() = when (this) {
+    fun getTypeFace(type: SpanType) = when (type) {
         is Bold -> Typeface.BOLD
         is Italic -> Typeface.ITALIC
         else -> 0
@@ -55,4 +56,14 @@ sealed class SpanType {
         is StrikeThrough -> StrikethroughSpan::class.java
     }
 }
+val listClasses
+    get() = listOf(
+        SpanType.StrikeThrough,
+        SpanType.Underlined,
+        SpanType.Bold,
+        SpanType.Italic,
+        SpanType.Background(),
+        SpanType.Foreground(),
+        SpanType.ColoredUnderlined()
+    )
 

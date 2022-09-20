@@ -2,7 +2,6 @@ package com.lm.notes.presentation
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -18,6 +17,7 @@ import com.lm.notes.core.appComponentBuilder
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.SPreferences
+import com.lm.notes.data.models.UiStates
 import com.lm.notes.databinding.EditTextBinding
 import com.lm.notes.di.compose.CustomTextToolbar
 import com.lm.notes.di.compose.mainScreenDependencies
@@ -60,6 +60,9 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var spansProvider: SpansProvider
 
+    @Inject
+    lateinit var uiStates: UiStates
+
     private val notesViewModel by viewModels<NotesViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +84,8 @@ class MainActivity : BaseActivity() {
                     filesProvider,
                     noteData,
                     editTextProvider,
-                    spansProvider
+                    spansProvider,
+                    uiStates
                 ) {
                     CompositionLocalProvider(
                         LocalTextToolbar provides CustomTextToolbar(LocalView.current)

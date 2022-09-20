@@ -1,20 +1,14 @@
 package com.lm.notes.ui.cells
 
-import android.graphics.Color
-import android.text.Spanned
-import android.text.style.UnderlineSpan
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.core.text.getSpans
-import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.bars.header
 import com.lm.notes.utils.formatTimestamp
-import com.lm.notes.utils.log
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
@@ -68,7 +62,7 @@ fun MainColumn() {
                                 .wrapContentHeight()
                                 .noRippleClickable {
                                     notesViewModel.setFullscreenNoteModel(it.id, it.text)
-                                    editTextProvider.setText(it)
+                                    editTextProvider.setText(it.text)
                                     navController.navigate("fullScreenNote") {
                                         popUpTo("mainList")
                                     }

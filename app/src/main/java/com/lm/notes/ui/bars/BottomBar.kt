@@ -1,7 +1,5 @@
 package com.lm.notes.ui.bars
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +9,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -28,7 +25,6 @@ import com.lm.notes.data.models.NoteModel
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.theme.bar
 import com.lm.notes.utils.animDp
-import com.lm.notes.utils.animFloat
 
 @Composable
 fun BottomBar(isFullScreen: Boolean) {
@@ -37,7 +33,7 @@ fun BottomBar(isFullScreen: Boolean) {
         val click = remember {
             {
                 notesViewModel.addNewNote(lifecycleScope) {
-                    editTextProvider.setText(NoteModel())
+                    editTextProvider.setText("")
                     navController.navigate("fullScreenNote") {
                         popUpTo("mainList")
                     }

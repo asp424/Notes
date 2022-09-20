@@ -1,11 +1,15 @@
 package com.lm.notes.data.models
 
+import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Green
-import androidx.compose.ui.graphics.toArgb
+import com.lm.notes.ui.cells.view.ColoredUnderlineSpan
 import com.lm.notes.ui.cells.view.SpanType
+import com.lm.notes.ui.cells.view.SpansProvider
 
 data class UiStates(
     private var longClickState: MutableState<Boolean> = mutableStateOf(false),
@@ -30,11 +34,11 @@ data class UiStates(
     val getColorButtonItalic get() = colorButtonItalic.value
     val getColorButtonStrikeThrough get() = colorButtonStrikeThrough.value
     val Boolean.setLongClickState get() = run { longClickState.value = this }
-    val Boolean.setColorPickerBackgroundIsShow
+    private val Boolean.setColorPickerBackgroundIsShow
         get() = run {
             colorPickerBackgroundIsShow.value = this
         }
-    val Boolean.setColorPickerForegroundIsShow
+    private val Boolean.setColorPickerForegroundIsShow
         get() = run {
             colorPickerForegroundIsShow.value = this
         }
@@ -42,36 +46,92 @@ data class UiStates(
         get() = run {
             colorPickerUnderlinedIsShow.value = this
         }
-    val Color.setColorButtonBackground get() = run { colorButtonBackground.value = this }
-    val Color.setColorButtonForeground get() = run { colorButtonForeground.value = this }
-    val Color.setColorButtonUnderlined get() = run { colorButtonUnderlined.value = this }
-    val Color.setColorButtonBold get() = run { colorButtonBold.value = this }
-    val Color.setColorButtonItalic get() = run { colorButtonItalic.value = this }
-    val Color.setColorButtonStrikeThrough get() = run { colorButtonStrikeThrough.value = this }
-    val Boolean.setAllColorPickerIsShow
+    private val Color.setColorButtonBackground get() = run { colorButtonBackground.value = this }
+    private val Color.setColorButtonForeground get() = run { colorButtonForeground.value = this }
+    private val Color.setColorButtonUnderlined get() = run { colorButtonUnderlined.value = this }
+    private val Color.setColorButtonBold get() = run { colorButtonBold.value = this }
+    private val Color.setColorButtonItalic get() = run { colorButtonItalic.value = this }
+    private val Color.setColorButtonStrikeThrough
+        get() = run {
+            colorButtonStrikeThrough.value = this
+        }
+    private val Boolean.setAllColorPickerIsShow
         get() = run {
             colorPickerBackgroundIsShow.value = this
             colorPickerForegroundIsShow.value = this
             colorPickerUnderlinedIsShow.value = this
         }
 
-    val Color.setAllButtonsColor
-        get() = run {
-            colorButtonUnderlined.value = this
-            colorButtonForeground.value = this
-            colorButtonBackground.value = this
-            colorButtonItalic.value = this
-            colorButtonBold.value = this
-            colorButtonStrikeThrough.value = this
-        }
-
-    fun setColor(color: Color, spanType: SpanType) = when (spanType) {
-        is SpanType.ColoredUnderlined -> color.setColorButtonUnderlined
-        is SpanType.Background -> color.setColorButtonBackground
-        is SpanType.Foreground -> color.setColorButtonForeground
+    fun Color.setColor(spanType: SpanType) = when (spanType) {
+        is SpanType.ColoredUnderlined -> setColorButtonUnderlined
+        is SpanType.Background -> setColorButtonBackground
+        is SpanType.Foreground -> setColorButtonForeground
         is SpanType.Underlined -> Green.setColorButtonUnderlined
         is SpanType.Bold -> Green.setColorButtonBold
         is SpanType.Italic -> Green.setColorButtonItalic
         is SpanType.StrikeThrough -> Green.setColorButtonStrikeThrough
     }
-}
+
+    fun setBlack(spanType: SpanType) = with(Black) {
+        when (spanType) {
+            is SpanType.ColoredUnderlined -> setColorButtonUnderlined
+            is SpanType.Background -> setColorButtonBackground
+            is SpanType.Foreground -> setColorButtonForeground
+            is SpanType.Underlined -> setColorButtonUnderlined
+            is SpanType.Bold -> setColorButtonBold
+            is SpanType.Italic -> setColorButtonItalic
+            is SpanType.StrikeThrough -> setColorButtonStrikeThrough
+        }
+    }
+
+    fun <T> SpansProvider.setAutoColor(type: SpanType, list: List<T>) {
+        if (list.isNotEmpty())
+            when (type) {
+                is SpanType.Background ->
+                    Color((list[0] as BackgroundColorSpan).backgroundColor).setColorButtonBackground
+                is SpanType.Foreground ->
+                    Color((list[0] as ForegroundColorSpan).foregroundColor).setColorButtonForeground
+                is SpanType.Bold -> if (list.filteredByStyle(SpanType.Bold).isNotEmpty())
+                    Green.setColorButtonBold
+                is SpanType.Italic -> if (list.filteredByStyle(SpanType.Italic).isNotEmpty())
+                    Green.setColorButtonItalic
+                is SpanType.Underlined -> Green.setColorButtonUnderlined
+                is SpanType.StrikeThrough -> Green.setColorButtonStrikeThrough
+                is SpanType.ColoredUnderlined ->
+                    Color((list[0] as ColoredUnderlineSpan).underlineColor).setColorButtonUnderlined
+            }
+    }
+
+        fun setBlack() = with(Black) {
+            setColorButtonUnderlined
+            setColorButtonBackground
+            setColorButtonForeground
+            setColorButtonUnderlined
+            setColorButtonBold
+            setColorButtonItalic
+            setColorButtonStrikeThrough
+        }
+
+        fun SpanType.ifNoSpans() = when (this) {
+            is SpanType.Background -> {
+                if (!getColorPickerBackgroundIsShow) true.setColorPickerBackgroundIsShow
+                else false.setColorPickerBackgroundIsShow
+            }
+            is SpanType.Foreground -> {
+                if (!getColorPickerForegroundIsShow) true.setColorPickerForegroundIsShow
+                else false.setColorPickerForegroundIsShow
+            }
+            else -> Unit
+        }
+
+        fun hideFormatPanel() {
+            false.setLongClickState
+            false.setColorPickerBackgroundIsShow
+            false.setColorPickerForegroundIsShow
+        }
+
+        fun onClickEditText() {
+            if (getLongClickState) hideFormatPanel()
+            false.setAllColorPickerIsShow
+        }
+    }
