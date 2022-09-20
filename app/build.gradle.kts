@@ -8,12 +8,12 @@ plugins {
 @Suppress("UnstableApiUsage")
 android {
     namespace = appId
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = appId
         minSdk = 24
-        targetSdk = 32
+        targetSdk = 33
         versionCode = 1
         versionName = appVersion
         testInstrumentationRunner = testRunner
@@ -47,7 +47,7 @@ dependencies {
     kapt("com.google.dagger:dagger-compiler:2.42")
 
     //Base
-    implementation("androidx.core:core-ktx:1.9.0-alpha05")
+    implementation("androidx.core:core-ktx:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha01")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha01")
@@ -58,11 +58,10 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:$composeVersion")
     implementation("androidx.compose.material:material:$composeVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.2.0")
     implementation("androidx.compose.material:material-icons-core:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     implementation("androidx.compose.animation:animation:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.0.0-alpha15")
+    implementation("androidx.compose.material3:material3:1.0.0-beta02")
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.24.1-alpha")
     implementation ("com.google.accompanist:accompanist-pager:0.26.0-alpha")
@@ -79,17 +78,13 @@ dependencies {
     implementation("androidx.benchmark:benchmark-junit4:1.1.0")
 
     //Firebase
-    implementation("com.google.firebase:firebase-bom:30.3.2")
-    implementation("com.google.firebase:firebase-database-ktx:20.0.5")
-    implementation("com.google.firebase:firebase-auth-ktx:21.0.7")
-    implementation("com.google.android.gms:play-services-auth:20.2.0")
+    implementation("com.google.firebase:firebase-bom:30.5.0")
+    implementation("com.google.firebase:firebase-database-ktx:20.0.6")
+    implementation("com.google.firebase:firebase-auth-ktx:21.0.8")
+    implementation("com.google.android.gms:play-services-auth:20.3.0")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.1.0")
-
-
-    //Canary
-    debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.9.1")
 }
 
 
