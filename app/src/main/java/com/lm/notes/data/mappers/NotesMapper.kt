@@ -66,6 +66,7 @@ interface NotesMapper {
                     initTime = timestampChange,
                     underlinedColor = underlinedColor,
                     underlinedThickness = underlinedThickness,
+                    textScaleState = textScale
                 )
             }
             return NoteModel()
@@ -81,24 +82,26 @@ interface NotesMapper {
                     text = text,
                     underlinedColor = underlinedColor,
                     underlinedThickness = underlinedThickness,
+                    textScale = textScaleState
                 )
             }
 
         override fun data(stateFlow: Flow<RemoteLoadStates>) = flow {
-                stateFlow.collect { state ->
-                    if (state is RemoteLoadStates.Success<*>)
-                        if (state.data != null) {
-                            (state.data as DataSnapshot).children.map { emit(it.getNoteModel) }
-                        }
-                }
+            stateFlow.collect { state ->
+                if (state is RemoteLoadStates.Success<*>)
+                    if (state.data != null) {
+                        (state.data as DataSnapshot).children.map { emit(it.getNoteModel) }
+                    }
             }
-
-            private val DataSnapshot.getNoteModel get() =
-            (getValue(NoteModel::class.java)?: NoteModel()).apply {
-                timestampChangeState = timestampChange.toMutableState()
-                headerState = TextFieldValue(header).toMutableState()
-            }
-
-        private fun <T: Any> T.toMutableState() = mutableStateOf(this)
         }
+
+        private val DataSnapshot.getNoteModel
+            get() =
+                (getValue(NoteModel::class.java) ?: NoteModel()).apply {
+                    timestampChangeState = timestampChange.toMutableState()
+                    headerState = TextFieldValue(header).toMutableState()
+                }
+
+        private fun <T : Any> T.toMutableState() = mutableStateOf(this)
     }
+}

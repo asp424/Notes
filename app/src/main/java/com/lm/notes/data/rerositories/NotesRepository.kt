@@ -14,14 +14,19 @@ interface NotesRepository {
     val noteModelFullScreen: StateFlow<NoteModel>
 
     val notesList: StateFlow<List<NoteModel>>
-    fun deleteNote(id: String, coroutineScope: CoroutineScope)
+
+    fun deleteNote(id: String)
+
     fun updateNoteFromUi(newText: String)
 
     fun updateHeaderFromUi(text: TextFieldValue)
 
     fun setFullscreenNoteModel(id: String, text: String)
+
     suspend fun updateChangedNotes()
+
     fun synchronize(coroutineScope: CoroutineScope)
+
     fun isMustRemoveFromList(): Boolean
 
     fun isNewHeader(text: String): Boolean
@@ -66,8 +71,8 @@ interface NotesRepository {
             }
         }
 
-        override fun deleteNote(id: String, coroutineScope: CoroutineScope) {
-            coroutineScope.launch(coroutineDispatcher) {
+        override fun deleteNote(id: String) {
+            CoroutineScope(coroutineDispatcher).launch {
                 roomRepository.deleteNote(id)
                 notesListData.remove(id)
             }
@@ -82,12 +87,6 @@ interface NotesRepository {
         override val notesList = notesListData.notesList.apply {
             CoroutineScope(coroutineDispatcher).launch {
                 notesListData.initList(roomRepository.notesList())
-            }
-        }
-
-        private val list = mutableListOf<NoteModel>().apply {
-            CoroutineScope(coroutineDispatcher).launch {
-                roomRepository.notesList().forEach { m -> add(m) }
             }
         }
 

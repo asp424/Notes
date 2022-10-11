@@ -25,6 +25,7 @@ interface NoteData {
         private val _noteModelFullScreen = MutableStateFlow(NoteModel())
 
         override val noteModelFullScreen = _noteModelFullScreen.asStateFlow()
+
         override fun setFullscreenNoteModel(noteModel: NoteModel) {
             _noteModelFullScreen.value = noteModel
         }
@@ -50,7 +51,7 @@ interface NoteData {
 
         override fun updateHeaderFromUi(text: TextFieldValue) = with(noteModelFullScreen.value) {
             headerState.value = text
-            if (text.text != this.text) isChanged = true
+             isChanged = true
         }
 
         companion object{

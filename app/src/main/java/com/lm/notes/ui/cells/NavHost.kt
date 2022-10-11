@@ -15,25 +15,25 @@ import com.lm.notes.ui.screens.FullScreenNote
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun NavHost(
-    noteModel: NoteModel,
-    isFormatMode: Boolean,
-    onNavigate: (Boolean) -> Unit
+    noteModel: NoteModel
 ) {
     with(mainDep) {
-        AnimatedNavHost(
-            navController = navController,
-            startDestination = "mainList"
-        ) {
-            composable("mainList", enterTransition = { enterLeftToRight },
-                exitTransition = { exitRightToLeft }) {
-                MainColumn()
-                onNavigate(false)
-            }
+        with(notesViewModel.uiStates) {
+            AnimatedNavHost(
+                navController = navController,
+                startDestination = "mainList"
+            ) {
+                composable("mainList", enterTransition = { enterLeftToRight },
+                    exitTransition = { exitRightToLeft }) {
+                    MainColumn()
+                    setMainMode()
+                }
 
-            composable("fullScreenNote", enterTransition = { enterRightToLeft },
-                exitTransition = { exitLeftToRight }) {
-                FullScreenNote(noteModel)
-                onNavigate(true)
+                composable("fullScreenNote", enterTransition = { enterRightToLeft },
+                    exitTransition = { exitLeftToRight }) {
+                    setFullScreenMode()
+                    FullScreenNote(noteModel)
+                }
             }
         }
     }

@@ -31,7 +31,7 @@ interface FirebaseRepository {
             firebaseSource.saveNote(
                 text, id, timestampCreate,
                 timestampChangeState.value, headerState.value.text,
-                underlinedColor, underlinedThickness
+                underlinedColor, underlinedThickness, textScaleState
             )
         }
 

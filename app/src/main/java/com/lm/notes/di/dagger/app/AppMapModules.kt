@@ -1,7 +1,6 @@
 package com.lm.notes.di.dagger.app
 
 import com.lm.notes.di.dagger.app.modules.*
-import com.lm.notes.di.dagger.app.modules.NotesDataBaseDaoModule
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -27,7 +26,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         EditTextProviderModule::class,
         InputMethodManagerModule::class,
         SpansProviderModule::class,
-        UiStatesModule::class
+        UiStatesModule::class,
+        ClipboardManagerModule::class,
+        ClipboardProviderModule::class,
+        SharedPreferencesModule::class,
+        SPreferencesModule::class
     ]
 )
 interface AppMapModules

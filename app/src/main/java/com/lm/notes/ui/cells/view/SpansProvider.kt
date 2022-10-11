@@ -3,28 +3,28 @@ package com.lm.notes.ui.cells.view
 import android.os.IBinder
 import android.text.Html
 import android.text.Spanned
+import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FormatColorFill
-import androidx.compose.material.icons.rounded.FormatColorText
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.text.set
 import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.models.UiStates
-import com.lm.notes.utils.getAction
-import com.lm.notes.utils.getSpanType
+import com.lm.notes.utils.log
 import javax.inject.Inject
 
 interface SpansProvider {
 
     fun SpanType.setSpan()
 
+    fun setButtonColors()
+
+    fun clearFocus()
+
     fun SpanType.removeSpan()
+
+    fun isSelected(): Boolean
 
     fun removeAllSpans()
 
@@ -42,6 +42,14 @@ interface SpansProvider {
 
     fun setFormatMode()
 
+    fun updateText(scale: Float)
+
+    fun setRelativeSpan(scale: Float)
+
+    fun setSelection()
+
+    fun saveSelection()
+
     class Base @Inject constructor(
         private val noteData: NoteData,
         override val editText: EditText,
@@ -50,23 +58,50 @@ interface SpansProvider {
     ) : SpansProvider {
 
         override fun SpanType.removeSpan() {
-            uiStates.setBlack(this)
+            uiStates.setAllButtonsWhite(this)
             listSpans(instance.javaClass).filteredByStyle(this).forEach {
                 with(editText.text) {
                     editText.setSpansAroundSelected(getSpanStart(it), getSpanEnd(it))
                     { instance }
+                    uiStates.log
                     removeSpan(it)
                 }
             }
-            updateText
+            updateText(-1f)
         }
 
-        override fun removeAllSpans() = editText.text.clearSpans()
+        override fun isSelected() = (editText.selectionEnd - editText.selectionStart) > 0
+
+        override fun removeAllSpans() {
+            listClasses.forEach {
+                listSpans(it.instance.javaClass).forEach { span ->
+                    editText.text.removeSpan(span)
+                    uiStates.setAllButtonsWhite()
+                }
+            }
+        }
 
         override fun SpanType.setSpan() {
             removeSpan()
-            uiStates.apply { Color(getColor).setColor(this@setSpan) }
-            set().apply { updateText }
+            uiStates.apply { Color(getColor) setColor this@setSpan }
+            set().apply { updateText(-1f) }
+        }
+
+        override fun setButtonColors() {
+            with(uiStates) {
+                listClasses.forEach { setAutoColor(it, listSpans(it.clazz)) }
+            }
+        }
+
+        private val listClasses by lazy {
+            listOf(
+                SpanType.StrikeThrough, SpanType.Underlined, SpanType.Bold, SpanType.Italic,
+                SpanType.Background(), SpanType.Foreground(), SpanType.ColoredUnderlined()
+            )
+        }
+
+        override fun clearFocus() {
+            editText.clearFocus()
         }
 
         private fun <T : Any> EditText.setSpansAroundSelected(start: Int, end: Int, span: () -> T) {
@@ -78,10 +113,15 @@ interface SpansProvider {
             text.setSpan(instance, selectionStart, selectionEnd, flagSpan)
         }
 
-        private val updateText
-            get() = noteData.noteModelFullScreen.value.apply {
-                text = toHtml(editText.text); isChanged = true
-            }
+        override fun updateText(scale: Float) = with(noteData.noteModelFullScreen.value) {
+            text = toHtml(editText.text); isChanged = true; if (scale != -1f) textScaleState =
+            scale
+        }
+
+        override fun setRelativeSpan(scale: Float) = with(editText) {
+            text.setSpan(RelativeSizeSpan(scale), 0, text.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+            updateText(scale)
+        }
 
         override fun <T> listSpans(clazz: Class<T>): List<T> = with(editText) {
             text.getSpans(selectionStart, selectionEnd, clazz).asList()
@@ -100,12 +140,14 @@ interface SpansProvider {
                 else -> list
             }
 
-        override fun setFormatMode() =
-            with(editText) { windowToken?.hideKeyboard; showSoftInputOnFocus = false }
+        override fun setFormatMode() = with(editText) {
+            windowToken?.hideKeyboard; showSoftInputOnFocus = false
+            isCursorVisible = false
+        }
 
         override fun toHtml(text: Spanned) = Html.toHtml(text, flagHtml).toString()
 
-        override fun fromHtml(text: String): Spanned? = Html.fromHtml(text, flagHtml)
+        override fun fromHtml(text: String): Spanned? = Html.fromHtml(text, flagSpan)
 
         private val flagSpan by lazy { Spanned.SPAN_EXCLUSIVE_EXCLUSIVE }
 
@@ -113,5 +155,21 @@ interface SpansProvider {
 
         private val IBinder.hideKeyboard
             get() = inputMethodManager.hideSoftInputFromWindow(this, 0)
+
+        override fun setSelection() = with(uiStates.getSelection) {
+            if (this != Pair(0, 0)) {
+                editText.requestFocus()
+                editText.setSelection(first, second)
+            }
+        }
+
+        override fun saveSelection() {
+            with(editText) {
+                with(uiStates) {
+                    Pair(selectionStart, selectionEnd).setSelection
+                    true.setIsSelected
+                }
+            }
+        }
     }
 }

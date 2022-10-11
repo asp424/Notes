@@ -26,8 +26,13 @@ android {
     }
 
     buildTypes {
+        debug{
+            isMinifyEnabled = true
+            isShrinkResources = true
+        }
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile(proGName), proGRules)
         }
     }
@@ -37,7 +42,6 @@ android {
     compileOptions { sourceCompatibility = javaVersion; targetCompatibility = javaVersion }
     kotlinOptions { jvmTarget = jvm; freeCompilerArgs = argsList }
     packagingOptions { resources { excludes += res } }
-
 }
 
 dependencies {
@@ -48,9 +52,9 @@ dependencies {
 
     //Base
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha01")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha01")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha02")
 
     //Compose
     implementation("androidx.compose.ui:ui:$composeVersion")
@@ -61,8 +65,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     implementation("androidx.compose.animation:animation:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.0.0-beta02")
-    implementation("androidx.activity:activity-compose:1.5.1")
+    implementation("androidx.compose.material3:material3:1.0.0-rc01")
+    implementation("androidx.activity:activity-compose:1.6.0")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.24.1-alpha")
     implementation ("com.google.accompanist:accompanist-pager:0.26.0-alpha")
     implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")
@@ -85,6 +89,11 @@ dependencies {
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.1.0")
+
+    //ColorPicker
+    implementation("org.conscrypt:conscrypt-android:2.2.1")
+    implementation ("org.bouncycastle:bcprov-jdk15on:1.69")
+    implementation ("org.bouncycastle:bcpkix-jdk15on:1.69")
 }
 
 

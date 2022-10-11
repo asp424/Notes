@@ -1,21 +1,13 @@
 package com.lm.notes.di.compose
 
 import android.net.Uri
-import android.view.ActionMode
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.TextToolbar
-import androidx.compose.ui.platform.TextToolbarStatus
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -24,14 +16,9 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.data.local_data.FilesProvider
-import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.SPreferences
-import com.lm.notes.data.models.UiStates
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModelFactory
-import com.lm.notes.ui.cells.view.EditTextProvider
-import com.lm.notes.ui.cells.view.SpansProvider
-import com.lm.notes.utils.format_text.ClipboardProvider
 import kotlinx.coroutines.CoroutineScope
 
 data class MainDependencies(
@@ -47,11 +34,7 @@ data class MainDependencies(
     val sPreferences: SPreferences,
     val listState: LazyListState,
     val filesProvider: FilesProvider,
-    val navController: NavHostController,
-    val clipboardProvider: ClipboardProvider,
-    val editTextProvider: EditTextProvider,
-    val spansProvider: SpansProvider,
-    val uiStates: UiStates
+    val navController: NavHostController
 )
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -61,10 +44,6 @@ fun mainScreenDependencies(
     viewModelFactory: ViewModelFactory,
     firebaseAuth: FirebaseAuth,
     filesProvider: FilesProvider,
-    noteData: NoteData,
-    editTextProvider: EditTextProvider,
-    spansProvider: SpansProvider,
-    uiStates: UiStates,
     content: @Composable () -> Unit
 ) = with(LocalConfiguration.current) {
 
@@ -89,13 +68,7 @@ fun mainScreenDependencies(
                 sPreferences = sPreferences,
                 listState = rememberLazyListState(),
                 filesProvider = filesProvider,
-                navController = rememberAnimatedNavController(),
-                clipboardProvider = ClipboardProvider.Base(
-                    LocalClipboardManager.current, noteData
-                ),
-                editTextProvider = editTextProvider,
-                spansProvider = spansProvider,
-                uiStates = uiStates
+                navController = rememberAnimatedNavController()
             ), content = content
         )
     }
@@ -106,46 +79,4 @@ private val Local = staticCompositionLocalOf<MainDependencies> { error("No value
 object MainDep {
     val mainDep @Composable get() = Local.current
 }
-
-class CustomTextToolbar(private val view: View) : TextToolbar {
-    private var actionMode: ActionMode? = null
-    override var status: TextToolbarStatus = TextToolbarStatus.Hidden
-        private set
-
-    override fun hide() {
-        status = TextToolbarStatus.Hidden
-        actionMode?.finish()
-        actionMode = null
-    }
-
-    override fun showMenu(
-        rect: Rect,
-        onCopyRequested: (() -> Unit)?,
-        onPasteRequested: (() -> Unit)?,
-        onCutRequested: (() -> Unit)?,
-        onSelectAllRequested: (() -> Unit)?
-    ) {
-        view.startActionMode(TextActionModeCallback())
-    }
-}
-
-class TextActionModeCallback(
-) : ActionMode.Callback {
-
-    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-        return true
-    }
-
-    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        return false
-    }
-
-    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        return true
-    }
-
-    override fun onDestroyActionMode(mode: ActionMode?) {
-    }
-}
-
 

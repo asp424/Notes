@@ -23,23 +23,35 @@ import com.lm.notes.utils.animDp
 @Composable
 fun ColorPickers(list: List<SpanType>) {
     with(mainDep) {
+        with(notesViewModel) {
+            with(uiStates) {
+                with(spansProvider) {
+                    list.forEach { type ->
+                        with(getBoolean(type)) {
 
-        with(spansProvider) {
-            list.forEach { type ->
-                with(uiStates.getBoolean(type)) {
+                            val y = animDp(this, height - 200.dp, height, 100)
 
-                    val y = animDp(this, height - 200.dp, height, 100)
+                            val yIcon = animDp(this, height - 210.dp, height, 100)
 
-                    val yIcon = animDp(this, height - 210.dp, height, 100)
+                            Box(Modifier, Center) {
 
-                    Box(Modifier, Center) {
+                                HarmonyColorPicker(
+                                    Modifier
+                                        .size(150.dp)
+                                        .offset(0.dp, y), ColorHarmonyMode.SHADES,
+                                    onColorChanged = { c ->
+                                        c.toColorInt().also { getType(type, it) }
+                                    }
+                                )
 
-                        HarmonyColorPicker(
-                            Modifier.size(150.dp).offset(0.dp, y), ColorHarmonyMode.SHADES,
-                            onColorChanged = { c -> c.toColorInt().also { getType(type, it) } }
-                        )
-
-                        Icon(type.getIcon, null, Modifier.offset(0.dp, yIcon).size(20.dp))
+                                Icon(
+                                    type.getIcon, null,
+                                    Modifier
+                                        .offset(0.dp, yIcon)
+                                        .size(20.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -47,13 +59,14 @@ fun ColorPickers(list: List<SpanType>) {
     }
 }
 
-    private fun SpansProvider.getType(type: SpanType, color: Int) =
-        if (type is SpanType.Background) SpanType.Background(color).setSpan()
-        else SpanType.Foreground(color).setSpan()
+private fun SpansProvider.getType(type: SpanType, color: Int) =
+    if (type is SpanType.Background) SpanType.Background(color).setSpan()
+    else SpanType.Foreground(color).setSpan()
 
-    private fun UiStates.getBoolean(type: SpanType) = if (type is SpanType.Background)
-        getColorPickerBackgroundIsShow else getColorPickerForegroundIsShow
+private fun UiStates.getBoolean(type: SpanType) = if (type is SpanType.Background)
+    getColorPickerBackgroundIsShow else getColorPickerForegroundIsShow
 
-    private val SpanType.getIcon get() = if (this is SpanType.Background)
-    Icons.Rounded.FormatColorFill else Icons.Rounded.FormatColorText
+private val SpanType.getIcon
+    get() = if (this is SpanType.Background)
+        Icons.Rounded.FormatColorFill else Icons.Rounded.FormatColorText
 

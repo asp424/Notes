@@ -17,6 +17,7 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.ColorPickers
 import com.lm.notes.ui.cells.IconFormat
 import com.lm.notes.ui.cells.view.SpanType
+import com.lm.notes.ui.theme.back
 import com.lm.notes.utils.animDp
 
 @Composable
@@ -26,7 +27,8 @@ fun FormatBar(isFormatMode: Boolean) {
             Modifier
                 .offset(0.dp, animDp(isFormatMode, height - 45.dp, height, 100))
                 .height(45.dp).padding(1.dp).fillMaxWidth(),
-            RoundedCornerShape(20.dp), border = BorderStroke(1.dp, Color.Black)
+            RoundedCornerShape(20.dp),
+            border = BorderStroke(1.dp, Color.Black), backgroundColor = back
         ) {
             Box(
                 Modifier.padding(10.dp), Center) {
@@ -42,7 +44,7 @@ fun FormatBar(isFormatMode: Boolean) {
     }
 }
 
-private val listIcons
+val listIcons
     get() = listOf(
         Icons.Rounded.FormatBold,
         Icons.Rounded.FormatItalic,

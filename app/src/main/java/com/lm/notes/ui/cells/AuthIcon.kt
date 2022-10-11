@@ -45,6 +45,7 @@ fun AuthIcon(animScale: Float) {
                     }
                 }
             }
+
             val onLoading = remember(iconUri) {
                 {
                     if (iconUri.toString().isNotEmpty()) progressVisibility.value = true

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c26d5289c2035f6e8cbeef6b9c43fb48",
+    "identityHash": "21619943cd3f20fe53aa9fd0cf7aec1a",
     "entities": [
       {
         "tableName": "notes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `timestampCreate` INTEGER NOT NULL, `timestampChange` INTEGER NOT NULL, `text` TEXT NOT NULL, `header` TEXT NOT NULL, `underlinedColor` INTEGER NOT NULL, `underlinedThickness` REAL NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `timestampCreate` INTEGER NOT NULL, `timestampChange` INTEGER NOT NULL, `text` TEXT NOT NULL, `header` TEXT NOT NULL, `underlinedColor` INTEGER NOT NULL, `underlinedThickness` REAL NOT NULL, `textScale` REAL NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -49,6 +49,12 @@
             "columnName": "underlinedThickness",
             "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "textScale",
+            "columnName": "textScale",
+            "affinity": "REAL",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -64,7 +70,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c26d5289c2035f6e8cbeef6b9c43fb48')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '21619943cd3f20fe53aa9fd0cf7aec1a')"
     ]
   }
 }

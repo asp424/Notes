@@ -26,7 +26,9 @@ fun HeaderTextField(noteModel: NoteModel) {
             TextField(value =
             if (notesViewModel.isNewHeader(headerState.value.text)) TextFieldValue("")
             else headerState.value,
-                onValueChange = { notesViewModel.updateHeaderFromUi(it) },
+                onValueChange = {
+                    notesViewModel.updateHeaderFromUi(it)
+                },
                 colors = TextFieldDefaults.textFieldColors(
                     disabledTextColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
@@ -41,7 +43,12 @@ fun HeaderTextField(noteModel: NoteModel) {
                 ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                placeholder = { Text(text = headerState.value.text.substringAfter(NEW_TAG), color = LightGray) }
+                placeholder = {
+                    Text(
+                        text = headerState.value.text.substringAfter(NEW_TAG),
+                        color = LightGray
+                    )
+                }
             )
         }
     }

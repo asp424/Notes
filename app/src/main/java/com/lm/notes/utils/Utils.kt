@@ -27,7 +27,6 @@ import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.SpanType
 import com.lm.notes.ui.cells.view.SpansProvider
-import kotlinx.coroutines.CoroutineScope
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -46,11 +45,6 @@ inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier
 @Composable
 fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int) = animateDpAsState(
     if (target) first else second, tween(delay)
-).value
-
-@Composable
-fun animFloat(target: Boolean, first: Float, second: Float) = animateFloatAsState(
-    if (target) first else second, tween(100)
 ).value
 
 @Composable
@@ -93,27 +87,26 @@ private fun String.asTime(): String {
     return timeFormat.format(time)
 }
 
-fun MainActivity.backPressHandle(
+fun backPressHandle(
     navController: NavController,
     notesViewModel: NotesViewModel,
-    coroutine: CoroutineScope,
     noteModel: NoteModel,
-    uiStates: UiStates
+    mainActivity: MainActivity
 ) {
-    if (navController.currentDestination?.route == "mainList") finish()
+    if (navController.currentDestination?.route == "mainList") mainActivity.finish()
     else {
-        if (uiStates.getLongClickState) {
-            uiStates.hideFormatPanel()
-            editTextProvider.setEditMode()
-        }
-        else {
+        if (notesViewModel.uiStates.getIsFormatMode) {
+            notesViewModel.uiStates.hideFormatPanel()
+            notesViewModel.editTextProvider.setEditMode()
+
+        } else {
             navController.navigate("mainList")
             with(notesViewModel) {
-                if (isMustRemoveFromList())
-                    notesViewModel.deleteNote(coroutine, noteModel.id)
+                if (isMustRemoveFromList()) deleteNote(noteModel.id)
             }
         }
     }
+    notesViewModel.editTextProvider.removeSelection()
 }
 
 fun ImageVector.getTint(uiStates: UiStates) = with(uiStates) {
@@ -124,7 +117,7 @@ fun ImageVector.getTint(uiStates: UiStates) = with(uiStates) {
         Icons.Rounded.FormatBold -> getColorButtonBold
         Icons.Rounded.FormatItalic -> getColorButtonItalic
         Icons.Rounded.FormatStrikethrough -> getColorButtonStrikeThrough
-        else -> Color.Black
+        else -> Color.White
     }
 }
 

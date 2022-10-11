@@ -3,12 +3,12 @@ package com.lm.notes.ui.cells.view
 import android.graphics.Typeface
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.toArgb
-import com.lm.notes.utils.log
 
 sealed class SpanType {
     class ColoredUnderlined(var color: Int = 0) : SpanType()
@@ -18,6 +18,7 @@ sealed class SpanType {
     object Italic : SpanType()
     object Underlined : SpanType()
     object StrikeThrough : SpanType()
+    class Relative(var scale: Float = 0f): SpanType()
 
     val getColor get() = when (this) {
             is ColoredUnderlined -> color
@@ -27,6 +28,7 @@ sealed class SpanType {
             is Bold -> Green.toArgb()
             is Italic -> Green.toArgb()
             is StrikeThrough -> Green.toArgb()
+            is Relative -> Green.toArgb()
         }
 
     val instance
@@ -38,6 +40,7 @@ sealed class SpanType {
             is Italic -> StyleSpan(Typeface.ITALIC)
             is Underlined -> UnderlineSpan()
             is StrikeThrough -> StrikethroughSpan()
+            is Relative -> RelativeSizeSpan(0f)
         }
 
     fun getTypeFace(type: SpanType) = when (type) {
@@ -54,16 +57,6 @@ sealed class SpanType {
         is Bold -> StyleSpan::class.java
         is Italic -> StyleSpan::class.java
         is StrikeThrough -> StrikethroughSpan::class.java
+        is Relative -> RelativeSizeSpan::class.java
     }
 }
-val listClasses
-    get() = listOf(
-        SpanType.StrikeThrough,
-        SpanType.Underlined,
-        SpanType.Bold,
-        SpanType.Italic,
-        SpanType.Background(),
-        SpanType.Foreground(),
-        SpanType.ColoredUnderlined()
-    )
-
