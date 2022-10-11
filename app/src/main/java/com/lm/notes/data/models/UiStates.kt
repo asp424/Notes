@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import com.lm.notes.ui.cells.view.ColoredUnderlineSpan
 import com.lm.notes.ui.cells.view.SpanType
 import com.lm.notes.ui.cells.view.SpansProvider
+import com.lm.notes.ui.theme.main
 
 @Immutable
 data class UiStates(
@@ -33,10 +34,14 @@ data class UiStates(
     private var isFullscreenMode: MutableState<Boolean> = mutableStateOf(false),
     private var isMainMode: MutableState<Boolean> = mutableStateOf(false),
     private var isExpandShare: MutableState<Boolean> = mutableStateOf(false),
+    private var settingsVisible: MutableState<Boolean> = mutableStateOf(false),
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
+    val mainColor: MutableState<Color> = mutableStateOf(main),
     var selection: Pair<Int, Int> = Pair(0, 0)
 ) {
     val getIsFormatMode get() = isFormatMode.value
+    val getMainColor get() = mainColor.value
+    val getSettingsVisible get() = settingsVisible.value
     val getSelection get() = selection
     val getIsExpandShare get() = isExpandShare.value
     val getIsMainMode get() = isMainMode.value
@@ -71,6 +76,7 @@ data class UiStates(
     private val Color.setColorButtonUnderlined get() = run { colorButtonUnderlined.value = this }
     private val Color.setColorButtonBold get() = run { colorButtonBold.value = this }
     private val Color.setColorButtonItalic get() = run { colorButtonItalic.value = this }
+    val Color.setMainColor get() = run { mainColor.value = this }
     private val Color.setColorButtonStrikeThrough
         get() = run {
             colorButtonStrikeThrough.value = this
@@ -87,6 +93,8 @@ data class UiStates(
     val Pair<Int, Int>.setSelection get() = run { selection = this }
 
     val Boolean.setClipboardIsEmpty get() = run { clipboardIsEmpty.value = this }
+
+    val Boolean.setSettingsVisible get() = run { settingsVisible.value = this }
 
     infix fun Color.setColor(spanType: SpanType) = when (spanType) {
         is SpanType.ColoredUnderlined -> setColorButtonUnderlined

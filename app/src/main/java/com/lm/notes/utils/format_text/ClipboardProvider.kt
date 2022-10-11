@@ -38,7 +38,7 @@ interface ClipboardProvider {
             with(spansProvider.editText) {
                 readText?.also { pasted -> text.replace(i, i1, pasted, 0, pasted.length) }
                 with(uiStates) { false.setIsSelected }
-                spansProvider.updateText(-1f)
+                spansProvider.updateText()
             }
         }
 
@@ -75,7 +75,7 @@ interface ClipboardProvider {
                     clipBoardIsNotEmpty?.setClipboardIsEmpty
                     false.setIsSelected
                 }
-                spansProvider.updateText(-1f)
+                spansProvider.updateText()
                 editTextProvider.removeSelection()
             }
         }

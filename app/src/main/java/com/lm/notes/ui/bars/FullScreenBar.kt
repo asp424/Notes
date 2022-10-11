@@ -23,7 +23,6 @@ import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.ui.cells.ShareCanvasButton
-import com.lm.notes.ui.theme.bar
 import com.lm.notes.utils.animDp
 import com.lm.notes.utils.noRippleClickable
 
@@ -37,21 +36,21 @@ fun FullScreenBar(animScale: Float) {
                         val asHtmlDp =
                             animDp(
                                 target = getIsExpandShare,
-                                first = width - 140.dp,
-                                second = width - 106.dp,
+                                first = width - 160.dp,
+                                second = width - 126.dp,
                                 200
                             )
                         val asTxtDp =
                             animDp(
                                 target = getIsExpandShare,
-                                first = width - 175.dp,
-                                second = width - 106.dp,
+                                first = width - 195.dp,
+                                second = width - 126.dp,
                                 400
                             )
                         val txtDp = animDp(
                             target = getIsExpandShare,
-                            first = width - 210.dp,
-                            second = width - 106.dp,
+                            first = width - 230.dp,
+                            second = width - 126.dp,
                             600
                         )
 
@@ -91,13 +90,13 @@ fun FullScreenBar(animScale: Float) {
                         }
                         Canvas(
                             Modifier
-                                .offset(width - 106.dp, 0.dp)
+                                .offset(width - 126.dp, 0.dp)
                                 .scale(animScale)
-                        ) { drawCircle(bar, 18.dp.toPx(), Offset.Zero) }
+                        ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
 
                         Box(
                             Modifier
-                                .offset(width - 115.dp, 0.dp)
+                                .offset(width - 135.dp, 0.dp)
                                 .scale(animScale)
                         ) {
                             Icon(

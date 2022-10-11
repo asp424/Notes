@@ -11,9 +11,6 @@ class NoteModelRoom(
     val timestampChange: Long = 0,
     val text: String = "",
     val header: String = "",
-    val underlinedColor: Int = 0,
-    val underlinedThickness: Float = 5f,
-    var textScale: Float = 1f
 )
 
 

@@ -13,33 +13,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.IconClipBoard
-import com.lm.notes.ui.theme.bar
 
 @Composable
 fun ClipboardBar() {
     with(mainDep) {
-        notesViewModel.noteModelFullScreen.value.textState.value.apply {
+        with(notesViewModel.uiStates) {
+            notesViewModel.noteModelFullScreen.value.textState.value.apply {
                 val textIsEmpty = notesViewModel.spansProvider.fromHtml(
                     replace(" ", "", false)
                 )?.isNotEmpty() ?: false
-            Card(
-                Modifier
-                    .height(45.dp)
-                    .padding(1.dp)
-                    .fillMaxWidth(),
-                RoundedCornerShape(
-                    topEnd = 0.dp,
-                    topStart = 0.dp,
-                    bottomEnd = 20.dp,
-                    bottomStart = 20.dp
-                ),
-                backgroundColor = bar
-            ) {
-                Box(
-                    Modifier.padding(start = 10.dp), Alignment.Center
+                Card(
+                    Modifier
+                        .height(45.dp)
+                        .padding(1.dp)
+                        .fillMaxWidth(),
+                    RoundedCornerShape(
+                        topEnd = 0.dp,
+                        topStart = 0.dp,
+                        bottomEnd = 20.dp,
+                        bottomStart = 20.dp
+                    ),
+                    backgroundColor = getMainColor
                 ) {
-                    Row(
-                        Modifier, Start, Top) { listIconsClipboard.forEach { IconClipBoard(it, textIsEmpty) } }
+                    Box(
+                        Modifier.padding(start = 10.dp), Alignment.Center
+                    ) {
+                        Row(
+                            Modifier, Start, Top
+                        ) { listIconsClipboard.forEach { IconClipBoard(it, textIsEmpty) } }
+                    }
                 }
             }
         }

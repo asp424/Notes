@@ -16,8 +16,5 @@ data class NoteModel(
     var headerState: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue("")),
     var textState: MutableState<String> = mutableStateOf(""),
     var timestampChangeState: MutableState<Long> = mutableStateOf(0),
-    var textScaleState: Float = 0f,
-    var isChanged: Boolean = false,
-    var underlinedColor: Int = 0,
-    var underlinedThickness: Float = 5f
+    var isChanged: Boolean = false
 )

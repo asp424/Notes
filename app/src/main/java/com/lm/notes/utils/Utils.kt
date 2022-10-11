@@ -48,8 +48,8 @@ fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int) = animateDpAsStat
 ).value
 
 @Composable
-fun animScale(target: Boolean) = animateFloatAsState(
-    if (target) 1f else 0f, tween(100)
+fun animScale(target: Boolean, duration: Int = 100) = animateFloatAsState(
+    if (target) 1f else 0f, tween(duration)
 ).value
 
 fun formatTimestamp(timestamp: Long): String {
@@ -93,7 +93,13 @@ fun backPressHandle(
     noteModel: NoteModel,
     mainActivity: MainActivity
 ) {
-    if (navController.currentDestination?.route == "mainList") mainActivity.finish()
+    if (navController.currentDestination?.route == "mainList") {
+        with(notesViewModel.uiStates) {
+            if (getSettingsVisible) {
+                false.setSettingsVisible
+            } else mainActivity.finish()
+        }
+    }
     else {
         if (notesViewModel.uiStates.getIsFormatMode) {
             notesViewModel.uiStates.hideFormatPanel()

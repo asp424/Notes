@@ -63,10 +63,7 @@ interface NotesMapper {
                     text = text,
                     headerState = TextFieldValue(header).toMutableState(),
                     textState = text.toMutableState(),
-                    initTime = timestampChange,
-                    underlinedColor = underlinedColor,
-                    underlinedThickness = underlinedThickness,
-                    textScaleState = textScale
+                    initTime = timestampChange
                 )
             }
             return NoteModel()
@@ -79,10 +76,7 @@ interface NotesMapper {
                     timestampChange = timestampChangeState.value,
                     timestampCreate = timestampCreate,
                     header = headerState.value.text,
-                    text = text,
-                    underlinedColor = underlinedColor,
-                    underlinedThickness = underlinedThickness,
-                    textScale = textScaleState
+                    text = text
                 )
             }
 

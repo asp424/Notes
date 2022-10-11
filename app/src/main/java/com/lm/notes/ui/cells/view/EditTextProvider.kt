@@ -18,26 +18,14 @@ interface EditTextProvider {
     class Base @Inject constructor(
         private val editText: EditText,
         private val uiStates: UiStates,
-        private val accessibilityDelegateIns: AccessibilityDelegate,
-        private val noteData: NoteData
+        private val accessibilityDelegateIns: AccessibilityDelegate
     ) : EditTextProvider {
 
-        init {
-            editText.initEditText()
-        }
+        init { editText.initEditText() }
 
-        override fun setText(text: String) {
-            editText.setText(
-                fromHtml(
-                    text, htmlMode, null, MyHtmlTagHandler(
-                        noteData.noteModelFullScreen.value.textScaleState
-                    )
-                ).trim()
-            )
-        }
+        override fun setText(text: String) = editText.setText(fromHtml(text, htmlMode).trim())
 
-        override fun setEditMode() =
-            with(editText) {
+        override fun setEditMode() = with(editText) {
                 showSoftInputOnFocus = true; isCursorVisible = true; removeSelection()
             }
 
@@ -46,8 +34,7 @@ interface EditTextProvider {
             CallbackEditText().also {
                 customSelectionActionModeCallback = it
                 customInsertionActionModeCallback = it
-            }
-            accessibilityDelegate = accessibilityDelegateIns
+            }; accessibilityDelegate = accessibilityDelegateIns
         }
 
         override fun removeSelection() = with(editText) {

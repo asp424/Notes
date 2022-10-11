@@ -26,9 +26,10 @@ android {
     }
 
     buildTypes {
+
         debug{
-            isMinifyEnabled = true
-            isShrinkResources = true
+           // isMinifyEnabled = true
+           // isShrinkResources = true
         }
         release {
             isMinifyEnabled = true
@@ -69,7 +70,6 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.6.0")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.24.1-alpha")
     implementation ("com.google.accompanist:accompanist-pager:0.26.0-alpha")
-    implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -91,9 +91,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.1.0")
 
     //ColorPicker
-    implementation("org.conscrypt:conscrypt-android:2.2.1")
-    implementation ("org.bouncycastle:bcprov-jdk15on:1.69")
-    implementation ("org.bouncycastle:bcpkix-jdk15on:1.69")
+    implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")
 }
 
 

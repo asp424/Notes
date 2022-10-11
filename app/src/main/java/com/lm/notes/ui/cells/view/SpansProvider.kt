@@ -20,8 +20,6 @@ interface SpansProvider {
 
     fun setButtonColors()
 
-    fun clearFocus()
-
     fun SpanType.removeSpan()
 
     fun isSelected(): Boolean
@@ -42,7 +40,7 @@ interface SpansProvider {
 
     fun setFormatMode()
 
-    fun updateText(scale: Float)
+    fun updateText()
 
     fun setRelativeSpan(scale: Float)
 
@@ -62,12 +60,10 @@ interface SpansProvider {
             listSpans(instance.javaClass).filteredByStyle(this).forEach {
                 with(editText.text) {
                     editText.setSpansAroundSelected(getSpanStart(it), getSpanEnd(it))
-                    { instance }
-                    uiStates.log
-                    removeSpan(it)
+                    { instance }; removeSpan(it)
                 }
             }
-            updateText(-1f)
+            updateText()
         }
 
         override fun isSelected() = (editText.selectionEnd - editText.selectionStart) > 0
@@ -75,22 +71,18 @@ interface SpansProvider {
         override fun removeAllSpans() {
             listClasses.forEach {
                 listSpans(it.instance.javaClass).forEach { span ->
-                    editText.text.removeSpan(span)
-                    uiStates.setAllButtonsWhite()
+                    editText.text.removeSpan(span); uiStates.setAllButtonsWhite()
                 }
             }
         }
 
         override fun SpanType.setSpan() {
-            removeSpan()
-            uiStates.apply { Color(getColor) setColor this@setSpan }
-            set().apply { updateText(-1f) }
+            removeSpan(); uiStates.apply { Color(getColor) setColor this@setSpan }
+            set().apply { updateText() }
         }
 
         override fun setButtonColors() {
-            with(uiStates) {
-                listClasses.forEach { setAutoColor(it, listSpans(it.clazz)) }
-            }
+            with(uiStates) { listClasses.forEach { setAutoColor(it, listSpans(it.clazz)) } }
         }
 
         private val listClasses by lazy {
@@ -98,10 +90,6 @@ interface SpansProvider {
                 SpanType.StrikeThrough, SpanType.Underlined, SpanType.Bold, SpanType.Italic,
                 SpanType.Background(), SpanType.Foreground(), SpanType.ColoredUnderlined()
             )
-        }
-
-        override fun clearFocus() {
-            editText.clearFocus()
         }
 
         private fun <T : Any> EditText.setSpansAroundSelected(start: Int, end: Int, span: () -> T) {
@@ -113,14 +101,14 @@ interface SpansProvider {
             text.setSpan(instance, selectionStart, selectionEnd, flagSpan)
         }
 
-        override fun updateText(scale: Float) = with(noteData.noteModelFullScreen.value) {
-            text = toHtml(editText.text); isChanged = true; if (scale != -1f) textScaleState =
-            scale
+        override fun updateText() = with(noteData.noteModelFullScreen.value) {
+            text = toHtml(editText.text); isChanged = true
         }
 
         override fun setRelativeSpan(scale: Float) = with(editText) {
-            text.setSpan(RelativeSizeSpan(scale), 0, text.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-            updateText(scale)
+            text.setSpan(
+                RelativeSizeSpan(scale), 0, text.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            ); updateText()
         }
 
         override fun <T> listSpans(clazz: Class<T>): List<T> = with(editText) {
@@ -131,8 +119,7 @@ interface SpansProvider {
             listSpans(clazz).filteredByStyle(this).isNotEmpty()
 
         override fun <T> List<T>.filteredByStyle(spanType: SpanType) =
-            if (isNotEmpty()) get(0).getList(this, spanType)
-            else emptyList()
+            if (isNotEmpty()) get(0).getList(this, spanType) else emptyList()
 
         private fun <T> T.getList(list: List<T>, type: SpanType) =
             when (this) {
@@ -141,8 +128,7 @@ interface SpansProvider {
             }
 
         override fun setFormatMode() = with(editText) {
-            windowToken?.hideKeyboard; showSoftInputOnFocus = false
-            isCursorVisible = false
+            windowToken?.hideKeyboard; showSoftInputOnFocus = false; isCursorVisible = false
         }
 
         override fun toHtml(text: Spanned) = Html.toHtml(text, flagHtml).toString()
@@ -158,16 +144,14 @@ interface SpansProvider {
 
         override fun setSelection() = with(uiStates.getSelection) {
             if (this != Pair(0, 0)) {
-                editText.requestFocus()
-                editText.setSelection(first, second)
+                with(editText) { requestFocus(); setSelection(first, second) }
             }
         }
 
         override fun saveSelection() {
             with(editText) {
                 with(uiStates) {
-                    Pair(selectionStart, selectionEnd).setSelection
-                    true.setIsSelected
+                    Pair(selectionStart, selectionEnd).setSelection; true.setIsSelected
                 }
             }
         }

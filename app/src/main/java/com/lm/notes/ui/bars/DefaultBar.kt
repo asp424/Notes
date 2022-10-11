@@ -9,6 +9,7 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.AuthIcon
 import com.lm.notes.ui.cells.CanvasCircle
 import com.lm.notes.ui.cells.LogOut
+import com.lm.notes.ui.cells.SettingsIcon
 
 @Composable
 fun DefaultBar(animScale: Float) {
@@ -23,9 +24,8 @@ fun DefaultBar(animScale: Float) {
                 )
             }
         }
-
         LogOut(animScale)
-
         AuthIcon(animScale)
+        SettingsIcon()
     }
 }

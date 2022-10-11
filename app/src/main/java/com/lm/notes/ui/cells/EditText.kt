@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.widget.addTextChangedListener
@@ -25,7 +26,6 @@ fun EditText() {
             var scale by remember { mutableStateOf(1f) }
             val state = rememberTransformableState { zoomChange, _, _ ->
                 scale *= zoomChange
-                // if (zoomChange != 1f) setRelativeSpan(zoomChange)
             }
 
             val listener = remember {
@@ -36,24 +36,23 @@ fun EditText() {
                     }
                 }
             }
-
-            Box(
-                Modifier
-                    .border(1.dp, Black)
-                    .transformable(state)
-                    .fillMaxSize(), Alignment.TopStart
-            ) {
-                AndroidView(
-                    { editText },
+            LocalDensity.current.apply {
+                Box(
                     Modifier
+                        .border(1.dp, Black)
+                        .transformable(state)
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .alpha(0.8f).graphicsLayer {
-                            scaleX = scale
-                            scaleY = scale
-                        }
-                )
-
+                        .graphicsLayer { editText.textSize = scale * 16 },
+                    Alignment.TopStart
+                ) {
+                    AndroidView(
+                        { editText },
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .alpha(0.8f)
+                    )
+                }
                 DisposableEffect(true) {
                     onDispose { editText.removeTextChangedListener(listener) }
                 }

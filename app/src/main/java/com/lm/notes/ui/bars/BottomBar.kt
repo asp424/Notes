@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.ui.theme.bar
 import com.lm.notes.utils.animDp
 
 @Composable
@@ -52,7 +51,7 @@ fun BottomBar() {
                     ) {
                         Canvas(Modifier) {
                             drawRect(
-                                bar,
+                                getMainColor,
                                 Offset(0f, height.value * density - 50.dp.toPx()),
                                 size = Size(width.value * density, 50.dp.toPx())
                             )
@@ -69,7 +68,7 @@ fun BottomBar() {
                             onClick = click, modifier = Modifier
                                 .offset((width - 89.dp), (height - 79.dp))
                                 .size(60.dp), colors = ButtonDefaults.buttonColors(
-                                containerColor = bar
+                                containerColor = getMainColor
                             )
                         ) {
                             Text(

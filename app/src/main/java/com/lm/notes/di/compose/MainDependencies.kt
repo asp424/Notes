@@ -20,6 +20,7 @@ import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModelFactory
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 
 data class MainDependencies(
     val width: Dp,
@@ -49,7 +50,6 @@ fun mainScreenDependencies(
 
     val infoVisibility = remember { mutableStateOf(false) }
     LocalViewModelStoreOwner.current?.also { owner ->
-
         CompositionLocalProvider(
             Local provides MainDependencies(
                 width = screenWidthDp.dp,
@@ -71,6 +71,7 @@ fun mainScreenDependencies(
                 navController = rememberAnimatedNavController()
             ), content = content
         )
+
     }
 }
 
