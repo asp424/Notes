@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Notes</string>
     <string name="note">Note</string>
+    <string name="loading">loading</string>
+    <string name="glasses_of_water_preview">glasses o water</string>
+    <string name="goal_met">goal met</string>
+    <string name="glasses">ass</string>
+    <string name="water_goal">water goal</string>
 </resources>

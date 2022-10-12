@@ -69,11 +69,12 @@ fun NotesTheme(
         }
         val view = LocalView.current
         if (!view.isInEditMode) {
-            LaunchedEffect(notesViewModel.uiStates.getMainColor) {
-                (view.context as Activity).window.statusBarColor =
-                    notesViewModel.uiStates.getMainColor.toArgb()
-                WindowCompat.getInsetsController((view.context as Activity).window, view)
-                    .isAppearanceLightStatusBars = darkTheme
+            notesViewModel.uiStates.getMainColor.also { color ->
+                LaunchedEffect(color) {
+                    (view.context as Activity).window.statusBarColor = color.toArgb()
+                    WindowCompat.getInsetsController((view.context as Activity).window, view)
+                        .isAppearanceLightStatusBars = darkTheme
+                }
             }
         }
 

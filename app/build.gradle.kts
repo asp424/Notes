@@ -92,6 +92,9 @@ dependencies {
 
     //ColorPicker
     implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")
+
+    //Glance
+    implementation("androidx.glance:glance-appwidget:1.0.0-alpha05")
 }
 
 

@@ -1,11 +1,15 @@
 package com.lm.notes.presentation
 
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.graphics.Color
+import androidx.annotation.RequiresApi
 import androidx.core.app.ShareCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
@@ -14,6 +18,7 @@ import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.databinding.EditTextBinding
 import com.lm.notes.di.compose.mainScreenDependencies
+import com.lm.notes.ui.cells.view.app_widget.WaterWidgetReceiver
 import com.lm.notes.ui.screens.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
 import kotlinx.coroutines.CoroutineScope
@@ -50,20 +55,14 @@ class MainActivity : BaseActivity() {
         setContent {
             NotesTheme(viewModelFactory = viewModelFactory) {
                 mainScreenDependencies(sPreferences, viewModelFactory, firebaseAuth, filesProvider)
-                {
-                    val notesViewModel by viewModels<NotesViewModel> { viewModelFactory }
-                    LaunchedEffect(true){
-                        notesViewModel.uiStates.apply {
-                            Color(sPreferences.readMainColor()).setMainColor
-                        }
-                    }
-                    MainScreen() }
+                { MainScreen() }
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
+        a()
         lifecycleScope.launchWhenResumed {
             delay(300)
             with(notesViewModel.uiStates) {
@@ -76,6 +75,16 @@ class MainActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         CoroutineScope(IO).launch { notesViewModel.updateChangedNotes() }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun a(){
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val myProvider = ComponentName(this, WaterWidgetReceiver::class.java)
+        val successCallback = PendingIntent.getBroadcast(
+            this, 0, Intent(this, MainActivity::class.java),
+        PendingIntent.FLAG_IMMUTABLE)
+        appWidgetManager.requestPinAppWidget(myProvider, null, successCallback)
     }
 }
 
