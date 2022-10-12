@@ -1,6 +1,7 @@
 package com.lm.notes.di.dagger.app
 
 import com.lm.notes.di.dagger.app.modules.*
+import com.lm.notes.di.dagger.note_widget.modules.AppWidgetManagerModule
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -30,7 +31,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         ClipboardManagerModule::class,
         ClipboardProviderModule::class,
         SharedPreferencesModule::class,
-        SPreferencesModule::class
+        SPreferencesModule::class,
+        AppWidgetManagerModule::class
     ]
 )
 interface AppMapModules

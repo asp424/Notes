@@ -15,6 +15,9 @@ import com.lm.notes.ui.cells.view.ColoredUnderlineSpan
 import com.lm.notes.ui.cells.view.SpanType
 import com.lm.notes.ui.cells.view.SpansProvider
 import com.lm.notes.ui.theme.main
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Immutable
 data class UiStates(
@@ -35,11 +38,13 @@ data class UiStates(
     private var isMainMode: MutableState<Boolean> = mutableStateOf(false),
     private var isExpandShare: MutableState<Boolean> = mutableStateOf(false),
     private var settingsVisible: MutableState<Boolean> = mutableStateOf(false),
+    private var notShareVisible: MutableState<Boolean> = mutableStateOf(true),
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
     var selection: Pair<Int, Int> = Pair(0, 0)
 ) {
     val getIsFormatMode get() = isFormatMode.value
+    val getNotShareVisible get() = notShareVisible.value
     val getMainColor get() = mainColor.value
     val getSettingsVisible get() = settingsVisible.value
     val getSelection get() = selection
@@ -89,6 +94,8 @@ data class UiStates(
         }
 
     val Boolean.setIsSelected get() = run { isSelected.value = this }
+
+    val Boolean.setNotShareVisible get() = run { notShareVisible.value = this }
 
     val Pair<Int, Int>.setSelection get() = run { selection = this }
 
@@ -173,12 +180,12 @@ data class UiStates(
         false.setIsSelected
     }
 
-    fun setDeleteMode(){
+    fun setDeleteMode() {
         true.setIsDeleteMode
         false.setIsMainMode
     }
 
-    fun setMainMode(){
+    fun setMainMode() {
         false.setIsFullscreenMode
         true.setIsMainMode
         false.setIsExpandShare
@@ -186,16 +193,30 @@ data class UiStates(
         listDeleteAble.clear()
     }
 
-    fun setFullScreenMode(){
+    fun setFullScreenMode() {
         true.setIsFullscreenMode
         false.setIsMainMode
     }
 
-    fun addToDeleteAbleList(id: String){
+    fun addToDeleteAbleList(id: String) {
         listDeleteAble.add(id)
     }
 
-    fun removeFromDeleteAbleList(id: String){
+    fun removeFromDeleteAbleList(id: String) {
         listDeleteAble.remove(id)
+    }
+
+    fun expandShare(coroutineScope: CoroutineScope){
+        coroutineScope.launch {
+            if (getIsExpandShare) {
+                false.setIsExpandShare
+                delay(500)
+                true.setNotShareVisible
+            } else {
+                false.setNotShareVisible
+                delay(200)
+                true.setIsExpandShare
+            }
+        }
     }
 }

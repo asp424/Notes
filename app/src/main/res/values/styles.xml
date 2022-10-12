@@ -1,0 +1,12 @@
+<resources>
+
+    <style name="NoteWidget.Container" parent="android:Widget">
+        <item name="android:padding">?attr/appWidgetPadding</item>
+        <item name="android:background">@drawable/note_widget_background</item>
+    </style>
+
+    <style name="NoteWidget..InnerView" parent="android:Widget">
+        <item name="android:padding">?attr/appWidgetPadding</item>
+        <item name="android:background">@drawable/note_widget_inner_view_background</item>
+    </style>
+</resources>

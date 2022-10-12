@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Widgets
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,9 +26,11 @@ import com.lm.notes.presentation.MainActivity
 import com.lm.notes.ui.cells.ShareCanvasButton
 import com.lm.notes.utils.animDp
 import com.lm.notes.utils.noRippleClickable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun FullScreenBar(animScale: Float) {
+fun FullScreenBar(animScaleShare: Float, animScaleNotShare: Float) {
     with(mainDep) {
         with(notesViewModel) {
             with(uiStates) {
@@ -69,7 +72,7 @@ fun FullScreenBar(animScale: Float) {
                                 }\n\n$text", ShareType.AsHtml,
                                 timestampChangeState.value
                             )
-                        }, animScale, paint, ".html", -40f, 12.dp.toPx())
+                        }, animScaleShare, paint, ".html", -40f, 12.dp.toPx())
 
                         ShareCanvasButton(asTxtDp, click = {
                             filesProvider.shareAsFile(
@@ -81,31 +84,52 @@ fun FullScreenBar(animScale: Float) {
                                 ShareType.AsTxt,
                                 timestampChangeState.value
                             )
-                        }, animScale, paint, ".txt", -35f, 14.dp.toPx())
+                        }, animScaleShare, paint, ".txt", -35f, 14.dp.toPx())
 
                         (LocalContext.current as MainActivity).apply {
                             ShareCanvasButton(txtDp, click = {
                                 filesProvider.shareAsText(text)
-                            }, animScale, paint, "txt", -26f, 14.dp.toPx())
+                            }, animScaleShare, paint, "txt", -26f, 14.dp.toPx())
                         }
                         Canvas(
                             Modifier
                                 .offset(width - 126.dp, 0.dp)
-                                .scale(animScale)
+                                .scale(animScaleShare)
                         ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
 
                         Box(
                             Modifier
                                 .offset(width - 135.dp, 0.dp)
-                                .scale(animScale)
+                                .scale(animScaleShare)
                         ) {
                             Icon(
                                 Icons.Rounded.Share,
                                 null,
+                                modifier = Modifier.noRippleClickable { expandShare(coroutine) },
+                                tint = White
+                            )
+                        }
+                        Box(
+                            Modifier
+                                .offset(width - 195.dp, 0.dp)
+                                .scale(animScaleNotShare)
+                        ) {
+                            Icon(
+                                Icons.Rounded.Widgets,
+                                null,
                                 modifier = Modifier
                                     .noRippleClickable {
-                                        if (getIsExpandShare)
-                                            false.setIsExpandShare else true.setIsExpandShare
+                                        noteAppWidgetController
+                                            .pinNoteWidget(
+                                                Pair(
+                                                    spansProvider
+                                                        .fromHtml(
+                                                            spansProvider
+                                                                .editText.text.toString()
+                                                        ).toString(),
+                                                    headerState.value.text
+                                                )
+                                            )
                                     },
                                 tint = White
                             )

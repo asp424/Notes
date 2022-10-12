@@ -23,6 +23,10 @@ fun TopBar() {
                                 getIsFullscreenMode && spansProvider.fromHtml(
                                     replace(" ", "", false)
                                 )?.isNotEmpty() ?: false
+                            ),  animScale(
+                                getIsFullscreenMode && spansProvider.fromHtml(
+                                    replace(" ", "", false)
+                                )?.isNotEmpty() ?: false && getNotShareVisible
                             )
                         )
                         DeleteBar(animScale(getIsDeleteMode))
