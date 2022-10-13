@@ -17,7 +17,7 @@ import com.godaddy.android.colorpicker.toColorInt
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.view.SpanType
-import com.lm.notes.ui.cells.view.SpansProvider
+import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.animDp
 
 @Composable
@@ -25,7 +25,7 @@ fun ColorPickers(list: List<SpanType>) {
     with(mainDep) {
         with(notesViewModel) {
             with(uiStates) {
-                with(spansProvider) {
+                with(editTextController) {
                     list.forEach { type ->
                         with(getBoolean(type)) {
 
@@ -59,7 +59,7 @@ fun ColorPickers(list: List<SpanType>) {
     }
 }
 
-private fun SpansProvider.getType(type: SpanType, color: Int) =
+private fun EditTextController.getType(type: SpanType, color: Int) =
     if (type is SpanType.Background) SpanType.Background(color).setSpan()
     else SpanType.Foreground(color).setSpan()
 

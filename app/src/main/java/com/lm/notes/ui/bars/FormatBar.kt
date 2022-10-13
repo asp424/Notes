@@ -19,26 +19,30 @@ import com.lm.notes.ui.cells.IconFormat
 import com.lm.notes.ui.cells.view.SpanType
 import com.lm.notes.ui.theme.back
 import com.lm.notes.utils.animDp
+import com.lm.notes.utils.log
 
 @Composable
-fun FormatBar(isFormatMode: Boolean) {
+fun FormatBar() {
     with(mainDep) {
-        Card(
-            Modifier
-                .offset(0.dp, animDp(isFormatMode, height - 45.dp, height, 100))
-                .height(45.dp).padding(1.dp).fillMaxWidth(),
-            RoundedCornerShape(20.dp),
-            border = BorderStroke(1.dp, Color.Black), backgroundColor = back
-        ) {
-            Box(
-                Modifier.padding(10.dp), Center) {
-                Row(Modifier, Start, Bottom) { listIcons.forEach { IconFormat(it) } }
+        with(notesViewModel.uiStates) {
+            Card(
+                Modifier
+                    .offset(0.dp, animDp(getIsFormatMode, height - 45.dp, height, 100))
+                    .height(45.dp).padding(1.dp).fillMaxWidth(),
+                RoundedCornerShape(20.dp),
+                border = BorderStroke(1.dp, Color.Black), backgroundColor = back
+            ) {
+                Box(
+                    Modifier.padding(10.dp), Center
+                ) {
+                    Row(Modifier, Start, Bottom) { listIcons.forEach { IconFormat(it) } }
+                }
             }
-        }
 
-        Box(Modifier, Center) {
-            Row(Modifier.fillMaxWidth(), Arrangement.Center) {
-                ColorPickers(listOf(SpanType.Foreground(0), SpanType.Background(0)))
+            Box(Modifier, Center) {
+                Row(Modifier.fillMaxWidth(), Arrangement.Center) {
+                    ColorPickers(listOf(SpanType.Foreground(0), SpanType.Background(0)))
+                }
             }
         }
     }
@@ -46,6 +50,7 @@ fun FormatBar(isFormatMode: Boolean) {
 
 val listIcons
     get() = listOf(
+        Icons.Rounded.AddLink,
         Icons.Rounded.FormatBold,
         Icons.Rounded.FormatItalic,
         Icons.Rounded.FormatUnderlined,

@@ -21,7 +21,6 @@ interface NoteAppWidgetController {
         private val pendingIntent: PendingIntent
     ) : NoteAppWidgetController {
 
-        private var note = Pair("", "")
 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun pinNoteWidget(notesText: Pair<String, String>) {
@@ -34,5 +33,7 @@ interface NoteAppWidgetController {
                 setTextViewText(R.id.note_text, note.first)
                 setTextViewText(R.id.note_header, note.second)
             }
+
+        private var note = Pair("", "")
     }
 }

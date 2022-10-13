@@ -23,6 +23,7 @@ import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModelFactory
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
+import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
@@ -62,7 +63,7 @@ fun mainScreenDependencies(
                     height = screenHeightDp.dp,
                     iconUri = remember { mutableStateOf(checkNotNull(sPreferences.readIconUri())) },
                     progressVisibility = remember { mutableStateOf(false) },
-                    infoVisibility = infoVisibility,
+                    infoVisibility = remember { infoVisibility },
                     coroutine = rememberCoroutineScope(),
                     infoOffset = animateDpAsState(
                         if (infoVisibility.value) 20.dp else 0.dp, tween(500)

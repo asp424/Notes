@@ -5,8 +5,7 @@ import android.content.ClipboardManager
 import android.widget.EditText
 import androidx.compose.ui.text.AnnotatedString
 import com.lm.notes.data.models.UiStates
-import com.lm.notes.ui.cells.view.EditTextProvider
-import com.lm.notes.ui.cells.view.SpansProvider
+import com.lm.notes.ui.cells.view.EditTextController
 import javax.inject.Inject
 
 interface ClipboardProvider {
@@ -27,47 +26,45 @@ interface ClipboardProvider {
 
     class Base @Inject constructor(
         private val clipboardManager: ClipboardManager,
-        private val spansProvider: SpansProvider,
-        private val uiStates: UiStates,
-        private val editTextProvider: EditTextProvider
+        private val editTextController: EditTextController,
+        private val uiStates: UiStates
     ) : ClipboardProvider {
 
         override val clipBoardIsNotEmpty get() = readText?.isNotEmpty()
 
         override fun paste() {
-            with(spansProvider.editText) {
-                readText?.also { pasted -> text.replace(i, i1, pasted, 0, pasted.length) }
+            with(editTextController.editText) {
+                readText?.also { pasted ->
+                    if (i == -1) text.append(pasted)
+                    else text.replace(i, i1, pasted, 0, pasted.length)
+                }
                 with(uiStates) { false.setIsSelected }
-                spansProvider.updateText()
+                editTextController.updateText()
             }
         }
 
         override fun copyAll() {
-            AnnotatedString(spansProvider.editText.text.toString()).saveText
+            AnnotatedString(editTextController.editText.text.toString()).saveText
             with(uiStates) { clipBoardIsNotEmpty?.setClipboardIsEmpty }
         }
 
         override fun selectAll() {
-            with(spansProvider) {
+            with(editTextController) {
                 editText.requestFocus()
                 editText.setSelection(0, editText.text.length)
-                uiStates.apply {
-                    true.setIsSelected; true.setIsFormatMode; setAllButtonsWhite()
-                }
                 setFormatMode()
                 setButtonColors()
                 saveSelection()
-
             }
         }
 
-        override fun copySelected() = with(spansProvider.editText) {
+        override fun copySelected() = with(editTextController.editText) {
             AnnotatedString(text.substring(selectionStart, selectionEnd)).saveText
             with(uiStates) { clipBoardIsNotEmpty?.setClipboardIsEmpty ?: Unit }
         }
 
         override fun cutSelected() {
-            with(spansProvider.editText) {
+            with(editTextController.editText) {
                 AnnotatedString(text.substring(selectionStart, selectionEnd)).saveText
                 text.replace(i, i1, "", 0, 0)
                 with(uiStates) {
@@ -75,8 +72,8 @@ interface ClipboardProvider {
                     clipBoardIsNotEmpty?.setClipboardIsEmpty
                     false.setIsSelected
                 }
-                spansProvider.updateText()
-                editTextProvider.removeSelection()
+                editTextController.updateText()
+                editTextController.removeSelection()
             }
         }
 

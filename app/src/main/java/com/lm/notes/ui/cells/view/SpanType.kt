@@ -1,27 +1,25 @@
 package com.lm.notes.ui.cells.view
 
 import android.graphics.Typeface
-import android.text.style.BackgroundColorSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.StrikethroughSpan
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
+import android.text.method.LinkMovementMethod
+import android.text.style.*
+import android.view.View
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.toArgb
+import com.lm.notes.utils.log
 
 sealed class SpanType {
-    class ColoredUnderlined(var color: Int = 0) : SpanType()
     class Background(var color: Int = 0) : SpanType()
     class Foreground(var color: Int = 0) : SpanType()
     object Bold : SpanType()
     object Italic : SpanType()
     object Underlined : SpanType()
     object StrikeThrough : SpanType()
-    class Relative(var scale: Float = 0f): SpanType()
+    class Relative(var scale: Float = 0f) : SpanType()
+    object Url : SpanType()
 
-    val getColor get() = when (this) {
-            is ColoredUnderlined -> color
+    val getColor
+        get() = when (this) {
             is Background -> color
             is Foreground -> color
             is Underlined -> Green.toArgb()
@@ -29,11 +27,11 @@ sealed class SpanType {
             is Italic -> Green.toArgb()
             is StrikeThrough -> Green.toArgb()
             is Relative -> Green.toArgb()
+            is Url -> Green.toArgb()
         }
 
     val instance
         get() = when (this) {
-            is ColoredUnderlined -> ColoredUnderlineSpan(getColor, 5f)
             is Background -> BackgroundColorSpan(getColor)
             is Foreground -> ForegroundColorSpan(getColor)
             is Bold -> StyleSpan(Typeface.BOLD)
@@ -41,6 +39,7 @@ sealed class SpanType {
             is Underlined -> UnderlineSpan()
             is StrikeThrough -> StrikethroughSpan()
             is Relative -> RelativeSizeSpan(0f)
+            is Url -> URLSpan("https://www.google.com/")
         }
 
     fun getTypeFace(type: SpanType) = when (type) {
@@ -49,14 +48,15 @@ sealed class SpanType {
         else -> 0
     }
 
-    val clazz get() = when(this){
-        is ColoredUnderlined -> ColoredUnderlineSpan::class.java
-        is Background -> BackgroundColorSpan::class.java
-        is Foreground -> ForegroundColorSpan::class.java
-        is Underlined -> UnderlineSpan::class.java
-        is Bold -> StyleSpan::class.java
-        is Italic -> StyleSpan::class.java
-        is StrikeThrough -> StrikethroughSpan::class.java
-        is Relative -> RelativeSizeSpan::class.java
-    }
+    val clazz
+        get() = when (this) {
+            is Background -> BackgroundColorSpan::class.java
+            is Foreground -> ForegroundColorSpan::class.java
+            is Underlined -> UnderlineSpan::class.java
+            is Bold -> StyleSpan::class.java
+            is Italic -> StyleSpan::class.java
+            is StrikeThrough -> StrikethroughSpan::class.java
+            is Relative -> RelativeSizeSpan::class.java
+            is Url -> URLSpan::class.java
+        }
 }

@@ -1,28 +1,34 @@
 package com.lm.notes.ui.cells.view
 
-import android.os.IBinder
+import android.annotation.SuppressLint
+import android.content.Context
 import android.text.Html
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
+import android.view.ContextMenu
+import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.compose.ui.graphics.Color
+import androidx.core.text.HtmlCompat
 import androidx.core.text.set
+import androidx.core.text.toHtml
 import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.utils.log
 import javax.inject.Inject
 
-interface SpansProvider {
+
+interface EditTextController {
+
+    fun setText(text: String)
 
     fun SpanType.setSpan()
 
     fun setButtonColors()
 
     fun SpanType.removeSpan()
-
-    fun isSelected(): Boolean
 
     fun removeAllSpans()
 
@@ -34,9 +40,7 @@ interface SpansProvider {
 
     val editText: EditText
 
-    fun toHtml(text: Spanned): String
-
-    fun fromHtml(text: String): Spanned?
+    fun fromHtml(text: String): Spanned
 
     fun setFormatMode()
 
@@ -48,15 +52,42 @@ interface SpansProvider {
 
     fun saveSelection()
 
+    fun setEditMode()
+
+    fun removeSelection()
+
     class Base @Inject constructor(
         private val noteData: NoteData,
         override val editText: EditText,
         private val uiStates: UiStates,
-        private val inputMethodManager: InputMethodManager
-    ) : SpansProvider {
+        private val inputMethodManager: InputMethodManager,
+        private val callbackEditText: CallbackEditText
+    ) : EditTextController {
+
+        init { initEditText() }
+
+        @SuppressLint("ClickableViewAccessibility")
+        private fun initEditText() {
+            AccessibilityDelegate(this@Base, uiStates).also { listener ->
+            with(editText) {
+                with(uiStates) {
+                    setOnClickListener {
+                        if (getIsFormatMode) { onClickEditText(); removeSelection() }
+                        else { setEditMode(); inputMethodManager.showSoftInput(editText, 0) }
+                    }
+                }
+                    accessibilityDelegate = listener
+                    customSelectionActionModeCallback = callbackEditText
+                    customInsertionActionModeCallback = callbackEditText
+                    // movementMethod = LinkMovementMethod.getInstance()
+                }
+            }
+        }
+
+        override fun setText(text: String) = editText.setText(Html.fromHtml(text, htmlMode).trim())
 
         override fun SpanType.removeSpan() {
-            uiStates.setAllButtonsWhite(this)
+            uiStates.setButtonWhite(this)
             listSpans(instance.javaClass).filteredByStyle(this).forEach {
                 with(editText.text) {
                     editText.setSpansAroundSelected(getSpanStart(it), getSpanEnd(it))
@@ -65,8 +96,6 @@ interface SpansProvider {
             }
             updateText()
         }
-
-        override fun isSelected() = (editText.selectionEnd - editText.selectionStart) > 0
 
         override fun removeAllSpans() {
             listClasses.forEach {
@@ -82,13 +111,14 @@ interface SpansProvider {
         }
 
         override fun setButtonColors() {
+            uiStates.setAllButtonsWhite()
             with(uiStates) { listClasses.forEach { setAutoColor(it, listSpans(it.clazz)) } }
         }
 
         private val listClasses by lazy {
             listOf(
                 SpanType.StrikeThrough, SpanType.Underlined, SpanType.Bold, SpanType.Italic,
-                SpanType.Background(), SpanType.Foreground(), SpanType.ColoredUnderlined()
+                SpanType.Background(), SpanType.Foreground(), SpanType.Url
             )
         }
 
@@ -102,7 +132,7 @@ interface SpansProvider {
         }
 
         override fun updateText() = with(noteData.noteModelFullScreen.value) {
-            text = toHtml(editText.text); isChanged = true
+            text = editText.text.toHtml(); isChanged = true
         }
 
         override fun setRelativeSpan(scale: Float) = with(editText) {
@@ -128,22 +158,43 @@ interface SpansProvider {
             }
 
         override fun setFormatMode() = with(editText) {
-            windowToken?.hideKeyboard; showSoftInputOnFocus = false; isCursorVisible = false
+            hideKeyboard
+            showSoftInputOnFocus = false
+            isCursorVisible = false
+            with(uiStates) {
+                true.setIsFormatMode
+                true.setIsSelected
+            }
         }
 
-        override fun toHtml(text: Spanned) = Html.toHtml(text, flagHtml).toString()
+        override fun setEditMode() = with(editText) {
+            if (!showSoftInputOnFocus) showSoftInputOnFocus = true
+            if (!isCursorVisible) isCursorVisible = true; with(uiStates) {
+            false.setIsSelected
+        }
+            removeSelection()
+        }
 
-        override fun fromHtml(text: String): Spanned? = Html.fromHtml(text, flagSpan)
+        override fun removeSelection() = with(editText) {
+            with(uiStates) {
+                if (getSelection != Pair(-1, -1)) {
+                    setSelection(editText.text.length, editText.text.length)
+                    Pair(-1, -1).setSelection
+                }
+            }
+        }
+
+        override fun fromHtml(text: String): Spanned = HtmlCompat.fromHtml(text, flagHtml)
 
         private val flagSpan by lazy { Spanned.SPAN_EXCLUSIVE_EXCLUSIVE }
 
         private val flagHtml by lazy { Html.FROM_HTML_MODE_LEGACY }
 
-        private val IBinder.hideKeyboard
-            get() = inputMethodManager.hideSoftInputFromWindow(this, 0)
+        private val hideKeyboard
+            get() = inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0)
 
         override fun setSelection() = with(uiStates.getSelection) {
-            if (this != Pair(0, 0)) {
+            if (this != Pair(0, 0) && this != Pair(-1, -1)) {
                 with(editText) { requestFocus(); setSelection(first, second) }
             }
         }
@@ -155,5 +206,7 @@ interface SpansProvider {
                 }
             }
         }
+
+        private val htmlMode by lazy { Html.FROM_HTML_MODE_LEGACY }
     }
 }

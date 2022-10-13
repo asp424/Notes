@@ -33,7 +33,7 @@ fun BottomBar() {
                 val click = remember {
                     {
                         addNewNote(lifecycleScope) {
-                            editTextProvider.setText("")
+                            editTextController.setText("")
                             (clipboardProvider.clipBoardIsNotEmpty)?.setClipboardIsEmpty
                             navController.navigate("fullScreenNote") {
                                 popUpTo("mainList")

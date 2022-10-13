@@ -38,8 +38,5 @@ fun ShareCanvasButton(
             paint.apply { textSize = textS }
             drawIntoCanvas { it.nativeCanvas.drawText(text, textX, 15f, paint) }
         }
-        DisposableEffect(true) {
-            onDispose { false.setIsExpandShare }
-        }
     }
 }

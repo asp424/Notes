@@ -29,7 +29,9 @@ fun IconClipBoard(source: ImageVector, textIsEmpty: Boolean) {
                 with(uiStates) {
                     val scale = when (source) {
                         Icons.Rounded.ContentPaste -> animScale(getClipboardIsEmpty)
-                        Icons.Rounded.SelectAll -> animScale(textIsEmpty)
+                        Icons.Rounded.SelectAll -> {
+                            animScale(textIsEmpty)
+                        }
                         Icons.Rounded.ContentCopy -> animScale(getIsSelected && textIsEmpty)
                         Icons.Rounded.CopyAll -> animScale(textIsEmpty)
                         Icons.Rounded.ContentCut -> animScale(getIsSelected && textIsEmpty)
@@ -54,7 +56,10 @@ fun IconClipBoard(source: ImageVector, textIsEmpty: Boolean) {
                     }
                     Box(
                         modifier = Modifier
-                            .padding(start = 5.dp)
+                            .padding(
+                                start = 5.dp, end =
+                                if (source == Icons.Rounded.ContentPaste) 4.dp else 0.dp
+                            )
                             .size(scale.dp * 30)
                     ) {
                         Icon(

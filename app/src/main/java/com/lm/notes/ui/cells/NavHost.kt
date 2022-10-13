@@ -25,14 +25,12 @@ fun NavHost(
             ) {
                 composable("mainList", enterTransition = { enterLeftToRight },
                     exitTransition = { exitRightToLeft }) {
-                    MainColumn()
-                    setMainMode()
+                    MainColumn(); setMainMode()
                 }
 
                 composable("fullScreenNote", enterTransition = { enterRightToLeft },
                     exitTransition = { exitLeftToRight }) {
-                    setFullScreenMode()
-                    FullScreenNote(noteModel)
+                    FullScreenNote(noteModel); setFullScreenMode()
                 }
             }
         }

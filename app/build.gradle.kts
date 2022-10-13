@@ -92,6 +92,11 @@ dependencies {
 
     //ColorPicker
     implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")
+
+    //Keyboard listener
+    implementation (
+        "net.yslibrary" +
+                ".keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3")
 }
 
 

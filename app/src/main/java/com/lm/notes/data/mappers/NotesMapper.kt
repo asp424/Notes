@@ -62,7 +62,6 @@ interface NotesMapper {
                     timestampCreate = timestampCreate,
                     text = text,
                     headerState = TextFieldValue(header).toMutableState(),
-                    textState = text.toMutableState(),
                     initTime = timestampChange
                 )
             }

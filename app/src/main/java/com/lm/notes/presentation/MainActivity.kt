@@ -25,6 +25,7 @@ import com.lm.notes.databinding.EditTextBinding
 import com.lm.notes.di.compose.mainScreenDependencies
 import com.lm.notes.ui.screens.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
+import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -42,14 +43,14 @@ class MainActivity : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.ashole)
+       // setContentView(R.layout.ashole)
         appComponentBuilder.intentBuilder { ShareCompat.IntentBuilder(this) }
             .editText(EditTextBinding.inflate(LayoutInflater.from(this)).root)
             .create().inject(this)
         if (intent.action.toString() == IS_AUTH_ACTION) {
             notesViewModel.synchronize(lifecycleScope)
         }
-            /*
+/*
         val textView = findViewById<TextView>(R.id.ass)
         val text = "Здравствуйте, идите на хуй, а потом в пизду"
         val spannableString = SpannableString(text)
@@ -74,7 +75,7 @@ class MainActivity : BaseActivity() {
         textView.setText(spannableString, TextView.BufferType.SPANNABLE)
         textView.movementMethod = LinkMovementMethod.getInstance()
 
-             */
+ */
     }
 
     @Inject
@@ -84,6 +85,7 @@ class MainActivity : BaseActivity() {
         firebaseAuth: FirebaseAuth,
         filesProvider: FilesProvider
     ) {
+        viewModelFactory.hashCode().log
         setContent {
             NotesTheme(viewModelFactory = viewModelFactory) {
                 mainScreenDependencies(sPreferences, viewModelFactory, firebaseAuth, filesProvider)
@@ -94,11 +96,10 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-
         lifecycleScope.launchWhenResumed {
             delay(300)
             with(notesViewModel.uiStates) {
-                notesViewModel.spansProvider.setSelection()
+                notesViewModel.editTextController.setSelection()
                 notesViewModel.clipboardProvider.clipBoardIsNotEmpty?.setClipboardIsEmpty
             }
         }

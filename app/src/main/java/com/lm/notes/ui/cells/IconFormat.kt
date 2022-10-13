@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.ui.cells.view.SpansProvider
+import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.getAction
 import com.lm.notes.utils.getSpanType
 import com.lm.notes.utils.getTint
@@ -24,9 +24,7 @@ fun IconFormat(source: ImageVector) {
     with(mainDep) {
         with(notesViewModel) {
             val click by derivedStateOf {
-                {
-                    source.buttonFormatAction(spansProvider, uiStates)
-                }
+                { source.buttonFormatAction(editTextController, uiStates) }
             }
 
             Box(modifier = Modifier.padding(start = 10.dp)) {
@@ -41,7 +39,7 @@ fun IconFormat(source: ImageVector) {
 }
 
 private fun ImageVector.buttonFormatAction(
-    spansProvider: SpansProvider, uiStates: UiStates
+    spansProvider: EditTextController, uiStates: UiStates
 ) = with(spansProvider) {
     with(getSpanType(uiStates)) {
         if (isHaveSpans()) removeSpan() else getAction(uiStates, this)

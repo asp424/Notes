@@ -51,9 +51,15 @@ interface RoomRepository {
 
         override suspend fun getNote(id: String) = notesDao.getById(id)
 
-        override fun newNote(id: String)
-        = with(actualTime){
-            notesMapper.map(NoteModelRoom(id, this, this, header = nowDate(actualTime)))
+        override fun newNote(id: String) = with(actualTime) {
+            notesMapper.map(
+                NoteModelRoom(
+                    id,
+                    this,
+                    this,
+                    header = nowDate(actualTime)
+                )
+            )
         }
 
         override val actualTime get() = Calendar.getInstance().time.time

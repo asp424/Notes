@@ -1,7 +1,6 @@
 package com.lm.notes.utils
 
 import android.content.Context
-import android.graphics.Color.WHITE
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
@@ -26,7 +25,7 @@ import com.lm.notes.data.models.UiStates
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.SpanType
-import com.lm.notes.ui.cells.view.SpansProvider
+import com.lm.notes.ui.cells.view.EditTextController
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -93,26 +92,27 @@ fun backPressHandle(
     noteModel: NoteModel,
     mainActivity: MainActivity
 ) {
-    if (navController.currentDestination?.route == "mainList") {
-        with(notesViewModel.uiStates) {
-            if (getSettingsVisible) {
-                false.setSettingsVisible
-            } else mainActivity.finish()
-        }
-    }
-    else {
-        if (notesViewModel.uiStates.getIsFormatMode) {
-            notesViewModel.uiStates.hideFormatPanel()
-            notesViewModel.editTextProvider.setEditMode()
-
-        } else {
-            navController.navigate("mainList")
-            with(notesViewModel) {
-                if (isMustRemoveFromList()) deleteNote(noteModel.id)
+    with(notesViewModel) {
+        with(editTextController) {
+            with(uiStates) {
+                if (navController.currentDestination?.route == "mainList") {
+                    if (getSettingsVisible || getIsDeleteMode) setMainMode()
+                    else mainActivity.finish()
+                } else {
+                    if (getIsFormatMode) {
+                        setEditMode(); onClickEditText(); editText.clearFocus()
+                    } else {
+                        navController.navigate("mainList")
+                        true.setIsClickableNote
+                        with(notesViewModel) {
+                            if (isMustRemoveFromList()) deleteNote(noteModel.id)
+                        }
+                    }
+                }
+                removeSelection()
             }
         }
     }
-    notesViewModel.editTextProvider.removeSelection()
 }
 
 fun ImageVector.getTint(uiStates: UiStates) = with(uiStates) {
@@ -123,6 +123,7 @@ fun ImageVector.getTint(uiStates: UiStates) = with(uiStates) {
         Icons.Rounded.FormatBold -> getColorButtonBold
         Icons.Rounded.FormatItalic -> getColorButtonItalic
         Icons.Rounded.FormatStrikethrough -> getColorButtonStrikeThrough
+        Icons.Rounded.AddLink -> getColorButtonClick
         else -> Color.White
     }
 }
@@ -135,11 +136,12 @@ fun ImageVector.getSpanType(uiStates: UiStates) = with(uiStates) {
         Icons.Rounded.FormatBold -> SpanType.Bold
         Icons.Rounded.FormatItalic -> SpanType.Italic
         Icons.Rounded.FormatStrikethrough -> SpanType.StrikeThrough
-        else -> SpanType.ColoredUnderlined(WHITE)
+        Icons.Rounded.AddLink -> SpanType.Url
+        else -> SpanType.Bold
     }
 }
 
-fun SpansProvider.getAction(uiStates: UiStates, spanType: SpanType) = with(uiStates) {
+fun EditTextController.getAction(uiStates: UiStates, spanType: SpanType) = with(uiStates) {
     with(spanType) {
         when (spanType) {
             is SpanType.Background -> ifNoSpans()

@@ -2,24 +2,21 @@ package com.lm.notes.data.models
 
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.Color.Companion.White
-import com.lm.notes.ui.cells.view.ColoredUnderlineSpan
 import com.lm.notes.ui.cells.view.SpanType
-import com.lm.notes.ui.cells.view.SpansProvider
+import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.ui.theme.main
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Immutable
+@Stable
 data class UiStates(
     private var isFormatMode: MutableState<Boolean> = mutableStateOf(false),
     private var colorPickerBackgroundIsShow: MutableState<Boolean> = mutableStateOf(false),
@@ -30,6 +27,7 @@ data class UiStates(
     private var colorButtonUnderlined: MutableState<Color> = mutableStateOf(Black),
     private var colorButtonBold: MutableState<Color> = mutableStateOf(Black),
     private var colorButtonItalic: MutableState<Color> = mutableStateOf(Black),
+    private var colorButtonClick: MutableState<Color> = mutableStateOf(Black),
     private var colorButtonStrikeThrough: MutableState<Color> = mutableStateOf(Black),
     private var isSelected: MutableState<Boolean> = mutableStateOf(false),
     private var clipboardIsEmpty: MutableState<Boolean> = mutableStateOf(false),
@@ -39,11 +37,15 @@ data class UiStates(
     private var isExpandShare: MutableState<Boolean> = mutableStateOf(false),
     private var settingsVisible: MutableState<Boolean> = mutableStateOf(false),
     private var notShareVisible: MutableState<Boolean> = mutableStateOf(true),
+    private var textIsEmpty: MutableState<Boolean> = mutableStateOf(true),
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
-    var selection: Pair<Int, Int> = Pair(0, 0)
+    val isClickableNote: MutableState<Boolean> = mutableStateOf(true),
+    var selection: Pair<Int, Int> = Pair(-1, -1)
 ) {
     val getIsFormatMode get() = isFormatMode.value
+    val getIsClickableNote get() = isClickableNote.value
+    val getTextIsEmpty get() = textIsEmpty.value
     val getNotShareVisible get() = notShareVisible.value
     val getMainColor get() = mainColor.value
     val getSettingsVisible get() = settingsVisible.value
@@ -60,6 +62,7 @@ data class UiStates(
     val getColorButtonForeground get() = colorButtonForeground.value
     val getColorButtonUnderlined get() = colorButtonUnderlined.value
     val getColorButtonBold get() = colorButtonBold.value
+    val getColorButtonClick get() = colorButtonClick.value
     val getColorButtonItalic get() = colorButtonItalic.value
     val getColorButtonStrikeThrough get() = colorButtonStrikeThrough.value
     val Boolean.setIsFormatMode get() = run { isFormatMode.value = this }
@@ -81,6 +84,7 @@ data class UiStates(
     private val Color.setColorButtonUnderlined get() = run { colorButtonUnderlined.value = this }
     private val Color.setColorButtonBold get() = run { colorButtonBold.value = this }
     private val Color.setColorButtonItalic get() = run { colorButtonItalic.value = this }
+    private val Color.setColorButtonClick get() = run { colorButtonClick.value = this }
     val Color.setMainColor get() = run { mainColor.value = this }
     private val Color.setColorButtonStrikeThrough
         get() = run {
@@ -95,7 +99,11 @@ data class UiStates(
 
     val Boolean.setIsSelected get() = run { isSelected.value = this }
 
-    val Boolean.setNotShareVisible get() = run { notShareVisible.value = this }
+    val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
+
+    val Boolean.setTextIsEmpty get() = run { textIsEmpty.value = this }
+
+    private val Boolean.setNotShareVisible get() = run { notShareVisible.value = this }
 
     val Pair<Int, Int>.setSelection get() = run { selection = this }
 
@@ -104,7 +112,6 @@ data class UiStates(
     val Boolean.setSettingsVisible get() = run { settingsVisible.value = this }
 
     infix fun Color.setColor(spanType: SpanType) = when (spanType) {
-        is SpanType.ColoredUnderlined -> setColorButtonUnderlined
         is SpanType.Background -> setColorButtonBackground
         is SpanType.Foreground -> setColorButtonForeground
         is SpanType.Underlined -> Green.setColorButtonUnderlined
@@ -112,22 +119,10 @@ data class UiStates(
         is SpanType.Italic -> Green.setColorButtonItalic
         is SpanType.StrikeThrough -> Green.setColorButtonStrikeThrough
         is SpanType.Relative -> Unit
+        is SpanType.Url -> Green.setColorButtonClick
     }
 
-    fun setAllButtonsWhite(spanType: SpanType) = with(White) {
-        when (spanType) {
-            is SpanType.ColoredUnderlined -> setColorButtonUnderlined
-            is SpanType.Background -> setColorButtonBackground
-            is SpanType.Foreground -> setColorButtonForeground
-            is SpanType.Underlined -> setColorButtonUnderlined
-            is SpanType.Bold -> setColorButtonBold
-            is SpanType.Italic -> setColorButtonItalic
-            is SpanType.StrikeThrough -> setColorButtonStrikeThrough
-            is SpanType.Relative -> Unit
-        }
-    }
-
-    fun <T> SpansProvider.setAutoColor(type: SpanType, list: List<T>) {
+    fun <T> EditTextController.setAutoColor(type: SpanType, list: List<T>) {
         if (list.isNotEmpty())
             when (type) {
                 is SpanType.Background ->
@@ -140,10 +135,22 @@ data class UiStates(
                     Green.setColorButtonItalic
                 is SpanType.Underlined -> Green.setColorButtonUnderlined
                 is SpanType.StrikeThrough -> Green.setColorButtonStrikeThrough
-                is SpanType.ColoredUnderlined ->
-                    Color((list[0] as ColoredUnderlineSpan).underlineColor).setColorButtonUnderlined
                 is SpanType.Relative -> Unit
+                is SpanType.Url -> Green.setColorButtonClick
             }
+    }
+
+    fun setButtonWhite(spanType: SpanType) = with(White) {
+        when (spanType) {
+            is SpanType.Background -> setColorButtonBackground
+            is SpanType.Foreground -> setColorButtonForeground
+            is SpanType.Underlined -> setColorButtonUnderlined
+            is SpanType.Bold -> setColorButtonBold
+            is SpanType.Italic -> setColorButtonItalic
+            is SpanType.StrikeThrough -> setColorButtonStrikeThrough
+            is SpanType.Relative -> Unit
+            is SpanType.Url -> setColorButtonClick
+        }
     }
 
     fun setAllButtonsWhite() = with(White) {
@@ -154,6 +161,8 @@ data class UiStates(
         setColorButtonBold
         setColorButtonItalic
         setColorButtonStrikeThrough
+        setColorButtonClick
+
     }
 
     fun SpanType.ifNoSpans() = when (this) {
@@ -168,14 +177,14 @@ data class UiStates(
         else -> Unit
     }
 
-    fun hideFormatPanel() = with(false) {
+    private fun hideFormatPanel() = with(false) {
         setIsFormatMode
         setColorPickerBackgroundIsShow
         setColorPickerForegroundIsShow
     }
 
     fun onClickEditText() {
-        if (getIsFormatMode) hideFormatPanel()
+        hideFormatPanel()
         false.setAllColorPickerIsShow
         false.setIsSelected
     }
@@ -190,6 +199,8 @@ data class UiStates(
         true.setIsMainMode
         false.setIsExpandShare
         false.setIsDeleteMode
+        false.setSettingsVisible
+        true.setNotShareVisible
         listDeleteAble.clear()
     }
 

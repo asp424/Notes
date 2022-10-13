@@ -1,21 +1,21 @@
 package com.lm.notes.presentation
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.data.rerositories.NotesRepository
-import com.lm.notes.ui.cells.view.EditTextProvider
-import com.lm.notes.ui.cells.view.SpansProvider
+import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.format_text.ClipboardProvider
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 @Stable
+@Immutable
 class NotesViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
-    val spansProvider: SpansProvider,
-    val editTextProvider: EditTextProvider,
+    val editTextController: EditTextController,
     val uiStates: UiStates,
     val clipboardProvider: ClipboardProvider
 ) : ViewModel() {

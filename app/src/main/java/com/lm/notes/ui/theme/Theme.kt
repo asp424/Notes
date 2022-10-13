@@ -58,7 +58,6 @@ fun NotesTheme(
         val notesViewModel = remember {
         ViewModelProvider(owner, viewModelFactory)[NotesViewModel::class.java]
     }
-
         val colorScheme = when {
             dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                 val context = LocalContext.current

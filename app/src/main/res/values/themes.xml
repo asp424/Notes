@@ -2,6 +2,7 @@
 <resources>
     <style name="Theme.Notes" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:textColorHint">@color/hint</item>
+        <item name="android:textColorLink">#0000FF</item>
         <item name="appWidgetRadius">16dp</item>
         <item name="appWidgetInnerRadius">8dp</item>
     </style>

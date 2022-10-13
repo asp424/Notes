@@ -18,10 +18,7 @@ import com.lm.notes.ui.cells.IconClipBoard
 fun ClipboardBar() {
     with(mainDep) {
         with(notesViewModel.uiStates) {
-            notesViewModel.noteModelFullScreen.value.textState.value.apply {
-                val textIsEmpty = notesViewModel.spansProvider.fromHtml(
-                    replace(" ", "", false)
-                )?.isNotEmpty() ?: false
+            notesViewModel.noteModelFullScreen.value.text.apply {
                 Card(
                     Modifier
                         .height(45.dp)
@@ -40,7 +37,7 @@ fun ClipboardBar() {
                     ) {
                         Row(
                             Modifier, Start, Top
-                        ) { listIconsClipboard.forEach { IconClipBoard(it, textIsEmpty) } }
+                        ) { listIconsClipboard.forEach { IconClipBoard(it, getTextIsEmpty) } }
                     }
                 }
             }

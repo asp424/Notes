@@ -80,9 +80,7 @@ interface NotesListData {
         override fun updateHeaderFromUi(text: TextFieldValue) = noteData.updateHeaderFromUi(text)
 
         override fun setFullscreenNoteModel(id: String, text: String) =
-            noteData.setFullscreenNoteModel(findById(id).apply {
-                textState.value = text
-            })
+            noteData.setFullscreenNoteModel(findById(id))
 
         override fun isMustRemoveFromList() = noteData.isMustRemoveFromList()
         override fun isNewHeader(text: String) = noteData.isNewHeader(text)

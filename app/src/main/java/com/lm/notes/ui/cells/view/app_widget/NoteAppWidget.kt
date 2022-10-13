@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import com.lm.notes.core.noteWidgetComponent
 
-
 class NoteAppWidget : AppWidgetProvider() {
 
     override fun onUpdate(

@@ -34,105 +34,103 @@ fun FullScreenBar(animScaleShare: Float, animScaleNotShare: Float) {
     with(mainDep) {
         with(notesViewModel) {
             with(uiStates) {
-                noteModelFullScreen.collectAsState().value.apply {
-                    LocalDensity.current.apply {
-                        val asHtmlDp =
-                            animDp(
+                with(editTextController) {
+                    noteModelFullScreen.collectAsState().value.apply {
+                        LocalDensity.current.apply {
+                            val asHtmlDp =
+                                animDp(
+                                    target = getIsExpandShare,
+                                    first = width - 160.dp,
+                                    second = width - 126.dp,
+                                    200
+                                )
+                            val asTxtDp =
+                                animDp(
+                                    target = getIsExpandShare,
+                                    first = width - 195.dp,
+                                    second = width - 126.dp,
+                                    400
+                                )
+                            val txtDp = animDp(
                                 target = getIsExpandShare,
-                                first = width - 160.dp,
+                                first = width - 230.dp,
                                 second = width - 126.dp,
-                                200
+                                600
                             )
-                        val asTxtDp =
-                            animDp(
-                                target = getIsExpandShare,
-                                first = width - 195.dp,
-                                second = width - 126.dp,
-                                400
-                            )
-                        val txtDp = animDp(
-                            target = getIsExpandShare,
-                            first = width - 230.dp,
-                            second = width - 126.dp,
-                            600
-                        )
 
-                        val paint = remember {
-                            Paint().asFrameworkPaint().apply {
-                                isAntiAlias = true
-                                typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                            val paint = remember {
+                                Paint().asFrameworkPaint().apply {
+                                    isAntiAlias = true
+                                    typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                                }
                             }
-                        }
-                        ShareCanvasButton(asHtmlDp, click = {
-                            filesProvider.shareAsFile(
-                                "${
-                                    with(headerState.value.text) {
-                                        header(isNewHeader(this))
-                                    }
-                                }\n\n$text", ShareType.AsHtml,
-                                timestampChangeState.value
-                            )
-                        }, animScaleShare, paint, ".html", -40f, 12.dp.toPx())
+                            ShareCanvasButton(asHtmlDp, click = {
+                                filesProvider.shareAsFile(
+                                    "${
+                                        with(headerState.value.text) {
+                                            header(isNewHeader(this))
+                                        }
+                                    }\n\n$text", ShareType.AsHtml,
+                                    timestampChangeState.value
+                                )
+                            }, animScaleShare, paint, ".html", -40f, 12.dp.toPx())
 
-                        ShareCanvasButton(asTxtDp, click = {
-                            filesProvider.shareAsFile(
-                                "${
-                                    with(headerState.value.text) {
-                                        header(isNewHeader(this))
-                                    }
-                                }\n\n${spansProvider.fromHtml(text).toString()}",
-                                ShareType.AsTxt,
-                                timestampChangeState.value
-                            )
-                        }, animScaleShare, paint, ".txt", -35f, 14.dp.toPx())
+                            ShareCanvasButton(asTxtDp, click = {
+                                filesProvider.shareAsFile(
+                                    "${
+                                        with(headerState.value.text) {
+                                            header(isNewHeader(this))
+                                        }
+                                    }\n\n${fromHtml(text)}",
+                                    ShareType.AsTxt,
+                                    timestampChangeState.value
+                                )
+                            }, animScaleShare, paint, ".txt", -35f, 14.dp.toPx())
 
-                        (LocalContext.current as MainActivity).apply {
-                            ShareCanvasButton(txtDp, click = {
-                                filesProvider.shareAsText(text)
-                            }, animScaleShare, paint, "txt", -26f, 14.dp.toPx())
-                        }
-                        Canvas(
-                            Modifier
-                                .offset(width - 126.dp, 0.dp)
-                                .scale(animScaleShare)
-                        ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
+                            (LocalContext.current as MainActivity).apply {
+                                ShareCanvasButton(txtDp, click = {
+                                    filesProvider.shareAsText(text)
+                                }, animScaleShare, paint, "txt", -26f, 14.dp.toPx())
+                            }
+                            Canvas(
+                                Modifier
+                                    .offset(width - 126.dp, 0.dp)
+                                    .scale(animScaleShare)
+                            ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
 
-                        Box(
-                            Modifier
-                                .offset(width - 135.dp, 0.dp)
-                                .scale(animScaleShare)
-                        ) {
-                            Icon(
-                                Icons.Rounded.Share,
-                                null,
-                                modifier = Modifier.noRippleClickable { expandShare(coroutine) },
-                                tint = White
-                            )
-                        }
-                        Box(
-                            Modifier
-                                .offset(width - 195.dp, 0.dp)
-                                .scale(animScaleNotShare)
-                        ) {
-                            Icon(
-                                Icons.Rounded.Widgets,
-                                null,
-                                modifier = Modifier
-                                    .noRippleClickable {
-                                        noteAppWidgetController
-                                            .pinNoteWidget(
-                                                Pair(
-                                                    spansProvider
-                                                        .fromHtml(
-                                                            spansProvider
-                                                                .editText.text.toString()
-                                                        ).toString(),
-                                                    headerState.value.text
+                            Box(
+                                Modifier
+                                    .offset(width - 135.dp, 0.dp)
+                                    .scale(animScaleShare)
+                            ) {
+                                Icon(
+                                    Icons.Rounded.Share,
+                                    null,
+                                    modifier = Modifier.noRippleClickable { expandShare(coroutine) },
+                                    tint = White
+                                )
+                            }
+                            Box(
+                                Modifier
+                                    .offset(width - 195.dp, 0.dp)
+                                    .scale(animScaleNotShare)
+                            ) {
+                                Icon(
+                                    Icons.Rounded.Widgets,
+                                    null,
+                                    modifier = Modifier
+                                        .noRippleClickable {
+                                            noteAppWidgetController
+                                                .pinNoteWidget(
+                                                    Pair(fromHtml(editText.text.toString())
+                                                        .toString(),
+                                                        headerState.value.text
+                                                    )
                                                 )
-                                            )
-                                    },
-                                tint = White
-                            )
+                                        },
+                                    tint = White
+                                )
+                            }
                         }
                     }
                 }
