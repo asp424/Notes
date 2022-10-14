@@ -52,21 +52,21 @@ fun BottomBar() {
                         Canvas(Modifier) {
                             drawRect(
                                 getMainColor,
-                                Offset(0f, height.value * density - 50.dp.toPx()),
-                                size = Size(width.value * density, 50.dp.toPx())
+                                Offset(0f, height.value * density - 60.dp.toPx()),
+                                size = Size(width.value * density, 100.dp.toPx())
                             )
                         }
                         Button(
                             onClick = {}, modifier = Modifier
-                                .offset((width - 89.dp), (height - 79.dp))
+                                .offset((width - 89.dp), (height - 89.dp))
                                 .scale(1.05f)
                                 .size(60.dp), colors = ButtonDefaults.buttonColors(
-                                containerColor = White
+                                containerColor = getSecondColor
                             )
                         ) {}
                         Button(
                             onClick = click, modifier = Modifier
-                                .offset((width - 89.dp), (height - 79.dp))
+                                .offset((width - 89.dp), (height - 89.dp))
                                 .size(60.dp), colors = ButtonDefaults.buttonColors(
                                 containerColor = getMainColor
                             )
@@ -75,7 +75,7 @@ fun BottomBar() {
                                 text = "+", fontSize = 25.sp, modifier = Modifier.offset(
                                     (-1).dp,
                                     (-1).dp
-                                )
+                                ), color = getSecondColor
                             )
                         }
                     }

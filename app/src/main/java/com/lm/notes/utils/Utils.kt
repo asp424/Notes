@@ -96,13 +96,16 @@ fun backPressHandle(
         with(editTextController) {
             with(uiStates) {
                 if (navController.currentDestination?.route == "mainList") {
-                    if (getSettingsVisible || getIsDeleteMode) setMainMode()
+                    if (getSettingsVisible || getIsDeleteMode) {
+                        false.setSettingsVisible
+                        cancelDeleteMode()
+                    }
                     else mainActivity.finish()
                 } else {
                     if (getIsFormatMode) {
                         setEditMode(); onClickEditText(); editText.clearFocus()
                     } else {
-                        navController.navigate("mainList")
+                        navController.navigate("mainList"); setEditMode()
                         true.setIsClickableNote
                         with(notesViewModel) {
                             if (isMustRemoveFromList()) deleteNote(noteModel.id)
@@ -112,32 +115,6 @@ fun backPressHandle(
                 removeSelection()
             }
         }
-    }
-}
-
-fun ImageVector.getTint(uiStates: UiStates) = with(uiStates) {
-    when (this@getTint) {
-        Icons.Rounded.FormatColorFill -> getColorButtonBackground
-        Icons.Rounded.FormatColorText -> getColorButtonForeground
-        Icons.Rounded.FormatUnderlined -> getColorButtonUnderlined
-        Icons.Rounded.FormatBold -> getColorButtonBold
-        Icons.Rounded.FormatItalic -> getColorButtonItalic
-        Icons.Rounded.FormatStrikethrough -> getColorButtonStrikeThrough
-        Icons.Rounded.AddLink -> getColorButtonClick
-        else -> Color.White
-    }
-}
-
-fun ImageVector.getSpanType(uiStates: UiStates) = with(uiStates) {
-    when (this@getSpanType) {
-        Icons.Rounded.FormatColorFill -> SpanType.Background(getColorButtonBackground.toArgb())
-        Icons.Rounded.FormatColorText -> SpanType.Foreground(getColorButtonForeground.toArgb())
-        Icons.Rounded.FormatUnderlined -> SpanType.Underlined
-        Icons.Rounded.FormatBold -> SpanType.Bold
-        Icons.Rounded.FormatItalic -> SpanType.Italic
-        Icons.Rounded.FormatStrikethrough -> SpanType.StrikeThrough
-        Icons.Rounded.AddLink -> SpanType.Url
-        else -> SpanType.Bold
     }
 }
 

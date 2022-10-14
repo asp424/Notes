@@ -3,6 +3,7 @@ package com.lm.notes.ui.cells.view
 import android.view.View
 import android.view.accessibility.AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED
 import com.lm.notes.data.models.UiStates
+import com.lm.notes.utils.log
 import kotlinx.coroutines.*
 
 class AccessibilityDelegate(

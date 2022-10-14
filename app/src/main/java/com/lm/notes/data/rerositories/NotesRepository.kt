@@ -17,6 +17,8 @@ interface NotesRepository {
 
     fun deleteNote(id: String)
 
+    fun checkForEmptyText(): Boolean
+
     fun updateNoteFromUi(newText: String)
 
     fun updateHeaderFromUi(text: TextFieldValue)
@@ -59,6 +61,7 @@ interface NotesRepository {
         }
 
         override fun isMustRemoveFromList() = notesListData.isMustRemoveFromList()
+
         override fun isNewHeader(text: String) = notesListData.isNewHeader(text)
 
         override fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) {
@@ -77,6 +80,8 @@ interface NotesRepository {
                 notesListData.remove(id)
             }
         }
+
+        override fun checkForEmptyText() = notesListData.checkForEmptyText()
 
         override fun updateNoteFromUi(newText: String) =
             notesListData.updateNoteFromUi(newText, roomRepository.actualTime)

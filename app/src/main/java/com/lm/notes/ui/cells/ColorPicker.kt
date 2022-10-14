@@ -17,7 +17,6 @@ import com.godaddy.android.colorpicker.toColorInt
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.view.SpanType
-import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.animDp
 
 @Composable
@@ -27,12 +26,9 @@ fun ColorPickers(list: List<SpanType>) {
             with(uiStates) {
                 with(editTextController) {
                     list.forEach { type ->
-                        with(getBoolean(type)) {
-
+                        with(type.getColorPicker()) {
                             val y = animDp(this, height - 200.dp, height, 100)
-
                             val yIcon = animDp(this, height - 210.dp, height, 100)
-
                             Box(Modifier, Center) {
 
                                 HarmonyColorPicker(
@@ -40,7 +36,7 @@ fun ColorPickers(list: List<SpanType>) {
                                         .size(150.dp)
                                         .offset(0.dp, y), ColorHarmonyMode.SHADES,
                                     onColorChanged = { c ->
-                                        c.toColorInt().also { getType(type, it) }
+                                        c.toColorInt().also { type.getType(it) }
                                     }
                                 )
 
@@ -58,15 +54,4 @@ fun ColorPickers(list: List<SpanType>) {
         }
     }
 }
-
-private fun EditTextController.getType(type: SpanType, color: Int) =
-    if (type is SpanType.Background) SpanType.Background(color).setSpan()
-    else SpanType.Foreground(color).setSpan()
-
-private fun UiStates.getBoolean(type: SpanType) = if (type is SpanType.Background)
-    getColorPickerBackgroundIsShow else getColorPickerForegroundIsShow
-
-private val SpanType.getIcon
-    get() = if (this is SpanType.Background)
-        Icons.Rounded.FormatColorFill else Icons.Rounded.FormatColorText
 

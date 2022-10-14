@@ -85,7 +85,6 @@ class MainActivity : BaseActivity() {
         firebaseAuth: FirebaseAuth,
         filesProvider: FilesProvider
     ) {
-        viewModelFactory.hashCode().log
         setContent {
             NotesTheme(viewModelFactory = viewModelFactory) {
                 mainScreenDependencies(sPreferences, viewModelFactory, firebaseAuth, filesProvider)
@@ -97,10 +96,13 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launchWhenResumed {
-            delay(300)
             with(notesViewModel.uiStates) {
-                notesViewModel.editTextController.setSelection()
+            false.setSetSelectionEnable
+            delay(300)
                 notesViewModel.clipboardProvider.clipBoardIsNotEmpty?.setClipboardIsEmpty
+                delay(500)
+                notesViewModel.editTextController.setSelection()
+                true.setSetSelectionEnable
             }
         }
     }

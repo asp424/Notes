@@ -52,6 +52,23 @@ fun SettingsCard() {
                                 }
                             )
                         }
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp, end = 20.dp)
+                        ) {
+                            Text(text = "Second color")
+                            HarmonyColorPicker(
+                                Modifier
+                                    .size(100.dp), ColorHarmonyMode.SHADES,
+                                onColorChanged = { c ->
+                                    Color(c.toColorInt()).setSecondColor
+                                    sPreferences.saveSecondColor(c.toColorInt())
+                                }
+                            )
+                        }
                     }
                 }
             }

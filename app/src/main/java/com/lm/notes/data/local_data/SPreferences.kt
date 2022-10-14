@@ -16,6 +16,10 @@ interface SPreferences {
 
     fun readMainColor(): Int
 
+    fun saveSecondColor(color: Int)
+
+    fun readSecondColor(): Int
+
     class Base @Inject constructor(
         private val sharedPreferences: SharedPreferences,
     ) : SPreferences {
@@ -29,9 +33,15 @@ interface SPreferences {
             .getString(Uri.EMPTY.toString(), "")?.toUri()
 
         override fun saveMainColor(color: Int) {
-            sharedPreferences.edit().putInt("color", color).apply()
+            sharedPreferences.edit().putInt("mainColor", color).apply()
         }
 
-        override fun readMainColor() = sharedPreferences.getInt("color", (0xFF00BCD4).toInt())
+        override fun readMainColor() = sharedPreferences.getInt("mainColor", (0xFF00BCD4).toInt())
+
+        override fun saveSecondColor(color: Int) {
+            sharedPreferences.edit().putInt("secondColor", color).apply()
+        }
+
+        override fun readSecondColor() = sharedPreferences.getInt("secondColor", (0xFFFFFFFF).toInt())
     }
 }

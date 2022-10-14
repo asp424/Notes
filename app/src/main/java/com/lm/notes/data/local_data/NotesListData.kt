@@ -40,6 +40,8 @@ interface NotesListData {
 
     fun isNewHeader(text: String): Boolean
 
+    fun checkForEmptyText(): Boolean
+
     class Base @Inject constructor(private val noteData: NoteData) : NotesListData {
 
         private val mSFOfNotesList = MutableStateFlow<List<NoteModel>>(emptyList())
@@ -83,6 +85,9 @@ interface NotesListData {
             noteData.setFullscreenNoteModel(findById(id))
 
         override fun isMustRemoveFromList() = noteData.isMustRemoveFromList()
+
         override fun isNewHeader(text: String) = noteData.isNewHeader(text)
+
+        override fun checkForEmptyText() = noteData.checkForEmptyText()
     }
 }

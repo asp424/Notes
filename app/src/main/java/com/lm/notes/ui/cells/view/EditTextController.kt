@@ -1,21 +1,22 @@
 package com.lm.notes.ui.cells.view
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.text.Html
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
-import android.view.ContextMenu
-import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FormatClear
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.text.HtmlCompat
 import androidx.core.text.set
 import androidx.core.text.toHtml
 import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.models.UiStates
+import com.lm.notes.utils.getAction
 import com.lm.notes.utils.log
 import javax.inject.Inject
 
@@ -56,30 +57,42 @@ interface EditTextController {
 
     fun removeSelection()
 
+    fun hideKeyboard()
+
+    fun ImageVector.buttonFormatAction()
+
+    fun SpanType.getType(color: Int)
+
     class Base @Inject constructor(
         private val noteData: NoteData,
         override val editText: EditText,
         private val uiStates: UiStates,
-        private val inputMethodManager: InputMethodManager,
-        private val callbackEditText: CallbackEditText
+        private val inputMethodManager: InputMethodManager
     ) : EditTextController {
 
-        init { initEditText() }
+        init {
+            initEditText()
+        }
 
         @SuppressLint("ClickableViewAccessibility")
         private fun initEditText() {
             AccessibilityDelegate(this@Base, uiStates).also { listener ->
-            with(editText) {
-                with(uiStates) {
-                    setOnClickListener {
-                        if (getIsFormatMode) { onClickEditText(); removeSelection() }
-                        else { setEditMode(); inputMethodManager.showSoftInput(editText, 0) }
+                with(editText) {
+                    with(uiStates) {
+                        setOnClickListener {
+                            if (getIsFormatMode) {
+                                setEditMode(); onClickEditText(); removeSelection(); editText.clearFocus()
+                            } else {
+                                inputMethodManager.showSoftInput(editText, 0)
+                            }
+                        }
                     }
-                }
-                    accessibilityDelegate = listener
-                    customSelectionActionModeCallback = callbackEditText
-                    customInsertionActionModeCallback = callbackEditText
-                    // movementMethod = LinkMovementMethod.getInstance()
+                    CallbackEditText(uiStates, this@Base, editText).also { callback ->
+                        accessibilityDelegate = listener
+                        customSelectionActionModeCallback = callback
+                        customInsertionActionModeCallback = callback
+                        // movementMethod = LinkMovementMethod.getInstance()
+                    }
                 }
             }
         }
@@ -96,6 +109,10 @@ interface EditTextController {
             }
             updateText()
         }
+
+        override fun SpanType.getType(color: Int) =
+            if (this is SpanType.Background) SpanType.Background(color).setSpan()
+            else SpanType.Foreground(color).setSpan()
 
         override fun removeAllSpans() {
             listClasses.forEach {
@@ -158,7 +175,7 @@ interface EditTextController {
             }
 
         override fun setFormatMode() = with(editText) {
-            hideKeyboard
+            hideKeyboard()
             showSoftInputOnFocus = false
             isCursorVisible = false
             with(uiStates) {
@@ -190,8 +207,8 @@ interface EditTextController {
 
         private val flagHtml by lazy { Html.FROM_HTML_MODE_LEGACY }
 
-        private val hideKeyboard
-            get() = inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0)
+        override fun hideKeyboard()
+        { inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0) }
 
         override fun setSelection() = with(uiStates.getSelection) {
             if (this != Pair(0, 0) && this != Pair(-1, -1)) {
@@ -206,6 +223,14 @@ interface EditTextController {
                 }
             }
         }
+
+        override fun ImageVector.buttonFormatAction() =
+            with(uiStates) {
+                with(getSpanType()) {
+                    if (isHaveSpans()) removeSpan() else getAction(uiStates, this)
+                }
+                if (this@buttonFormatAction == Icons.Rounded.FormatClear) removeAllSpans()
+            }
 
         private val htmlMode by lazy { Html.FROM_HTML_MODE_LEGACY }
     }

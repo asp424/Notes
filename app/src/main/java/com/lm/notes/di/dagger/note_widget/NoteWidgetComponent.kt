@@ -6,6 +6,7 @@ import com.lm.notes.di.dagger.app.AppComponent
 import com.lm.notes.di.dagger.app.NoteWidgetScope
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidget
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
+import com.lm.notes.ui.cells.view.app_widget.ToastCreator
 import dagger.BindsInstance
 import dagger.Component
 import java.io.File
@@ -18,6 +19,10 @@ interface NoteWidgetComponent {
 
         @BindsInstance
         fun application(application: Application): Builder
+
+        @BindsInstance
+        fun toastCreator(toastCreator: ToastCreator): Builder
+
         fun create(): NoteWidgetComponent
     }
 

@@ -30,9 +30,9 @@ fun DeleteBar(animScale: Float) {
                         null,
                         modifier = Modifier.noRippleClickable {
                             listDeleteAble.forEach { deleteNote(it) }
-                            setMainMode()
+                            cancelDeleteMode()
                         },
-                        tint = Color.White
+                        tint = getSecondColor
                     )
                 }
                 Box(
@@ -43,8 +43,8 @@ fun DeleteBar(animScale: Float) {
                     Icon(
                         Icons.Rounded.Close,
                         null,
-                        modifier = Modifier.noRippleClickable { setMainMode() },
-                        tint = Color.White
+                        modifier = Modifier.noRippleClickable { cancelDeleteMode() },
+                        tint = getSecondColor
                     )
                 }
             }

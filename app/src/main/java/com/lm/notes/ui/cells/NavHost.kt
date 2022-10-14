@@ -11,6 +11,7 @@ import com.lm.notes.ui.enterRightToLeft
 import com.lm.notes.ui.exitLeftToRight
 import com.lm.notes.ui.exitRightToLeft
 import com.lm.notes.ui.screens.FullScreenNote
+import com.lm.notes.utils.log
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

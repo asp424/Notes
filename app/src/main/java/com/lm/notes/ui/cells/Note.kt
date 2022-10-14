@@ -1,9 +1,7 @@
 package com.lm.notes.ui.cells
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material3.Text
@@ -22,10 +20,13 @@ import com.lm.notes.di.compose.MainDep.mainDep
 fun Note(modifier: Modifier, time: String, notesText: String, header: String, id: String) {
     with(mainDep.notesViewModel.uiStates) {
         Card(
-            modifier = modifier, contentColor = Color.White,
+            modifier = modifier
+                .padding(bottom = 10.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(), contentColor = Color.White,
             shape = RoundedCornerShape(8.dp), border =
             if (listDeleteAble.contains(id) && getIsDeleteMode) BorderStroke(2.dp, Color.Red)
-            else BorderStroke(0.dp, Color.Blue),
+            else BorderStroke(1.dp, getMainColor),
             elevation = if (listDeleteAble.contains(id) && getIsDeleteMode) 50.dp else 10.dp
         ) {
             Box(
@@ -41,7 +42,7 @@ fun Note(modifier: Modifier, time: String, notesText: String, header: String, id
                     )
                     if (notesText.isNotEmpty()) {
                         Text(
-                            text = notesText, maxLines = 1,
+                            text = "$notesText...", maxLines = 1,
                             fontSize = 12.sp, color = Color.Gray
                         )
                     }

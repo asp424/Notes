@@ -27,16 +27,11 @@ fun ShareCanvasButton(
     with(mainDep.notesViewModel.uiStates) {
         Canvas(
             Modifier
-                .offset(x, 0.dp)
-                .noRippleClickable {
-                    click()
-                    false.setIsExpandShare
-                }
-                .scale(scale)
+                .offset(x, 0.dp).noRippleClickable { click(); false.setIsExpandShare }.scale(scale)
         ) {
             drawCircle(Color.White, 15.dp.toPx(), Offset.Zero)
             paint.apply { textSize = textS }
-            drawIntoCanvas { it.nativeCanvas.drawText(text, textX, 15f, paint) }
+            drawIntoCanvas { it.nativeCanvas.drawText(text, textX, 5.dp.toPx(), paint) }
         }
     }
 }

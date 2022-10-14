@@ -4,6 +4,9 @@ import android.graphics.Typeface
 import android.text.method.LinkMovementMethod
 import android.text.style.*
 import android.view.View
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.FormatColorFill
+import androidx.compose.material.icons.rounded.FormatColorText
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.toArgb
 import com.lm.notes.utils.log
@@ -47,6 +50,10 @@ sealed class SpanType {
         is Italic -> Typeface.ITALIC
         else -> 0
     }
+
+    val getIcon
+        get() = if (this is Background)
+            Icons.Rounded.FormatColorFill else Icons.Rounded.FormatColorText
 
     val clazz
         get() = when (this) {

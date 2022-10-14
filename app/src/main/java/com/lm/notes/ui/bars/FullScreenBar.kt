@@ -1,6 +1,7 @@
 package com.lm.notes.ui.bars
 
 import android.graphics.Typeface
+import android.os.Build
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
@@ -73,7 +74,7 @@ fun FullScreenBar(animScaleShare: Float, animScaleNotShare: Float) {
                                     }\n\n$text", ShareType.AsHtml,
                                     timestampChangeState.value
                                 )
-                            }, animScaleShare, paint, ".html", -40f, 12.dp.toPx())
+                            }, animScaleShare, paint, ".html", -13.dp.toPx(), 11.dp.toPx())
 
                             ShareCanvasButton(asTxtDp, click = {
                                 filesProvider.shareAsFile(
@@ -85,12 +86,12 @@ fun FullScreenBar(animScaleShare: Float, animScaleNotShare: Float) {
                                     ShareType.AsTxt,
                                     timestampChangeState.value
                                 )
-                            }, animScaleShare, paint, ".txt", -35f, 14.dp.toPx())
+                            }, animScaleShare, paint, ".txt", -12.dp.toPx(), 14.dp.toPx())
 
                             (LocalContext.current as MainActivity).apply {
                                 ShareCanvasButton(txtDp, click = {
                                     filesProvider.shareAsText(text)
-                                }, animScaleShare, paint, "txt", -26f, 14.dp.toPx())
+                                }, animScaleShare, paint, "txt", -9.dp.toPx(), 14.dp.toPx())
                             }
                             Canvas(
                                 Modifier
@@ -107,7 +108,7 @@ fun FullScreenBar(animScaleShare: Float, animScaleNotShare: Float) {
                                     Icons.Rounded.Share,
                                     null,
                                     modifier = Modifier.noRippleClickable { expandShare(coroutine) },
-                                    tint = White
+                                    tint = getSecondColor
                                 )
                             }
                             Box(
@@ -120,15 +121,19 @@ fun FullScreenBar(animScaleShare: Float, animScaleNotShare: Float) {
                                     null,
                                     modifier = Modifier
                                         .noRippleClickable {
-                                            noteAppWidgetController
-                                                .pinNoteWidget(
-                                                    Pair(fromHtml(editText.text.toString())
-                                                        .toString(),
-                                                        headerState.value.text
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                noteAppWidgetController
+                                                    .pinNoteWidget(
+                                                        Pair(fromHtml(editText.text.toString())
+                                                            .toString(),
+                                                            with(headerState.value.text) {
+                                                                header(isNewHeader(this))
+                                                            }
+                                                        )
                                                     )
-                                                )
+                                            } else noteAppWidgetController.showUnCompatibleToast()
                                         },
-                                    tint = White
+                                    tint = getSecondColor
                                 )
                             }
                         }

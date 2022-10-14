@@ -2,16 +2,23 @@ package com.lm.notes.data.models
 
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
+import android.widget.EditText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.lm.notes.ui.cells.view.SpanType
 import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.ui.theme.main
+import com.lm.notes.utils.animScale
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -19,6 +26,7 @@ import kotlinx.coroutines.launch
 @Stable
 data class UiStates(
     private var isFormatMode: MutableState<Boolean> = mutableStateOf(false),
+    private var setSelectionEnable: MutableState<Boolean> = mutableStateOf(false),
     private var colorPickerBackgroundIsShow: MutableState<Boolean> = mutableStateOf(false),
     private var colorPickerForegroundIsShow: MutableState<Boolean> = mutableStateOf(false),
     private var colorPickerUnderlinedIsShow: MutableState<Boolean> = mutableStateOf(false),
@@ -33,38 +41,41 @@ data class UiStates(
     private var clipboardIsEmpty: MutableState<Boolean> = mutableStateOf(false),
     private var isDeleteMode: MutableState<Boolean> = mutableStateOf(false),
     private var isFullscreenMode: MutableState<Boolean> = mutableStateOf(false),
-    private var isMainMode: MutableState<Boolean> = mutableStateOf(false),
+    private var isMainMode: MutableState<Boolean> = mutableStateOf(true),
     private var isExpandShare: MutableState<Boolean> = mutableStateOf(false),
     private var settingsVisible: MutableState<Boolean> = mutableStateOf(false),
     private var notShareVisible: MutableState<Boolean> = mutableStateOf(true),
     private var textIsEmpty: MutableState<Boolean> = mutableStateOf(true),
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
+    val secondColor: MutableState<Color> = mutableStateOf(main),
     val isClickableNote: MutableState<Boolean> = mutableStateOf(true),
     var selection: Pair<Int, Int> = Pair(-1, -1)
 ) {
     val getIsFormatMode get() = isFormatMode.value
+    val getSetSelectionEnable get() = setSelectionEnable.value
     val getIsClickableNote get() = isClickableNote.value
     val getTextIsEmpty get() = textIsEmpty.value
     val getNotShareVisible get() = notShareVisible.value
     val getMainColor get() = mainColor.value
+    val getSecondColor get() = secondColor.value
     val getSettingsVisible get() = settingsVisible.value
     val getSelection get() = selection
     val getIsExpandShare get() = isExpandShare.value
     val getIsMainMode get() = isMainMode.value
     val getIsFullscreenMode get() = isFullscreenMode.value
     val getIsDeleteMode get() = isDeleteMode.value
-    val getIsSelected get() = isSelected.value
-    val getClipboardIsEmpty get() = clipboardIsEmpty.value
-    val getColorPickerBackgroundIsShow get() = colorPickerBackgroundIsShow.value
-    val getColorPickerForegroundIsShow get() = colorPickerForegroundIsShow.value
-    val getColorButtonBackground get() = colorButtonBackground.value
-    val getColorButtonForeground get() = colorButtonForeground.value
-    val getColorButtonUnderlined get() = colorButtonUnderlined.value
-    val getColorButtonBold get() = colorButtonBold.value
-    val getColorButtonClick get() = colorButtonClick.value
-    val getColorButtonItalic get() = colorButtonItalic.value
-    val getColorButtonStrikeThrough get() = colorButtonStrikeThrough.value
+    private val getIsSelected get() = isSelected.value
+    private val getClipboardIsEmpty get() = clipboardIsEmpty.value
+    private val getColorPickerBackgroundIsShow get() = colorPickerBackgroundIsShow.value
+    private val getColorPickerForegroundIsShow get() = colorPickerForegroundIsShow.value
+    private val getColorButtonBackground get() = colorButtonBackground.value
+    private val getColorButtonForeground get() = colorButtonForeground.value
+    private val getColorButtonUnderlined get() = colorButtonUnderlined.value
+    private val getColorButtonBold get() = colorButtonBold.value
+    private val getColorButtonClick get() = colorButtonClick.value
+    private val getColorButtonItalic get() = colorButtonItalic.value
+    private val getColorButtonStrikeThrough get() = colorButtonStrikeThrough.value
     val Boolean.setIsFormatMode get() = run { isFormatMode.value = this }
     private val Boolean.setIsDeleteMode get() = run { isDeleteMode.value = this }
     private val Boolean.setIsFullscreenMode get() = run { isFullscreenMode.value = this }
@@ -86,6 +97,7 @@ data class UiStates(
     private val Color.setColorButtonItalic get() = run { colorButtonItalic.value = this }
     private val Color.setColorButtonClick get() = run { colorButtonClick.value = this }
     val Color.setMainColor get() = run { mainColor.value = this }
+    val Color.setSecondColor get() = run { secondColor.value = this }
     private val Color.setColorButtonStrikeThrough
         get() = run {
             colorButtonStrikeThrough.value = this
@@ -98,6 +110,8 @@ data class UiStates(
         }
 
     val Boolean.setIsSelected get() = run { isSelected.value = this }
+
+    val Boolean.setSetSelectionEnable get() = run { setSelectionEnable.value = this }
 
     val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
 
@@ -192,16 +206,16 @@ data class UiStates(
     fun setDeleteMode() {
         true.setIsDeleteMode
         false.setIsMainMode
+        false.setIsClickableNote
+        listDeleteAble.clear()
     }
 
     fun setMainMode() {
         false.setIsFullscreenMode
-        true.setIsMainMode
+        (!getSettingsVisible).setIsMainMode
+        (!getIsDeleteMode).setIsMainMode
         false.setIsExpandShare
-        false.setIsDeleteMode
-        false.setSettingsVisible
         true.setNotShareVisible
-        listDeleteAble.clear()
     }
 
     fun setFullScreenMode() {
@@ -217,7 +231,17 @@ data class UiStates(
         listDeleteAble.remove(id)
     }
 
-    fun expandShare(coroutineScope: CoroutineScope){
+    fun cancelDeleteMode() {
+        listDeleteAble.clear()
+        false.setIsDeleteMode
+        true.setIsMainMode
+        CoroutineScope(IO).launch {
+            delay(300)
+            true.setIsClickableNote
+        }
+    }
+
+    fun expandShare(coroutineScope: CoroutineScope) {
         coroutineScope.launch {
             if (getIsExpandShare) {
                 false.setIsExpandShare
@@ -230,4 +254,39 @@ data class UiStates(
             }
         }
     }
+
+    fun SpanType.getColorPicker() = if (this is SpanType.Background)
+        getColorPickerBackgroundIsShow else getColorPickerForegroundIsShow
+
+    @Composable
+    fun ImageVector.getScale(textIsEmpty: Boolean) = when (this) {
+            Icons.Rounded.ContentPaste -> animScale(getClipboardIsEmpty)
+            Icons.Rounded.SelectAll -> animScale(textIsEmpty)
+            Icons.Rounded.ContentCopy -> animScale(getIsSelected && textIsEmpty)
+            Icons.Rounded.CopyAll -> animScale(textIsEmpty)
+            Icons.Rounded.ContentCut -> animScale(getIsSelected && textIsEmpty)
+            else -> 0f
+        }
+
+    fun ImageVector.getSpanType() = when (this) {
+            Icons.Rounded.FormatColorFill -> SpanType.Background(getColorButtonBackground.toArgb())
+            Icons.Rounded.FormatColorText -> SpanType.Foreground(getColorButtonForeground.toArgb())
+            Icons.Rounded.FormatUnderlined -> SpanType.Underlined
+            Icons.Rounded.FormatBold -> SpanType.Bold
+            Icons.Rounded.FormatItalic -> SpanType.Italic
+            Icons.Rounded.FormatStrikethrough -> SpanType.StrikeThrough
+            Icons.Rounded.AddLink -> SpanType.Url
+            else -> SpanType.Bold
+        }
+
+    fun ImageVector.getTint() = when (this) {
+            Icons.Rounded.FormatColorFill -> getColorButtonBackground
+            Icons.Rounded.FormatColorText -> getColorButtonForeground
+            Icons.Rounded.FormatUnderlined -> getColorButtonUnderlined
+            Icons.Rounded.FormatBold -> getColorButtonBold
+            Icons.Rounded.FormatItalic -> getColorButtonItalic
+            Icons.Rounded.FormatStrikethrough -> getColorButtonStrikeThrough
+            Icons.Rounded.AddLink -> getColorButtonClick
+            else -> White
+        }
 }

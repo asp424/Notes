@@ -32,6 +32,8 @@ class NotesViewModel @Inject constructor(
 
     fun updateNoteFromUi(newText: String) = notesRepository.updateNoteFromUi(newText)
 
+    fun checkForEmptyText() = notesRepository.checkForEmptyText()
+
     fun updateHeaderFromUi(text: TextFieldValue) = notesRepository.updateHeaderFromUi(text)
 
     fun isMustRemoveFromList() = notesRepository.isMustRemoveFromList()
