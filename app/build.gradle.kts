@@ -101,6 +101,9 @@ dependencies {
     implementation (
         "net.yslibrary" +
                 ".keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3")
+
+    //Leak Canary
+    debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.9.1")
 }
 
 

@@ -29,7 +29,7 @@ fun EditTextAndroidView() {
                 LocalDensity.current.apply {
                     Box(
                         Modifier
-                            .border(1.dp, getMainColor)
+                            .border(2.dp, getSecondColor)
                             .transformable(state)
                             .fillMaxSize()
                             .graphicsLayer { editText.textSize = scale * 16 }, Alignment.TopStart

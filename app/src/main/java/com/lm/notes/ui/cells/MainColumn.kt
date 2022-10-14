@@ -3,7 +3,6 @@ package com.lm.notes.ui.cells
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.di.compose.MainDep.mainDep
@@ -70,7 +69,7 @@ fun MainColumn() {
                                                     false.setIsClickableNote
                                                     setFullscreenNoteModel(id, text)
                                                     setText(text)
-                                                    updateNoteFromUi(text)
+                                                    checkForEmptyText().setTextIsEmpty
                                                     clipboardProvider.clipBoardIsNotEmpty?.setClipboardIsEmpty
                                                     false.setIsSelected
                                                     navController.navigate("fullScreenNote") {

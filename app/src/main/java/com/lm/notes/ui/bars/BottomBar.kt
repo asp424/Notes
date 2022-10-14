@@ -15,7 +15,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -34,6 +33,7 @@ fun BottomBar() {
                     {
                         addNewNote(lifecycleScope) {
                             editTextController.setText("")
+                            checkForEmptyText().setTextIsEmpty
                             (clipboardProvider.clipBoardIsNotEmpty)?.setClipboardIsEmpty
                             navController.navigate("fullScreenNote") {
                                 popUpTo("mainList")

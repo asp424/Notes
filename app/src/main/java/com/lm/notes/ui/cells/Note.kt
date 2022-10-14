@@ -26,7 +26,7 @@ fun Note(modifier: Modifier, time: String, notesText: String, header: String, id
                 .wrapContentHeight(), contentColor = Color.White,
             shape = RoundedCornerShape(8.dp), border =
             if (listDeleteAble.contains(id) && getIsDeleteMode) BorderStroke(2.dp, Color.Red)
-            else BorderStroke(1.dp, getMainColor),
+            else BorderStroke(2.dp, getSecondColor),
             elevation = if (listDeleteAble.contains(id) && getIsDeleteMode) 50.dp else 10.dp
         ) {
             Box(
