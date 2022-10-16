@@ -11,10 +11,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CanvasCircle(x: Dp, scale: Float, radius: Float, color: Color) {
+fun CanvasCircle(x: Dp, scale: Float, radius: Dp, color: Color) {
     Canvas(
         Modifier
             .offset(x, 0.dp)
             .scale(scale)
-    ) { drawCircle(color, radius, Offset.Zero) }
+    ) { drawCircle(color, radius.toPx() / density, Offset.Zero) }
 }

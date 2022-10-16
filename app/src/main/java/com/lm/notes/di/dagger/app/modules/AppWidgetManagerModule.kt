@@ -1,9 +1,8 @@
-package com.lm.notes.di.dagger.note_widget.modules
+package com.lm.notes.di.dagger.app.modules
 
 import android.app.Application
 import android.appwidget.AppWidgetManager
 import com.lm.notes.di.dagger.app.AppScope
-import com.lm.notes.di.dagger.app.NoteWidgetScope
 import dagger.Module
 import dagger.Provides
 
@@ -11,7 +10,7 @@ import dagger.Provides
 class AppWidgetManagerModule {
 
     @Provides
-    @NoteWidgetScope
+    @AppScope
     fun providesAppWidgetManager(application: Application)
     = AppWidgetManager.getInstance(application)
 }

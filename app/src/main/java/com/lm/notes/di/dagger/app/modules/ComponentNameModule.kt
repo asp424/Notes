@@ -1,8 +1,8 @@
-package com.lm.notes.di.dagger.note_widget.modules
+package com.lm.notes.di.dagger.app.modules
 
 import android.app.Application
 import android.content.ComponentName
-import com.lm.notes.di.dagger.app.NoteWidgetScope
+import com.lm.notes.di.dagger.app.AppScope
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidget
 import dagger.Module
 import dagger.Provides
@@ -11,7 +11,7 @@ import dagger.Provides
 class ComponentNameModule {
 
     @Provides
-    @NoteWidgetScope
+    @AppScope
     fun providesComponentName(application: Application)
             = ComponentName(application, NoteAppWidget::class.java)
 }

@@ -15,17 +15,15 @@ import com.lm.notes.ui.cells.SettingsIcon
 fun DefaultBar(animScale: Float) {
     with(mainDep) {
         (width - 55.dp).also { x ->
-            LocalDensity.current.apply {
                 CanvasCircle(
-                    x - infoOffset.value, animScale, infoOffset.value.value + 20f, Red
+                    x - infoOffset.value, animScale, infoOffset.value + 20.dp, Red
                 )
                 CanvasCircle(
-                    x + infoOffset.value, animScale, 15.dp.toPx(), White
+                    x + infoOffset.value, animScale, 15.dp, White
                 )
             }
-        }
         LogOut(animScale)
-        AuthIcon(animScale)
         SettingsIcon()
+        AuthIcon(animScale)
     }
 }

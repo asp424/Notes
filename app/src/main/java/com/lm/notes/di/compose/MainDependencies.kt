@@ -16,16 +16,13 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.lm.notes.core.noteWidgetComponent
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.presentation.ViewModelFactory
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
-import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
-import javax.inject.Inject
 
 data class MainDependencies(
     val width: Dp,
@@ -46,41 +43,39 @@ data class MainDependencies(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun mainScreenDependencies(
+fun MainScreenDependencies(
     sPreferences: SPreferences,
     viewModelFactory: ViewModelFactory,
     firebaseAuth: FirebaseAuth,
     filesProvider: FilesProvider,
+    noteAppWidgetController: NoteAppWidgetController,
     content: @Composable () -> Unit
 ) = with(LocalConfiguration.current) {
-
     val infoVisibility = remember { mutableStateOf(false) }
-    LocalViewModelStoreOwner.current?.also { owner ->
-        LocalContext.current.also { context ->
-            CompositionLocalProvider(
-                Local provides MainDependencies(
-                    width = screenWidthDp.dp,
-                    height = screenHeightDp.dp,
-                    iconUri = remember { mutableStateOf(checkNotNull(sPreferences.readIconUri())) },
-                    progressVisibility = remember { mutableStateOf(false) },
-                    infoVisibility = remember { infoVisibility },
-                    coroutine = rememberCoroutineScope(),
-                    infoOffset = animateDpAsState(
-                        if (infoVisibility.value) 20.dp else 0.dp, tween(500)
-                    ),
-                    notesViewModel = remember {
-                        ViewModelProvider(owner, viewModelFactory)[NotesViewModel::class.java]
-                    },
-                    firebaseAuth = firebaseAuth,
-                    sPreferences = sPreferences,
-                    listState = rememberLazyListState(),
-                    filesProvider = filesProvider,
-                    navController = rememberAnimatedNavController(),
-                    noteAppWidgetController = context.noteWidgetComponent.noteAppWidgetController()
-                ), content = content
-            )
-        }
-    }
+    val context = LocalContext.current as MainActivity
+    val owner = LocalViewModelStoreOwner.current ?: context
+    CompositionLocalProvider(
+        Local provides MainDependencies(
+            width = screenWidthDp.dp,
+            height = screenHeightDp.dp,
+            iconUri = remember { mutableStateOf(checkNotNull(sPreferences.readIconUri())) },
+            progressVisibility = remember { mutableStateOf(false) },
+            infoVisibility = remember { infoVisibility },
+            coroutine = rememberCoroutineScope(),
+            infoOffset = animateDpAsState(
+                if (infoVisibility.value) 20.dp else 0.dp, tween(500)
+            ),
+            notesViewModel = remember {
+                ViewModelProvider(owner, viewModelFactory)[NotesViewModel::class.java]
+            },
+            firebaseAuth = firebaseAuth,
+            sPreferences = sPreferences,
+            listState = rememberLazyListState(),
+            filesProvider = filesProvider,
+            navController = rememberAnimatedNavController(),
+            noteAppWidgetController = noteAppWidgetController
+        ), content = content
+    )
 }
 
 private val Local = staticCompositionLocalOf<MainDependencies> { error("No value provided") }

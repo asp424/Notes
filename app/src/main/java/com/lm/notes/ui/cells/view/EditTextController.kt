@@ -5,25 +5,26 @@ import android.text.Html
 import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FormatClear
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.text.HtmlCompat
 import androidx.core.text.set
 import androidx.core.text.toHtml
 import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.models.UiStates
+import com.lm.notes.ui.core.SpanType
+import com.lm.notes.ui.core.SpanType.Bold.listClasses
 import com.lm.notes.utils.getAction
-import com.lm.notes.utils.log
 import javax.inject.Inject
 
 
 interface EditTextController {
 
-    fun setText(text: String)
+    fun setText(newText: String)
+
+    fun getHtmlText(text: String): String
 
     fun SpanType.setSpan()
 
@@ -59,9 +60,13 @@ interface EditTextController {
 
     fun hideKeyboard()
 
-    fun ImageVector.buttonFormatAction()
+    fun SpanType.buttonFormatAction()
 
     fun SpanType.getType(color: Int)
+
+    fun showDialogChangeKeyboard()
+
+    fun removeUnderLinedFromKeyBoard()
 
     class Base @Inject constructor(
         private val noteData: NoteData,
@@ -97,7 +102,12 @@ interface EditTextController {
             }
         }
 
-        override fun setText(text: String) = editText.setText(Html.fromHtml(text, htmlMode).trim())
+        @SuppressLint("SetTextI18n")
+        override fun setText(newText: String) = with(editText) {
+            setText(Html.fromHtml(newText, htmlMode).trim())
+        }
+
+        override fun getHtmlText(text: String) = fromHtml(text).toString()
 
         override fun SpanType.removeSpan() {
             uiStates.setButtonWhite(this)
@@ -132,12 +142,7 @@ interface EditTextController {
             with(uiStates) { listClasses.forEach { setAutoColor(it, listSpans(it.clazz)) } }
         }
 
-        private val listClasses by lazy {
-            listOf(
-                SpanType.StrikeThrough, SpanType.Underlined, SpanType.Bold, SpanType.Italic,
-                SpanType.Background(), SpanType.Foreground(), SpanType.Url
-            )
-        }
+
 
         private fun <T : Any> EditText.setSpansAroundSelected(start: Int, end: Int, span: () -> T) {
             if (start < selectionStart) text[start..selectionStart] = span.invoke()
@@ -178,11 +183,10 @@ interface EditTextController {
             hideKeyboard()
             showSoftInputOnFocus = false
             isCursorVisible = false
-            with(uiStates) {
-                true.setIsFormatMode
-                true.setIsSelected
-            }
+            uiStates.setFormat()
         }
+
+        override fun showDialogChangeKeyboard() = inputMethodManager.showInputMethodPicker()
 
         override fun setEditMode() = with(editText) {
             if (!showSoftInputOnFocus) showSoftInputOnFocus = true
@@ -190,6 +194,12 @@ interface EditTextController {
             false.setIsSelected
         }
             removeSelection()
+        }
+
+        override fun removeUnderLinedFromKeyBoard() = with(editText.text){
+            for (span in this.getSpans(0, length, UnderlineSpan::class.java)) {
+                removeSpan(span)
+            }
         }
 
         override fun removeSelection() = with(editText) {
@@ -207,8 +217,9 @@ interface EditTextController {
 
         private val flagHtml by lazy { Html.FROM_HTML_MODE_LEGACY }
 
-        override fun hideKeyboard()
-        { inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0) }
+        override fun hideKeyboard() {
+            inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0)
+        }
 
         override fun setSelection() = with(uiStates.getSelection) {
             if (this != Pair(0, 0) && this != Pair(-1, -1)) {
@@ -219,17 +230,17 @@ interface EditTextController {
         override fun saveSelection() {
             with(editText) {
                 with(uiStates) {
-                    Pair(selectionStart, selectionEnd).setSelection; true.setIsSelected
+                    Pair(selectionStart, selectionEnd).setSelection; setFormat()
                 }
             }
         }
 
-        override fun ImageVector.buttonFormatAction() =
+        override fun SpanType.buttonFormatAction() =
             with(uiStates) {
-                with(getSpanType()) {
+                with(this@buttonFormatAction) {
                     if (isHaveSpans()) removeSpan() else getAction(uiStates, this)
                 }
-                if (this@buttonFormatAction == Icons.Rounded.FormatClear) removeAllSpans()
+                if (this@buttonFormatAction == SpanType.Clear) removeAllSpans()
             }
 
         private val htmlMode by lazy { Html.FROM_HTML_MODE_LEGACY }

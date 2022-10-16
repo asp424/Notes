@@ -1,6 +1,5 @@
 package com.lm.notes.data.local_data
 
-import android.text.Html
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.text.HtmlCompat
 import com.lm.notes.data.models.NoteModel
@@ -54,10 +53,9 @@ interface NoteData {
 
         override fun isNewHeader(text: String) = text.startsWith(NEW_TAG)
 
-        override fun updateHeaderFromUi(text: TextFieldValue)
-        = with(noteModelFullScreen.value) {
+        override fun updateHeaderFromUi(text: TextFieldValue) = with(noteModelFullScreen.value) {
             headerState.value = text
-             isChanged = true
+            isChanged = true
         }
 
         override fun checkForEmptyText() =
@@ -68,7 +66,7 @@ interface NoteData {
             ).isNotEmpty()
 
 
-        companion object{
+        companion object {
             const val NEW_TAG = "^^^^$"
         }
     }

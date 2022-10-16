@@ -16,7 +16,7 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
-fun MainList(notesList: List<NoteModel>, note: @Composable (Int) -> Unit) {
+fun MainList(notesList: List<NoteModel>, note: @Composable List<NoteModel>.(Int) -> Unit) {
     val listState = rememberLazyListState()
     with(mainDep) {
         val modifierSize = remember { Modifier.size(width, height - 80.dp) }
@@ -33,12 +33,14 @@ fun MainList(notesList: List<NoteModel>, note: @Composable (Int) -> Unit) {
                                     Box(
                                         modifier = modifierSize,
                                         contentAlignment = Alignment.TopCenter
-                                    ) { note(it) }
-                                } else note(it)
+                                    ) { note(notesList, it) }
+                                } else note(notesList, it)
                             }
                         )
                     },
-                    modifier = Modifier.fillMaxSize().noRippleClickable { cancelDeleteMode() },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .noRippleClickable(remember { { cancelDeleteMode () } }),
                     contentPadding = PaddingValues(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 )

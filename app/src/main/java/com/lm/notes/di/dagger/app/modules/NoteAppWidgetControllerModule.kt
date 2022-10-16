@@ -1,6 +1,6 @@
-package com.lm.notes.di.dagger.note_widget.modules
+package com.lm.notes.di.dagger.app.modules
 
-import com.lm.notes.di.dagger.app.NoteWidgetScope
+import com.lm.notes.di.dagger.app.AppScope
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import dagger.Binds
 import dagger.Module
@@ -9,7 +9,7 @@ import dagger.Module
 interface NoteAppWidgetControllerModule {
 
     @Binds
-    @NoteWidgetScope
+    @AppScope
     fun bindNoteAppWidgetController(
         noteAppWidgetController: NoteAppWidgetController.Base
     ): NoteAppWidgetController

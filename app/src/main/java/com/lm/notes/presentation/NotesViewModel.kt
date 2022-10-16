@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.data.rerositories.NotesRepository
 import com.lm.notes.ui.cells.view.EditTextController
-import com.lm.notes.utils.format_text.ClipboardProvider
+import com.lm.notes.data.local_data.ClipboardProvider
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 

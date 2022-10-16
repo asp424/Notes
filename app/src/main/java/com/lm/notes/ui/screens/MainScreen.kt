@@ -5,7 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
@@ -20,7 +20,7 @@ import com.lm.notes.ui.bars.TopBar
 import com.lm.notes.ui.cells.NavHost
 import com.lm.notes.ui.cells.SettingsCard
 import com.lm.notes.utils.backPressHandle
-import com.lm.notes.utils.log
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen() {
@@ -30,23 +30,23 @@ fun MainScreen() {
             .fillMaxSize()
             .alpha(0.5f), contentScale = ContentScale.Crop
     )
-
     with(mainDep) {
-        with(notesViewModel) {
-            noteModelFullScreen.collectAsState().value.also { noteModel ->
-                Column {
-                    TopBar()
-                    NavHost(noteModel)
-                }
-                BottomBar()
-                FormatBar()
-                (LocalContext.current as MainActivity).apply {
-                    BackHandler {
-                        backPressHandle(navController, notesViewModel, noteModel, this)
+        Column {
+            TopBar()
+            NavHost()
+        }
+        BottomBar()
+        FormatBar()
+        val mainActivity = LocalContext.current as MainActivity
+        BackHandler(
+            onBack = remember {
+                {
+                    coroutine.launch {
+                        backPressHandle(navController, notesViewModel, mainActivity)
                     }
                 }
-                SettingsCard()
             }
-        }
+        )
     }
+    SettingsCard()
 }

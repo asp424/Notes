@@ -11,13 +11,11 @@ import com.lm.notes.ui.cells.EditText
 import com.lm.notes.ui.cells.HeaderTextField
 
 @Composable
-fun FullScreenNote(
-    noteModel: NoteModel
-) {
+fun FullScreenNote() {
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
             ClipboardBar()
-            HeaderTextField(noteModel)
+            HeaderTextField()
             EditText()
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.IconClipBoard
+import com.lm.notes.utils.log
 
 @Composable
 fun ClipboardBar() {
@@ -20,17 +21,8 @@ fun ClipboardBar() {
         with(notesViewModel.uiStates) {
             notesViewModel.noteModelFullScreen.value.text.apply {
                 Card(
-                    Modifier
-                        .height(45.dp)
-                        .padding(1.dp)
-                        .fillMaxWidth(),
-                    RoundedCornerShape(
-                        topEnd = 0.dp,
-                        topStart = 0.dp,
-                        bottomEnd = 20.dp,
-                        bottomStart = 20.dp
-                    ),
-                    backgroundColor = getMainColor
+                    Modifier.height(45.dp).padding(1.dp).fillMaxWidth(),
+                    RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp), getMainColor
                 ) {
                     Box(
                         Modifier.padding(start = 10.dp), Alignment.Center
@@ -46,11 +38,13 @@ fun ClipboardBar() {
 }
 
 val listIconsClipboard
-    get() = listOf(
-        Icons.Rounded.ContentPaste,
-        Icons.Rounded.SelectAll,
-        Icons.Rounded.ContentCopy,
-        Icons.Rounded.CopyAll,
-        Icons.Rounded.ContentCut,
-    )
+    by lazy {
+        listOf(
+            Icons.Rounded.ContentPaste,
+            Icons.Rounded.SelectAll,
+            Icons.Rounded.ContentCopy,
+            Icons.Rounded.CopyAll,
+            Icons.Rounded.ContentCut,
+        )
+    }
 

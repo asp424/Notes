@@ -5,4 +5,10 @@
     <string name="widget_not_compatible">Device not compatible this function</string>
     <string name="selected_text_was_copied">Selected text was copied to clipboard</string>
     <string name="all_text_was_copied">All text was copied to clipboard</string>
+    <string name="text_plain">text/plain</string>
+    <string name="text_all">text_file</string>
+    <string name="application_msword">application/msword</string>
+    <string name="second_color">Second color</string>
+    <string name="change_keyboard">Change keyboard</string>
+    <string name="main_color">Main color</string>
 </resources>

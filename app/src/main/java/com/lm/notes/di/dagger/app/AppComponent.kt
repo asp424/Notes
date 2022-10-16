@@ -3,8 +3,8 @@ package com.lm.notes.di.dagger.app
 import android.app.Application
 import android.widget.EditText
 import com.lm.notes.data.local_data.IntentBorn
-import com.lm.notes.di.dagger.note_widget.NoteWidgetComponent
 import com.lm.notes.presentation.MainActivity
+import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.cells.view.app_widget.ToastCreator
 import dagger.BindsInstance
 import dagger.Component
@@ -26,13 +26,12 @@ interface AppComponent {
         fun editText(editText: EditText): Builder
 
         @BindsInstance
-        fun intentBuilder(intentBuilder: IntentBorn): Builder
-
-        @BindsInstance
         fun filesDir(filesDir: File): Builder
 
         fun create(): AppComponent
     }
 
     fun inject(mainActivity: MainActivity)
+
+    fun noteAppWidgetController(): NoteAppWidgetController
 }

@@ -1,15 +1,13 @@
-package com.lm.notes.ui.cells.view
+package com.lm.notes.ui.core
 
 import android.graphics.Typeface
-import android.text.method.LinkMovementMethod
 import android.text.style.*
-import android.view.View
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.FormatColorFill
 import androidx.compose.material.icons.rounded.FormatColorText
 import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.toArgb
-import com.lm.notes.utils.log
 
 sealed class SpanType {
     class Background(var color: Int = 0) : SpanType()
@@ -20,6 +18,7 @@ sealed class SpanType {
     object StrikeThrough : SpanType()
     class Relative(var scale: Float = 0f) : SpanType()
     object Url : SpanType()
+    object Clear : SpanType()
 
     val getColor
         get() = when (this) {
@@ -31,7 +30,12 @@ sealed class SpanType {
             is StrikeThrough -> Green.toArgb()
             is Relative -> Green.toArgb()
             is Url -> Green.toArgb()
+            is Clear -> White.toArgb()
         }
+
+    val listClasses by lazy {
+        listOf(StrikeThrough, Underlined, Bold, Italic, Background(), Foreground(), Url)
+    }
 
     val instance
         get() = when (this) {
@@ -43,6 +47,7 @@ sealed class SpanType {
             is StrikeThrough -> StrikethroughSpan()
             is Relative -> RelativeSizeSpan(0f)
             is Url -> URLSpan("https://www.google.com/")
+            is Clear -> StyleSpan(Typeface.NORMAL)
         }
 
     fun getTypeFace(type: SpanType) = when (type) {
@@ -65,5 +70,6 @@ sealed class SpanType {
             is StrikeThrough -> StrikethroughSpan::class.java
             is Relative -> RelativeSizeSpan::class.java
             is Url -> URLSpan::class.java
+            is Clear -> StyleSpan::class.java
         }
 }

@@ -1,58 +1,59 @@
 package com.lm.notes.ui.cells
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.utils.animDp
 
 @Composable
-fun Note(modifier: Modifier, time: String, notesText: String, header: String, id: String) {
-    with(mainDep.notesViewModel.uiStates) {
-        Card(
-            modifier = modifier
-                .padding(bottom = 10.dp)
-                .fillMaxWidth()
-                .wrapContentHeight(), contentColor = Color.White,
-            shape = RoundedCornerShape(8.dp), border =
-            if (listDeleteAble.contains(id) && getIsDeleteMode) BorderStroke(2.dp, Color.Red)
-            else BorderStroke(2.dp, getSecondColor),
-            elevation = if (listDeleteAble.contains(id) && getIsDeleteMode) 50.dp else 10.dp
-        ) {
-            Box(
-                Modifier.padding(10.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Column {
-                    Text(
-                        text = header,
-                        maxLines = 1,
-                        style = TextStyle(fontWeight = FontWeight.Bold),
-                        fontSize = 14.sp
-                    )
-                    if (notesText.isNotEmpty()) {
-                        Text(
-                            text = "$notesText...", maxLines = 1,
-                            fontSize = 12.sp, color = Color.Gray
+fun Note(modifier: Modifier, time: String, notesText: String, header: String, id: String
+         ) {
+    with(mainDep){
+        with(notesViewModel.uiStates) {
+
+            Card(
+                modifier = modifier
+                    .padding(bottom = 10.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                   /* .size(
+                        animDp(
+                            target =
+                            getIsFullscreenMode,
+                            first = width,
+                            second = width - 20.dp
+                        ), animDp(
+                            target =
+                            getIsFullscreenMode,
+                            first = height - 75.dp,
+                            second =  80.dp
                         )
-                    }
-                    Text(
-                        text = time,
-                        maxLines = 1,
-                        fontSize = 10.sp,
-                        fontStyle = FontStyle.Italic,
-                        modifier = Modifier.padding(top = 4.dp)
                     )
+                    */
+                ,
+                shape = RoundedCornerShape(8.dp), border = getNoteCardBorder(id),
+                elevation = getNoteCardElevation(id)
+            ) {
+                Box(Modifier.padding(10.dp), CenterStart) {
+                    Column {
+                        NoteCardText(header)
+                        if (notesText.isNotEmpty()) {
+                            Text(
+                                text = "$notesText...", maxLines = 1,
+                                fontSize = 12.sp, color = Color.Gray
+                            )
+                        }
+                        NoteCardText(time, false)
+                    }
                 }
             }
         }

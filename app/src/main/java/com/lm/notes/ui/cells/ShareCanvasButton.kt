@@ -1,37 +1,79 @@
 package com.lm.notes.ui.cells
 
+import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.NativePaint
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.presentation.MainActivity
+import com.lm.notes.utils.animScale
+import com.lm.notes.utils.getHeader
 import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.shareDp
 
 @Composable
-fun ShareCanvasButton(
-    x: Dp, click: () -> Unit,
-    scale: Float, paint: NativePaint,
-    text: String,
-    textX: Float,
-    textS: Float
-) {
-    with(mainDep.notesViewModel.uiStates) {
-        Canvas(
-            Modifier
-                .offset(x, 0.dp).noRippleClickable { click(); false.setIsExpandShare }.scale(scale)
-        ) {
-            drawCircle(Color.White, 15.dp.toPx(), Offset.Zero)
-            paint.apply { textSize = textS }
-            drawIntoCanvas { it.nativeCanvas.drawText(text, textX, 5.dp.toPx(), paint) }
+fun ShareCanvasButton(x: Dp, shareType: ShareType = ShareType.TextPlain) {
+    with(mainDep) {
+        with(notesViewModel) {
+            with(uiStates) {
+                noteModelFullScreen.collectAsState().value.apply {
+                    with(filesProvider) {
+                        val paint = remember {
+                            Paint().asFrameworkPaint().apply {
+                                isAntiAlias = true
+                                typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                            }
+                        }
+                        val activity = LocalContext.current as MainActivity
+
+                        Canvas(
+                            Modifier
+                                .offset(shareDp(x, getIsExpandShare, width), 0.dp)
+                                .noRippleClickable(
+                                    remember(this@apply) {
+                                        {
+                                            val header = with(headerState.value.text) {
+                                                getHeader(isNewHeader(this))
+                                            }
+                                            if (shareType == ShareType.TextPlain)
+                                                shareAsText(text, activity)
+                                            else shareAsFile(shareType, header, activity)
+                                            expandShare(coroutine)
+                                        }
+                                    })
+                                .scale(animScale(getIsFullscreenMode && getTextIsEmpty))
+                        ) {
+                            drawCircle(White, 15.dp.toPx(), Offset.Zero)
+                            paint.apply {
+                                textSize =
+                                    (if (shareType == ShareType.AsHtml) 11.dp else 14.dp).toPx()
+                            }
+
+                            drawIntoCanvas {
+                                it.nativeCanvas.drawText(
+                                    shareType.type, -12.dp.toPx(), 5.dp.toPx(), paint
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
+
+
+

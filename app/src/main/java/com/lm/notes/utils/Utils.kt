@@ -8,24 +8,24 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
-import com.lm.notes.ui.cells.view.SpanType
+import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.cells.view.EditTextController
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,14 +42,22 @@ inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier
     }
 
 @Composable
-fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int) = animateDpAsState(
+fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int = 300) = animateDpAsState(
     if (target) first else second, tween(delay)
 ).value
 
 @Composable
-fun animScale(target: Boolean, duration: Int = 100) = animateFloatAsState(
+fun animScale(target: Boolean, duration: Int = 300) = animateFloatAsState(
     if (target) 1f else 0f, tween(duration)
 ).value
+
+@Composable
+fun shareDp(start: Dp, getIsExpandShare: Boolean, width: Dp, delay: Int = 300) = animDp(
+    target = getIsExpandShare,
+    first = width - start,
+    second = width - 126.dp,
+    delay = delay
+)
 
 fun formatTimestamp(timestamp: Long): String {
     val timeWas = timestamp.toString().asTime()
@@ -86,10 +94,9 @@ private fun String.asTime(): String {
     return timeFormat.format(time)
 }
 
-fun backPressHandle(
+suspend fun backPressHandle(
     navController: NavController,
     notesViewModel: NotesViewModel,
-    noteModel: NoteModel,
     mainActivity: MainActivity
 ) {
     with(notesViewModel) {
@@ -99,17 +106,17 @@ fun backPressHandle(
                     if (getSettingsVisible || getIsDeleteMode) {
                         false.setSettingsVisible
                         cancelDeleteMode()
-                    }
-                    else mainActivity.finish()
+                    } else mainActivity.finish()
                 } else {
                     if (getIsFormatMode) {
                         setEditMode(); onClickEditText(); editText.clearFocus()
                     } else {
                         navController.navigate("mainList"); setEditMode()
-                        true.setIsClickableNote
                         with(notesViewModel) {
-                            if (isMustRemoveFromList()) deleteNote(noteModel.id)
+                            if (isMustRemoveFromList()) deleteNote(noteModelFullScreen.value.id)
                         }
+                        delay(1000)
+                        true.setIsClickableNote
                     }
                 }
                 removeSelection()
@@ -117,6 +124,9 @@ fun backPressHandle(
         }
     }
 }
+
+    fun String.getHeader(isNew: Boolean) = if (isNew)
+        substringAfter(NEW_TAG) else ifEmpty { "No name" }
 
 fun EditTextController.getAction(uiStates: UiStates, spanType: SpanType) = with(uiStates) {
     with(spanType) {
@@ -127,5 +137,6 @@ fun EditTextController.getAction(uiStates: UiStates, spanType: SpanType) = with(
         }
     }
 }
+
 
 

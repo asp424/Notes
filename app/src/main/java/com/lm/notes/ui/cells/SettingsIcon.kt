@@ -20,10 +20,8 @@ fun SettingsIcon() {
         Box(modifier = Modifier.scale(animScale(getIsMainMode))
         ) {
             Icon(Icons.Rounded.Settings, null, modifier = Modifier
-                .noRippleClickable {
-                    if (getSettingsVisible) false.setSettingsVisible else true.setSettingsVisible
-                }
-                .offset((-20).dp, 3.dp), tint = getSecondColor
+                .noRippleClickable(settingsIconClick)
+                , tint = getSecondColor
             )
         }
     }

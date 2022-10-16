@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -30,11 +31,11 @@ fun IconClipBoard(source: ImageVector, textIsEmpty: Boolean) {
             ) {
                 Icon(
                     source, null,
-                    modifier = Modifier
-                        .noRippleClickable(
-                            with(clipboardProvider) { source.clickOnButtonsClipboard() })
-                        .scale(scale),
-                    tint = getSecondColor
+                    Modifier
+                        .noRippleClickable(remember {
+                            { with(clipboardProvider) { source.clickOnButtonsClipboard() } }
+                        })
+                        .scale(scale), getSecondColor
                 )
             }
         }

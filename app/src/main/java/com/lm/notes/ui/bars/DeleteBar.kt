@@ -7,6 +7,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -28,10 +29,14 @@ fun DeleteBar(animScale: Float) {
                     Icon(
                         Icons.Rounded.Delete,
                         null,
-                        modifier = Modifier.noRippleClickable {
-                            listDeleteAble.forEach { deleteNote(it) }
-                            cancelDeleteMode()
-                        },
+                        modifier = Modifier.noRippleClickable (
+                            remember {
+                                {
+                                    listDeleteAble.forEach { deleteNote(it) }
+                                    cancelDeleteMode()
+                                }
+                            }
+                        ),
                         tint = getSecondColor
                     )
                 }
@@ -43,7 +48,7 @@ fun DeleteBar(animScale: Float) {
                     Icon(
                         Icons.Rounded.Close,
                         null,
-                        modifier = Modifier.noRippleClickable { cancelDeleteMode() },
+                        modifier = Modifier.noRippleClickable(remember { { cancelDeleteMode() } }),
                         tint = getSecondColor
                     )
                 }

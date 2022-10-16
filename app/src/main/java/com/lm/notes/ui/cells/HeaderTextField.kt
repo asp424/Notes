@@ -20,11 +20,12 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.theme.gray
 
 @Composable
-fun HeaderTextField(noteModel: NoteModel) {
+fun HeaderTextField() {
     with(mainDep) {
-        with(noteModel) {
+        with(notesViewModel.noteModelFullScreen.value) {
             TextField(value =
-            if (notesViewModel.isNewHeader(headerState.value.text)) TextFieldValue("")
+            if (notesViewModel.noteModelFullScreen.value.headerState.value.text.startsWith(NEW_TAG))
+                TextFieldValue("")
             else headerState.value,
                 onValueChange = {
                     notesViewModel.updateHeaderFromUi(it)

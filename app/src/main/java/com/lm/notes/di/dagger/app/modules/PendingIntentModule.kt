@@ -1,9 +1,9 @@
-package com.lm.notes.di.dagger.note_widget.modules
+package com.lm.notes.di.dagger.app.modules
 
 import android.app.Application
 import android.app.PendingIntent
 import android.content.Intent
-import com.lm.notes.di.dagger.app.NoteWidgetScope
+import com.lm.notes.di.dagger.app.AppScope
 import com.lm.notes.presentation.MainActivity
 import dagger.Module
 import dagger.Provides
@@ -12,7 +12,7 @@ import dagger.Provides
     class PendingIntentModule {
 
         @Provides
-        @NoteWidgetScope
+        @AppScope
         fun providesPendingIntent(application: Application)
                 = PendingIntent.getBroadcast(
             application, 0, Intent(application, MainActivity::class.java),

@@ -1,5 +1,6 @@
 package com.lm.notes.ui.cells
 
+import android.view.ViewGroup
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -22,14 +23,13 @@ import com.lm.notes.di.compose.MainDep.mainDep
 fun EditTextAndroidView() {
     var scale by remember { mutableStateOf(1f) }
     val state = rememberTransformableState { zoomChange, _, _ -> scale *= zoomChange }
-
     with(mainDep.notesViewModel) {
         with(editTextController) {
             with(uiStates) {
                 LocalDensity.current.apply {
                     Box(
                         Modifier
-                            .border(2.dp, getSecondColor)
+                            .border(2.dp, getMainColor)
                             .transformable(state)
                             .fillMaxSize()
                             .graphicsLayer { editText.textSize = scale * 16 }, Alignment.TopStart

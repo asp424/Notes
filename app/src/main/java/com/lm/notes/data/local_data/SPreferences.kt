@@ -3,7 +3,6 @@ package com.lm.notes.data.local_data
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.core.net.toUri
-import com.lm.notes.ui.theme.main
 import javax.inject.Inject
 
 interface SPreferences {
@@ -19,6 +18,14 @@ interface SPreferences {
     fun saveSecondColor(color: Int)
 
     fun readSecondColor(): Int
+
+    fun setNoteId(id: String)
+
+    fun getNoteId(id: String): String
+
+    fun setPinnedNoteId(noteId: String)
+
+    fun getPinnedNoteId(): String
 
     class Base @Inject constructor(
         private val sharedPreferences: SharedPreferences,
@@ -42,6 +49,21 @@ interface SPreferences {
             sharedPreferences.edit().putInt("secondColor", color).apply()
         }
 
-        override fun readSecondColor() = sharedPreferences.getInt("secondColor", (0xFFFFFFFF).toInt())
+        override fun readSecondColor() =
+            sharedPreferences.getInt("secondColor", (0xFFFFFFFF).toInt())
+
+        override fun setNoteId(id: String) {
+            sharedPreferences.edit().putString(id, getPinnedNoteId()).apply()
+        }
+
+        override fun getNoteId(id: String) = sharedPreferences.getString(id, "")?:""
+
+        override fun setPinnedNoteId(noteId: String) {
+            sharedPreferences.edit().putString("pinned", noteId).apply()
+        }
+
+        override fun getPinnedNoteId() =
+            sharedPreferences.getString("pinned", "")?:""
+
     }
 }

@@ -2,25 +2,34 @@ package com.lm.notes.data.models
 
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
-import android.widget.EditText
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.lm.notes.ui.cells.view.SpanType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.navigation.NavHostController
+import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.EditTextController
+import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
+import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.theme.main
 import com.lm.notes.utils.animScale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 @Immutable
 @Stable
@@ -56,7 +65,7 @@ data class UiStates(
     val getSetSelectionEnable get() = setSelectionEnable.value
     val getIsClickableNote get() = isClickableNote.value
     val getTextIsEmpty get() = textIsEmpty.value
-    val getNotShareVisible get() = notShareVisible.value
+    private val getNotShareVisible get() = notShareVisible.value
     val getMainColor get() = mainColor.value
     val getSecondColor get() = secondColor.value
     val getSettingsVisible get() = settingsVisible.value
@@ -76,11 +85,11 @@ data class UiStates(
     private val getColorButtonClick get() = colorButtonClick.value
     private val getColorButtonItalic get() = colorButtonItalic.value
     private val getColorButtonStrikeThrough get() = colorButtonStrikeThrough.value
-    val Boolean.setIsFormatMode get() = run { isFormatMode.value = this }
+    private val Boolean.setIsFormatMode get() = run { isFormatMode.value = this }
     private val Boolean.setIsDeleteMode get() = run { isDeleteMode.value = this }
     private val Boolean.setIsFullscreenMode get() = run { isFullscreenMode.value = this }
     private val Boolean.setIsMainMode get() = run { isMainMode.value = this }
-    val Boolean.setIsExpandShare get() = run { isExpandShare.value = this }
+    private val Boolean.setIsExpandShare get() = run { isExpandShare.value = this }
     private val Boolean.setColorPickerBackgroundIsShow
         get() = run {
             colorPickerBackgroundIsShow.value = this
@@ -111,7 +120,7 @@ data class UiStates(
 
     val Boolean.setIsSelected get() = run { isSelected.value = this }
 
-    val Boolean.setSetSelectionEnable get() = run { setSelectionEnable.value = this }
+    private val Boolean.setSetSelectionEnable get() = run { setSelectionEnable.value = this }
 
     val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
 
@@ -134,6 +143,7 @@ data class UiStates(
         is SpanType.StrikeThrough -> Green.setColorButtonStrikeThrough
         is SpanType.Relative -> Unit
         is SpanType.Url -> Green.setColorButtonClick
+        is SpanType.Clear -> Unit
     }
 
     fun <T> EditTextController.setAutoColor(type: SpanType, list: List<T>) {
@@ -151,6 +161,7 @@ data class UiStates(
                 is SpanType.StrikeThrough -> Green.setColorButtonStrikeThrough
                 is SpanType.Relative -> Unit
                 is SpanType.Url -> Green.setColorButtonClick
+                else -> Unit
             }
     }
 
@@ -164,6 +175,7 @@ data class UiStates(
             is SpanType.StrikeThrough -> setColorButtonStrikeThrough
             is SpanType.Relative -> Unit
             is SpanType.Url -> setColorButtonClick
+            is SpanType.Clear -> Unit
         }
     }
 
@@ -203,31 +215,33 @@ data class UiStates(
         false.setIsSelected
     }
 
-    fun setDeleteMode() {
+    private fun setDeleteMode() {
         true.setIsDeleteMode
         false.setIsMainMode
         false.setIsClickableNote
         listDeleteAble.clear()
     }
 
-    fun setMainMode() {
+    suspend fun setMainMode() {
         false.setIsFullscreenMode
-        (!getSettingsVisible).setIsMainMode
-        (!getIsDeleteMode).setIsMainMode
         false.setIsExpandShare
         true.setNotShareVisible
+        delay(100)
+        (!getSettingsVisible).setIsMainMode
+        (!getIsDeleteMode).setIsMainMode
     }
 
-    fun setFullScreenMode() {
-        true.setIsFullscreenMode
+    suspend fun setFullScreenMode() {
         false.setIsMainMode
+        delay(100)
+        true.setIsFullscreenMode
     }
 
-    fun addToDeleteAbleList(id: String) {
+    private fun addToDeleteAbleList(id: String) {
         listDeleteAble.add(id)
     }
 
-    fun removeFromDeleteAbleList(id: String) {
+    private fun removeFromDeleteAbleList(id: String) {
         listDeleteAble.remove(id)
     }
 
@@ -245,7 +259,7 @@ data class UiStates(
         coroutineScope.launch {
             if (getIsExpandShare) {
                 false.setIsExpandShare
-                delay(500)
+                delay(200)
                 true.setNotShareVisible
             } else {
                 false.setNotShareVisible
@@ -259,34 +273,118 @@ data class UiStates(
         getColorPickerBackgroundIsShow else getColorPickerForegroundIsShow
 
     @Composable
-    fun ImageVector.getScale(textIsEmpty: Boolean) = when (this) {
+    fun ImageVector.getScale(textIsEmpty: Boolean) =
+        when (this) {
             Icons.Rounded.ContentPaste -> animScale(getClipboardIsEmpty)
             Icons.Rounded.SelectAll -> animScale(textIsEmpty)
-            Icons.Rounded.ContentCopy -> animScale(getIsSelected && textIsEmpty)
             Icons.Rounded.CopyAll -> animScale(textIsEmpty)
-            Icons.Rounded.ContentCut -> animScale(getIsSelected && textIsEmpty)
-            else -> 0f
+            else -> animScale(getIsSelected && textIsEmpty)
         }
 
-    fun ImageVector.getSpanType() = when (this) {
-            Icons.Rounded.FormatColorFill -> SpanType.Background(getColorButtonBackground.toArgb())
-            Icons.Rounded.FormatColorText -> SpanType.Foreground(getColorButtonForeground.toArgb())
-            Icons.Rounded.FormatUnderlined -> SpanType.Underlined
-            Icons.Rounded.FormatBold -> SpanType.Bold
-            Icons.Rounded.FormatItalic -> SpanType.Italic
-            Icons.Rounded.FormatStrikethrough -> SpanType.StrikeThrough
-            Icons.Rounded.AddLink -> SpanType.Url
-            else -> SpanType.Bold
+    @Composable
+    fun ImageVector.getFullScreenIconsValues(
+        coroutine: CoroutineScope,
+        noteAppWidgetController: NoteAppWidgetController,
+        noteModel: NoteModel
+    ) = when (this@getFullScreenIconsValues) {
+            Icons.Rounded.Share -> Pair(
+                animScale(getIsFullscreenMode && getTextIsEmpty), remember {
+                    { expandShare(coroutine) }
+                }
+            )
+            Icons.Rounded.Widgets -> Pair(
+                animScale(
+                    getIsFullscreenMode && getTextIsEmpty && getNotShareVisible
+                ), remember(noteModel) { { noteAppWidgetController.pinNoteWidget(noteModel.id) } })
+            else -> Pair(0f) {}
         }
 
-    fun ImageVector.getTint() = when (this) {
-            Icons.Rounded.FormatColorFill -> getColorButtonBackground
-            Icons.Rounded.FormatColorText -> getColorButtonForeground
-            Icons.Rounded.FormatUnderlined -> getColorButtonUnderlined
-            Icons.Rounded.FormatBold -> getColorButtonBold
-            Icons.Rounded.FormatItalic -> getColorButtonItalic
-            Icons.Rounded.FormatStrikethrough -> getColorButtonStrikeThrough
-            Icons.Rounded.AddLink -> getColorButtonClick
-            else -> White
+    fun ImageVector.getButtonFormatValues() = when (this) {
+        Icons.Rounded.FormatColorFill -> with(getColorButtonBackground) {
+            Pair(this, SpanType.Background(toArgb()))
+        }
+        Icons.Rounded.FormatColorText -> with(getColorButtonForeground) {
+            Pair(this, SpanType.Foreground(toArgb()))
+        }
+        Icons.Rounded.FormatUnderlined -> Pair(getColorButtonUnderlined, SpanType.Underlined)
+        Icons.Rounded.FormatBold -> Pair(getColorButtonBold, SpanType.Bold)
+        Icons.Rounded.FormatItalic -> Pair(getColorButtonItalic, SpanType.Italic)
+        Icons.Rounded.FormatStrikethrough -> Pair(
+            getColorButtonStrikeThrough,
+            SpanType.StrikeThrough
+        )
+        Icons.Rounded.AddLink -> Pair(getColorButtonClick, SpanType.Url)
+        Icons.Rounded.FormatClear -> Pair(White, SpanType.Clear)
+        else -> Pair(White, SpanType.Italic)
+    }
+
+    fun setFormat() {
+        true.setIsFormatMode
+        true.setIsSelected
+    }
+
+    fun setEdit() {
+        false.setIsFormatMode
+        false.setIsSelected
+    }
+
+    fun Modifier.setClickOnNote(
+        notesViewModel: NotesViewModel, noteModel: NoteModel, navController: NavHostController
+    ) = pointerInput(Unit) {
+        detectTapGestures(
+            onTap = {
+                with(notesViewModel) {
+                    with(noteModel) {
+                        if (getIsDeleteMode) {
+                            if (listDeleteAble.contains(id)) {
+                                removeFromDeleteAbleList(id)
+                                if (listDeleteAble.isEmpty()) {
+                                    cancelDeleteMode()
+                                }
+                            } else addToDeleteAbleList(id)
+                        }
+                        if (getIsClickableNote && !getIsDeleteMode) {
+                            false.setIsClickableNote
+                            setFullscreenNoteModel(id, text)
+                            editTextController.setText(text)
+                            checkForEmptyText().setTextIsEmpty
+                            clipboardProvider.clipBoardIsNotEmpty?.setClipboardIsEmpty
+                            false.setIsSelected
+                            navController.navigate("fullScreenNote") {
+                                popUpTo("mainList")
+                            }
+                        }
+                    }
+                }
+            },
+            onLongPress = {
+                setDeleteMode()
+                addToDeleteAbleList(noteModel.id)
+            })
+    }
+
+    fun getNoteCardBorder(id: String) = if (checkNoteCardMode(id)) BorderStroke(3.dp, Color.Red)
+    else BorderStroke(2.dp, getMainColor)
+
+    fun getNoteCardElevation(id: String) = if (checkNoteCardMode(id)) 50.dp else 10.dp
+
+    private fun checkNoteCardMode(id: String) = listDeleteAble.contains(id) && getIsDeleteMode
+
+    fun setSelection(scope: LifecycleCoroutineScope, notesViewModel: NotesViewModel) {
+        scope.launchWhenResumed {
+            false.setSetSelectionEnable
+            delay(300)
+            notesViewModel.clipboardProvider.clipBoardIsNotEmpty?.setClipboardIsEmpty
+            delay(300)
+            notesViewModel.editTextController.setSelection()
+            true.setSetSelectionEnable
+        }
+    }
+
+    val settingsIconClick
+        @Composable get() = remember {
+            {
+                if (getSettingsVisible) false.setSettingsVisible else true.setSettingsVisible
+            }
         }
 }

@@ -1,7 +1,7 @@
 package com.lm.notes.di.dagger.app.modules
 
 import com.lm.notes.di.dagger.app.AppScope
-import com.lm.notes.utils.format_text.ClipboardProvider
+import com.lm.notes.data.local_data.ClipboardProvider
 import dagger.Binds
 import dagger.Module
 
