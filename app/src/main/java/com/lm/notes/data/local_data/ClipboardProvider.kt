@@ -2,16 +2,21 @@ package com.lm.notes.data.local_data
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.text.Spanned
 import android.widget.EditText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.AnnotatedString
+import androidx.core.text.toHtml
+import androidx.core.text.toSpanned
 import com.lm.notes.R
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.ui.cells.view.app_widget.ToastCreator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface ClipboardProvider {
@@ -39,12 +44,12 @@ interface ClipboardProvider {
         private val toastCreator: ToastCreator
     ) : ClipboardProvider {
 
-        override val clipBoardIsNotEmpty get() = readText?.isNotEmpty()
+        override val clipBoardIsNotEmpty get() = readText.isNotEmpty()
 
         override fun paste() {
             with(editTextController.editText) {
                 runCatching {
-                    readText?.also { pasted ->
+                    readText.trim().also { pasted ->
                         if (i == -1) text.append(pasted)
                         else text.replace(i, i1, pasted, 0, pasted.length)
                     }
@@ -55,8 +60,8 @@ interface ClipboardProvider {
         }
 
         override fun copyAll() {
-            AnnotatedString(editTextController.editText.text.toString()).saveText
-            with(uiStates) { clipBoardIsNotEmpty?.setClipboardIsEmpty }
+            editTextController.editText.text.saveText
+            with(uiStates) { clipBoardIsNotEmpty.setClipboardIsEmpty }
         }
 
         override fun selectAll() {
@@ -72,51 +77,68 @@ interface ClipboardProvider {
         }
 
         override fun copySelected() = with(editTextController.editText) {
-            AnnotatedString(text.substring(selectionStart, selectionEnd)).saveText
-            with(uiStates) { clipBoardIsNotEmpty?.setClipboardIsEmpty ?: Unit }
-        }
-
-        override fun cutSelected() {
-            with(editTextController) {
-                with(editText) {
-                    AnnotatedString(text.substring(selectionStart, selectionEnd)).saveText
-                    text.replace(i, i1, "", 0, 0)
+            val oldText = text.toSpanned()
+            text.replace(0, i, "").replace(i1, text.length, "").saveText
+            setText(oldText)
+            with(uiStates) {
+                CoroutineScope(Dispatchers.Main).launch {
                     with(uiStates) {
-                        setEdit()
-                        clipBoardIsNotEmpty?.setClipboardIsEmpty
+                        editTextController.editText.clearFocus()
+                        delay(200)
+                        if (getIsFormatMode && getSetSelectionEnable) {
+                            editTextController.setEditMode(); onClickEditText()
+                        }
                     }
-                    updateText()
-                    removeSelection()
                 }
+                clipBoardIsNotEmpty.setClipboardIsEmpty
             }
         }
 
-        override fun ImageVector.clickOnButtonsClipboard() =
-            when (this) {
-                Icons.Rounded.ContentPaste -> paste()
-                Icons.Rounded.SelectAll -> selectAll()
-                Icons.Rounded.ContentCopy -> {
-                    copySelected()
-                    toastCreator.invoke(R.string.selected_text_was_copied)
+    override fun cutSelected() {
+        with(editTextController.editText) {
+            text.replace(0, i, "").replace(i1, text.length, "").saveText
+        }
+        with(uiStates) {
+            with(editTextController) {
+                if (getIsFormatMode) {
+                    setEditMode(); onClickEditText(); removeSelection()
+                    editText.clearFocus()
                 }
-                Icons.Rounded.CopyAll -> {
-                    copyAll()
-                    toastCreator.invoke(R.string.all_text_was_copied)
-                }
-                Icons.Rounded.ContentCut -> cutSelected()
-                else -> Unit
+                updateText()
+                removeSelection()
             }
+        }
+    }
+
+    override fun ImageVector.clickOnButtonsClipboard() =
+        when (this) {
+            Icons.Rounded.ContentPaste -> paste()
+            Icons.Rounded.SelectAll -> selectAll()
+            Icons.Rounded.ContentCopy -> {
+                copySelected()
+                toastCreator.invoke(R.string.selected_text_was_copied)
+            }
+            Icons.Rounded.CopyAll -> {
+                copyAll()
+                toastCreator.invoke(R.string.all_text_was_copied)
+            }
+            Icons.Rounded.ContentCut -> cutSelected()
+            else -> Unit
+        }
 
     override fun clearClipBoard() {
-        AnnotatedString("").saveText
+        "".toSpanned().saveText
         with(uiStates) { true.setClipboardIsEmpty }
     }
 
-    private val AnnotatedString.saveText
-        get() = clipboardManager.setPrimaryClip(ClipData.newPlainText("newText", this))
+    private val Spanned.saveText
+        get() = clipboardManager.setPrimaryClip(
+            ClipData.newHtmlText("newText", this, toHtml())
+        )
 
     private val readText
-        get() = clipboardManager.primaryClip?.getItemAt(0)?.text?.trim()
+        get() = editTextController
+            .fromHtml(clipboardManager.primaryClip?.getItemAt(0)?.htmlText ?: "")
 
     private val EditText.i get() = selectionStart.coerceAtMost(selectionEnd)
 

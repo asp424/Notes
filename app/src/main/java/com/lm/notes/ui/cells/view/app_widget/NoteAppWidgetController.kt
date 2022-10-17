@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Build
+import android.text.Spanned
 import android.widget.RemoteViews
 import com.lm.notes.R
 import com.lm.notes.data.local_data.NoteData
@@ -47,24 +48,19 @@ interface NoteAppWidgetController {
 
         override suspend fun setUpTextToWidget(id: String) = remoteViews.apply {
             roomRepository.getNote(sPreferences.getPinnedNoteId())?.also {
-                setTextViewText(R.id.note_text, editTextController.fromHtml(it.text))
-                setTextViewText(R.id.note_header,
-                    with(it.header) { getHeader(noteData.isNewHeader(this)) })
+                setText(editTextController.fromHtml(it.text))
+                setHeader(it.header.getHeader)
+                sPreferences.setNoteId(id)
             }
-            sPreferences.setNoteId(id)
         }
 
         override suspend fun setStrikeThroughSpan(id: String) = with(remoteViews) {
-            val noteModelRoom = roomRepository.getNote(sPreferences.getNoteId(id))?: NoteModelRoom()
-                setTextViewText(R.id.note_text, editTextController.fromHtml(
-                        "<strike>${noteModelRoom.text}</strike>"
-                    )
-                )
-            setTextViewText(R.id.note_header,
-                with(noteModelRoom.header) { getHeader(noteData.isNewHeader(this)) }
-            )
-                appWidgetManager.updateAppWidget(id.toInt(), this)
-            }
+            val noteModelRoom =
+                roomRepository.getNote(sPreferences.getNoteId(id)) ?: NoteModelRoom()
+            setText(editTextController.fromHtml(noteModelRoom.text.strikeThroughSpan))
+            setHeader(noteModelRoom.header.getHeader)
+            appWidgetManager.updateAppWidget(id.toInt(), this)
+        }
 
         override fun showUnCompatibleToast() =
             toastCreator.invoke(R.string.widget_not_compatible)
@@ -72,6 +68,15 @@ interface NoteAppWidgetController {
         private val remoteViews by lazy {
             RemoteViews(componentName.packageName, R.layout.note_widget)
         }
+
+        private fun RemoteViews.setText(text: Spanned) = setTextViewText(R.id.note_text, text)
+
+        private fun RemoteViews.setHeader(header: String) =
+            setTextViewText(R.id.note_header, header)
+
+        private val String.getHeader get() = getHeader(noteData.isNewHeader(this))
+
+        private val String.strikeThroughSpan get() = "<strike>$this</strike>"
     }
 }
 

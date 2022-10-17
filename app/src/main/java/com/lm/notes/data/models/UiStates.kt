@@ -3,12 +3,17 @@ package com.lm.notes.data.models
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Indication
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Green
@@ -287,17 +292,17 @@ data class UiStates(
         noteAppWidgetController: NoteAppWidgetController,
         noteModel: NoteModel
     ) = when (this@getFullScreenIconsValues) {
-            Icons.Rounded.Share -> Pair(
-                animScale(getIsFullscreenMode && getTextIsEmpty), remember {
-                    { expandShare(coroutine) }
-                }
-            )
-            Icons.Rounded.Widgets -> Pair(
-                animScale(
-                    getIsFullscreenMode && getTextIsEmpty && getNotShareVisible
-                ), remember(noteModel) { { noteAppWidgetController.pinNoteWidget(noteModel.id) } })
-            else -> Pair(0f) {}
-        }
+        Icons.Rounded.Share -> Pair(
+            animScale(getIsFullscreenMode && getTextIsEmpty), remember {
+                { expandShare(coroutine) }
+            }
+        )
+        Icons.Rounded.Widgets -> Pair(
+            animScale(
+                getIsFullscreenMode && getTextIsEmpty && getNotShareVisible
+            ), remember(noteModel) { { noteAppWidgetController.pinNoteWidget(noteModel.id) } })
+        else -> Pair(0f) {}
+    }
 
     fun ImageVector.getButtonFormatValues() = when (this) {
         Icons.Rounded.FormatColorFill -> with(getColorButtonBackground) {
@@ -323,16 +328,18 @@ data class UiStates(
         true.setIsSelected
     }
 
-    fun setEdit() {
-        false.setIsFormatMode
-        false.setIsSelected
-    }
-
     fun Modifier.setClickOnNote(
-        notesViewModel: NotesViewModel, noteModel: NoteModel, navController: NavHostController
+        notesViewModel: NotesViewModel, noteModel: NoteModel, navController: NavHostController,
+        interactionSource: MutableInteractionSource, indication: Indication?,
+        coroutine: CoroutineScope
     ) = pointerInput(Unit) {
         detectTapGestures(
             onTap = {
+                val press = PressInteraction.Press(Offset(it.x + 100f, 0f))
+                coroutine.launch {
+                    interactionSource.emit(press)
+                    interactionSource.emit(PressInteraction.Release(press))
+                }
                 with(notesViewModel) {
                     with(noteModel) {
                         if (getIsDeleteMode) {
@@ -361,7 +368,7 @@ data class UiStates(
                 setDeleteMode()
                 addToDeleteAbleList(noteModel.id)
             })
-    }
+    }.indication(interactionSource, indication)
 
     fun getNoteCardBorder(id: String) = if (checkNoteCardMode(id)) BorderStroke(3.dp, Color.Red)
     else BorderStroke(2.dp, getMainColor)
@@ -372,6 +379,7 @@ data class UiStates(
 
     fun setSelection(scope: LifecycleCoroutineScope, notesViewModel: NotesViewModel) {
         scope.launchWhenResumed {
+            notesViewModel.editTextController.editText.isEnabled = true
             false.setSetSelectionEnable
             delay(300)
             notesViewModel.clipboardProvider.clipBoardIsNotEmpty?.setClipboardIsEmpty

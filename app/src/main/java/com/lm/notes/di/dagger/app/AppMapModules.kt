@@ -35,6 +35,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         ComponentNameModule::class,
         PendingIntentModule::class,
         NoteAppWidgetControllerModule::class,
+        CallbackEditTextModule::class,
+        AccessibilityDelegateModule::class
     ]
 )
 interface AppMapModules

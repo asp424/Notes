@@ -9,7 +9,9 @@
     android:paddingStart="20dp"
     android:paddingTop="15dp"
     android:paddingBottom="200dp"
+    android:theme="@style/Theme.Notes"
     android:hint="@string/note"
+    android:textSize="14.sp"
     android:autofillHints="" />
 
 

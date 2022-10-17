@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.core.app.ShareCompat
 import com.lm.notes.databinding.EditTextBinding
 import com.lm.notes.di.dagger.app.AppComponent
 import com.lm.notes.di.dagger.app.DaggerAppComponent
@@ -19,7 +18,13 @@ class App : Application() {
             .toastCreator { it.toast }
             .application(this@App)
             .editText(EditTextBinding.inflate(LayoutInflater.from(this)).root)
-            .filesDir(filesDir).create()
+            .filesDir(filesDir).create().apply {
+                editText().apply {
+                    accessibilityDelegate = accessibilityDelegate()
+                    customSelectionActionModeCallback = callbackEditText()
+                    customInsertionActionModeCallback = callbackEditText()
+                }
+            }
     }
 }
 

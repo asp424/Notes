@@ -3,6 +3,8 @@
     <style name="NoteWidget.Container" parent="android:Widget">
         <item name="android:padding">?attr/appWidgetPadding</item>
         <item name="android:background">@drawable/note_widget_background</item>
+        <item name="android:textColorHint">@color/hint</item>
+        <item name="android:textColorLink">#0000FF</item>
     </style>
 
     <style name="NoteWidget..InnerView" parent="android:Widget">

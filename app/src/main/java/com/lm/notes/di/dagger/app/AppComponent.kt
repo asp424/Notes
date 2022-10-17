@@ -2,8 +2,9 @@ package com.lm.notes.di.dagger.app
 
 import android.app.Application
 import android.widget.EditText
-import com.lm.notes.data.local_data.IntentBorn
 import com.lm.notes.presentation.MainActivity
+import com.lm.notes.ui.cells.view.AccessibilityDelegate
+import com.lm.notes.ui.cells.view.CallbackEditText
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.cells.view.app_widget.ToastCreator
 import dagger.BindsInstance
@@ -32,6 +33,8 @@ interface AppComponent {
     }
 
     fun inject(mainActivity: MainActivity)
-
     fun noteAppWidgetController(): NoteAppWidgetController
+    fun editText(): EditText
+    fun accessibilityDelegate(): AccessibilityDelegate
+    fun callbackEditText(): CallbackEditText
 }

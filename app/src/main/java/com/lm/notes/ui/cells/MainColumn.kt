@@ -1,5 +1,7 @@
 package com.lm.notes.ui.cells
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.lm.notes.data.models.NoteModel
@@ -27,11 +29,17 @@ fun MainColumn() {
                         getListFields { it { id } },
                     )
                 }
+                val indication = rememberRipple(color = uiStates.getMainColor)
+                val interactionSource = remember { MutableInteractionSource() }
+
                 Note(
                     getListFields {
                         it {
                             with(uiStates) {
-                                Modifier.setClickOnNote(notesViewModel, this@it, navController)
+                                Modifier.setClickOnNote(
+                                        notesViewModel, this@it, navController,
+                                        interactionSource, indication, coroutine
+                                    )
                             }
                         }
                     }[i], values[0][i], values[1][i], values[2][i], values[3][i]

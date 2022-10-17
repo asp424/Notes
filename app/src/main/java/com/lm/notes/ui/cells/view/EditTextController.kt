@@ -1,14 +1,20 @@
 package com.lm.notes.ui.cells.view
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color.YELLOW
+import android.net.Uri
 import android.text.Html
 import android.text.Spanned
-import android.text.style.RelativeSizeSpan
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
+import android.text.style.*
+import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_UP
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
 import androidx.compose.ui.graphics.Color
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.set
 import androidx.core.text.toHtml
@@ -17,6 +23,7 @@ import com.lm.notes.data.models.UiStates
 import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.core.SpanType.Bold.listClasses
 import com.lm.notes.utils.getAction
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
@@ -34,7 +41,9 @@ interface EditTextController {
 
     fun removeAllSpans()
 
-    fun <T> listSpans(clazz: Class<T>): List<T>
+    fun <T> listSpansInSelection(clazz: Class<T>): List<T>
+
+    fun <T> listSpansInAllText(clazz: Class<T>): List<T>
 
     fun SpanType.isHaveSpans(): Boolean
 
@@ -60,6 +69,8 @@ interface EditTextController {
 
     fun hideKeyboard()
 
+    fun showKeyboard()
+
     fun SpanType.buttonFormatAction()
 
     fun SpanType.getType(color: Int)
@@ -68,41 +79,44 @@ interface EditTextController {
 
     fun removeUnderLinedFromKeyBoard()
 
+    fun touchOffsetOnActionUp(view: TextView, event: MotionEvent, onActionUp: (Int) -> Unit)
+
+    fun listOfUrlSpans(onEachSpan: Pair<Int, Int>.(Uri) -> Unit, onEmpty: () -> Unit)
+
+    fun Pair<Int, Int>.checkForClick(offset: Int, onCheck: () -> Unit)
+
+    fun Pair<Int, Int>.setHighLightAndOpenLink(view: TextView, uri: Uri)
+
+    fun EditText.onClickAction()
+
+    fun onDestroyContextMenu()
+
     class Base @Inject constructor(
         private val noteData: NoteData,
         override val editText: EditText,
         private val uiStates: UiStates,
-        private val inputMethodManager: InputMethodManager
+        private val inputMethodManager: InputMethodManager,
+        private val coroutineDispatcher: CoroutineDispatcher
     ) : EditTextController {
 
         init {
-            initEditText()
+            editText.initEditText()
         }
 
         @SuppressLint("ClickableViewAccessibility")
-        private fun initEditText() {
-            AccessibilityDelegate(this@Base, uiStates).also { listener ->
-                with(editText) {
-                    with(uiStates) {
-                        setOnClickListener {
-                            if (getIsFormatMode) {
-                                setEditMode(); onClickEditText(); removeSelection(); editText.clearFocus()
-                            } else {
-                                inputMethodManager.showSoftInput(editText, 0)
-                            }
-                        }
-                    }
-                    CallbackEditText(uiStates, this@Base, editText).also { callback ->
-                        accessibilityDelegate = listener
-                        customSelectionActionModeCallback = callback
-                        customInsertionActionModeCallback = callback
-                        // movementMethod = LinkMovementMethod.getInstance()
-                    }
+        private fun EditText.initEditText() {
+            setOnTouchListener { view, event ->
+                touchOffsetOnActionUp(view as TextView, event) { offset ->
+                    listOfUrlSpans(
+                        onEachSpan = { uri ->
+                            checkForClick(offset) { setHighLightAndOpenLink(view, uri) }
+                        }, onEmpty = { showKeyboard() })
                 }
+                false
             }
+            setOnClickListener { onClickAction() }
         }
 
-        @SuppressLint("SetTextI18n")
         override fun setText(newText: String) = with(editText) {
             setText(Html.fromHtml(newText, htmlMode).trim())
         }
@@ -111,7 +125,7 @@ interface EditTextController {
 
         override fun SpanType.removeSpan() {
             uiStates.setButtonWhite(this)
-            listSpans(instance.javaClass).filteredByStyle(this).forEach {
+            listSpansInSelection(instance.javaClass).filteredByStyle(this).forEach {
                 with(editText.text) {
                     editText.setSpansAroundSelected(getSpanStart(it), getSpanEnd(it))
                     { instance }; removeSpan(it)
@@ -126,7 +140,7 @@ interface EditTextController {
 
         override fun removeAllSpans() {
             listClasses.forEach {
-                listSpans(it.instance.javaClass).forEach { span ->
+                listSpansInSelection(it.instance.javaClass).forEach { span ->
                     editText.text.removeSpan(span); uiStates.setAllButtonsWhite()
                 }
             }
@@ -139,12 +153,14 @@ interface EditTextController {
 
         override fun setButtonColors() {
             uiStates.setAllButtonsWhite()
-            with(uiStates) { listClasses.forEach { setAutoColor(it, listSpans(it.clazz)) } }
+            with(uiStates) {
+                listClasses.forEach { setAutoColor(it, listSpansInSelection(it.clazz)) }
+            }
         }
 
-
-
-        private fun <T : Any> EditText.setSpansAroundSelected(start: Int, end: Int, span: () -> T) {
+        private fun <T : Any> EditText.setSpansAroundSelected(
+            start: Int, end: Int, span: () -> T
+        ) {
             if (start < selectionStart) text[start..selectionStart] = span.invoke()
             if (end > selectionEnd) text[selectionEnd..end] = span.invoke()
         }
@@ -163,12 +179,16 @@ interface EditTextController {
             ); updateText()
         }
 
-        override fun <T> listSpans(clazz: Class<T>): List<T> = with(editText) {
+        override fun <T> listSpansInSelection(clazz: Class<T>): List<T> = with(editText) {
             text.getSpans(selectionStart, selectionEnd, clazz).asList()
         }
 
+        override fun <T> listSpansInAllText(clazz: Class<T>): List<T> = with(editText) {
+            text.getSpans(0, length(), clazz).asList()
+        }
+
         override fun SpanType.isHaveSpans() =
-            listSpans(clazz).filteredByStyle(this).isNotEmpty()
+            listSpansInSelection(clazz).filteredByStyle(this).isNotEmpty()
 
         override fun <T> List<T>.filteredByStyle(spanType: SpanType) =
             if (isNotEmpty()) get(0).getList(this, spanType) else emptyList()
@@ -196,7 +216,7 @@ interface EditTextController {
             removeSelection()
         }
 
-        override fun removeUnderLinedFromKeyBoard() = with(editText.text){
+        override fun removeUnderLinedFromKeyBoard() = with(editText.text) {
             for (span in this.getSpans(0, length, UnderlineSpan::class.java)) {
                 removeSpan(span)
             }
@@ -221,6 +241,12 @@ interface EditTextController {
             inputMethodManager.hideSoftInputFromWindow(editText.windowToken, 0)
         }
 
+        override fun showKeyboard() {
+            if (!uiStates.getIsFormatMode) {
+                inputMethodManager.showSoftInput(editText, 0)
+            }
+        }
+
         override fun setSelection() = with(uiStates.getSelection) {
             if (this != Pair(0, 0) && this != Pair(-1, -1)) {
                 with(editText) { requestFocus(); setSelection(first, second) }
@@ -229,9 +255,7 @@ interface EditTextController {
 
         override fun saveSelection() {
             with(editText) {
-                with(uiStates) {
-                    Pair(selectionStart, selectionEnd).setSelection; setFormat()
-                }
+                with(uiStates) { Pair(selectionStart, selectionEnd).setSelection; setFormat() }
             }
         }
 
@@ -242,6 +266,82 @@ interface EditTextController {
                 }
                 if (this@buttonFormatAction == SpanType.Clear) removeAllSpans()
             }
+
+        override fun touchOffsetOnActionUp(
+            view: TextView, event: MotionEvent, onActionUp: (Int) -> Unit
+        ) = with(event) {
+            if (action == ACTION_UP) with(view.layout) {
+                val line = getLineForVertical(y.toInt() - view.paddingTop)
+                onActionUp(getOffsetForHorizontal(line, x - view.paddingStart))
+            }
+        }
+
+        override fun listOfUrlSpans(
+            onEachSpan: Pair<Int, Int>.(Uri) -> Unit, onEmpty: () -> Unit
+        ) = with(listSpansInAllText(URLSpan::class.java)) {
+            if (isNotEmpty()) forEach {
+                onEachSpan(
+                    with(editText.text) { Pair(getSpanStart(it), getSpanEnd(it)) },
+                    it.url.toUri()
+                )
+            } else onEmpty()
+        }
+
+        override fun Pair<Int, Int>.checkForClick(offset: Int, onCheck: () -> Unit) =
+            if (offset in (first..second) &&
+                !uiStates.getIsFormatMode && offset in editText.text.indices
+            ) {
+                onCheck(); editText.isEnabled = false
+            } else Unit
+
+        override fun Pair<Int, Int>.setHighLightAndOpenLink(view: TextView, uri: Uri) {
+            BackgroundColorSpan(YELLOW).also { span ->
+                setHighLight.invoke(span)
+                view.context.openLink.invoke(uri)
+                removeHighLight.invoke(span)
+            }
+        }
+
+        override fun EditText.onClickAction() {
+            if (uiStates.getIsFormatMode) {
+                setEditMode(); uiStates.onClickEditText(); removeSelection()
+                clearFocus()
+            }
+        }
+
+        private val Context.openLink: (Uri) -> Unit
+            get() =
+                { startActivity(urlLinkIntent.invoke(it)) }
+
+        private val removeHighLight: (BackgroundColorSpan) -> Unit
+            get() = {
+                CoroutineScope(coroutineDispatcher).launch {
+                    delay(500); editText.text.removeSpan(it)
+                }
+            }
+
+        private val Pair<Int, Int>.setHighLight: (BackgroundColorSpan) -> Unit
+            get() = { editText.text.setSpan(it, first, second, flagSpan) }
+
+        private val urlLinkIntent: (Uri) -> Intent
+            get() = {
+                Intent(Intent.ACTION_VIEW).apply {
+                    data = it
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+            }
+
+        override fun onDestroyContextMenu() {
+            CoroutineScope(Dispatchers.Main).launch {
+                with(uiStates) {
+                    editText.clearFocus()
+                    delay(200)
+                    if (getIsFormatMode && getSetSelectionEnable) {
+                        setEditMode(); onClickEditText()
+                    }
+                }
+            }
+        }
 
         private val htmlMode by lazy { Html.FROM_HTML_MODE_LEGACY }
     }
