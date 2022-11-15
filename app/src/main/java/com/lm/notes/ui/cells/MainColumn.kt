@@ -2,31 +2,35 @@ package com.lm.notes.ui.cells
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.formatTimestamp
 import com.lm.notes.utils.getHeader
+import com.lm.notes.utils.log
 
 @Composable
 fun MainColumn() {
     with(mainDep) {
         with(notesViewModel) {
             val notesList by notesList.collectAsState()
+            notesList.log
             MainList(notesList) { i ->
-                val values = remember {
+                val values = remember(notesList) {
                     listOf(
                         getListFields<String> { it { formatTimestamp(timestampChangeState.value) } },
-                        getListFields { it { editTextController.fromHtml(text).toString() } },
-                        getListFields {
+                        getListFields<String> { it { preview } },
+                        getListFields<String> {
                             it {
-                                with(headerState.value.text) {
-                                    getHeader(isNewHeader(this))
-                                }
+                                with(header) { getHeader(isNewHeader(this)) }
                             }
                         },
-                        getListFields { it { id } },
+                        getListFields<String> { it { id } }
                     )
                 }
                 val indication = rememberRipple(color = uiStates.getMainColor)
@@ -37,9 +41,9 @@ fun MainColumn() {
                         it {
                             with(uiStates) {
                                 Modifier.setClickOnNote(
-                                        notesViewModel, this@it, navController,
-                                        interactionSource, indication, coroutine
-                                    )
+                                    notesViewModel, this@it, navController,
+                                    interactionSource, indication, coroutine
+                                )
                             }
                         }
                     }[i], values[0][i], values[1][i], values[2][i], values[3][i]

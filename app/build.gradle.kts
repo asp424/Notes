@@ -25,15 +25,13 @@ android {
         }
     }
 
-    lint {
-        baseline = file("lint-baseline.xml")
-    }
+    lint { baseline = file("lint-baseline.xml") }
 
     buildTypes {
 
         debug{
-           // isMinifyEnabled = true
-           // isShrinkResources = true
+          // isMinifyEnabled = true
+          // isShrinkResources = true
         }
         release {
             isMinifyEnabled = true
@@ -86,9 +84,9 @@ dependencies {
     implementation("androidx.benchmark:benchmark-junit4:1.1.0")
 
     //Firebase
-    implementation("com.google.firebase:firebase-bom:30.5.0")
-    implementation("com.google.firebase:firebase-database-ktx:20.0.6")
-    implementation("com.google.firebase:firebase-auth-ktx:21.0.8")
+    implementation("com.google.firebase:firebase-bom:31.0.0")
+    implementation("com.google.firebase:firebase-database-ktx:20.1.0")
+    implementation("com.google.firebase:firebase-auth-ktx:21.1.0")
     implementation("com.google.android.gms:play-services-auth:20.3.0")
 
     //Coil
@@ -103,7 +101,7 @@ dependencies {
                 ".keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3")
 
     //Leak Canary
-    debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.9.1")
+   // debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.9.1")
 }
 
 

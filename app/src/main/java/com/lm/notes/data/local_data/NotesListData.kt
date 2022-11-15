@@ -1,5 +1,7 @@
 package com.lm.notes.data.local_data
 
+import android.text.Editable
+import android.text.Spanned
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.models.NoteModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,17 +32,17 @@ interface NotesListData {
 
     fun initList(notesModelList: List<NoteModel>)
 
-    fun updateNoteFromUi(newText: String, actualTime: Long)
+    fun updateNoteFromUi(newText: Spanned, actualTime: Long)
 
     fun updateHeaderFromUi(text: TextFieldValue)
 
-    fun setFullscreenNoteModel(id: String, text: String)
+    fun setFullscreenNoteModel(id: String)
 
     fun isMustRemoveFromList(): Boolean
 
     fun isNewHeader(text: String): Boolean
 
-    fun checkForEmptyText(): Boolean
+    fun checkForEmptyText()
 
     class Base @Inject constructor(private val noteData: NoteData) : NotesListData {
 
@@ -76,12 +78,12 @@ interface NotesListData {
         override fun initList(notesModelList: List<NoteModel>) {
             mSFOfNotesList.value = notesModelList
         }
-        override fun updateNoteFromUi(newText: String, actualTime: Long)
+        override fun updateNoteFromUi(newText: Spanned, actualTime: Long)
         = noteData.updateNoteFromUi(newText, actualTime)
 
         override fun updateHeaderFromUi(text: TextFieldValue) = noteData.updateHeaderFromUi(text)
 
-        override fun setFullscreenNoteModel(id: String, text: String) =
+        override fun setFullscreenNoteModel(id: String) =
             noteData.setFullscreenNoteModel(findById(id))
 
         override fun isMustRemoveFromList() = noteData.isMustRemoveFromList()

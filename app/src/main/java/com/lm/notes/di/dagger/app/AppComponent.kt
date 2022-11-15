@@ -24,7 +24,7 @@ interface AppComponent {
         fun toastCreator(toastCreator: ToastCreator): Builder
 
         @BindsInstance
-        fun editText(editText: EditText): Builder
+        fun editText(editText: Function0<@JvmSuppressWildcards EditText>): Builder
 
         @BindsInstance
         fun filesDir(filesDir: File): Builder
@@ -34,7 +34,5 @@ interface AppComponent {
 
     fun inject(mainActivity: MainActivity)
     fun noteAppWidgetController(): NoteAppWidgetController
-    fun editText(): EditText
     fun accessibilityDelegate(): AccessibilityDelegate
-    fun callbackEditText(): CallbackEditText
 }

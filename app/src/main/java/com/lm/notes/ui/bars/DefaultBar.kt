@@ -19,7 +19,7 @@ fun DefaultBar(animScale: Float) {
                     x - infoOffset.value, animScale, infoOffset.value + 20.dp, Red
                 )
                 CanvasCircle(
-                    x + infoOffset.value, animScale, 15.dp, White
+                    x + infoOffset.value, animScale, 45.dp, White
                 )
             }
         LogOut(animScale)

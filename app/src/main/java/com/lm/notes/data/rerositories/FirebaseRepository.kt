@@ -30,7 +30,7 @@ interface FirebaseRepository {
         override fun saveNote(noteModel: NoteModel) = with(noteModel) {
             firebaseSource.saveNote(
                 text, id, timestampCreate,
-                timestampChangeState.value, headerState.value.text
+                timestampChangeState.value, header
             )
         }
 

@@ -10,6 +10,7 @@ import android.text.Spanned
 import android.text.style.*
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_UP
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
@@ -24,14 +25,12 @@ import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.core.SpanType.Bold.listClasses
 import com.lm.notes.utils.getAction
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Main
 import javax.inject.Inject
-
 
 interface EditTextController {
 
-    fun setText(newText: String)
-
-    fun getHtmlText(text: String): String
+    fun setNewText(newText: String)
 
     fun SpanType.setSpan()
 
@@ -79,7 +78,9 @@ interface EditTextController {
 
     fun removeUnderLinedFromKeyBoard()
 
-    fun touchOffsetOnActionUp(view: TextView, event: MotionEvent, onActionUp: (Int) -> Unit)
+    fun touchOffsetOnActionUp(
+        view: TextView, event: MotionEvent, onActionUp: (Int) -> Unit
+    ): Boolean
 
     fun listOfUrlSpans(onEachSpan: Pair<Int, Int>.(Uri) -> Unit, onEmpty: () -> Unit)
 
@@ -91,16 +92,27 @@ interface EditTextController {
 
     fun onDestroyContextMenu()
 
+    fun findEnglish()
+
+    fun setLinesCount()
+
+    fun createEditText(): EditText
+
     class Base @Inject constructor(
         private val noteData: NoteData,
-        override val editText: EditText,
+        private val editTextBuilder: Function0<@JvmSuppressWildcards EditText>,
         private val uiStates: UiStates,
         private val inputMethodManager: InputMethodManager,
-        private val coroutineDispatcher: CoroutineDispatcher
+        private val coroutineDispatcher: CoroutineDispatcher,
+        private val callbackEditText: CallbackEditText
     ) : EditTextController {
 
-        init {
-            editText.initEditText()
+        private var _editText: EditText? = null
+        override val editText get() = _editText?: editTextBuilder()
+
+        override fun createEditText() = editTextBuilder().apply {
+            _editText = this
+            _editText?.initEditText()
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -110,18 +122,46 @@ interface EditTextController {
                     listOfUrlSpans(
                         onEachSpan = { uri ->
                             checkForClick(offset) { setHighLightAndOpenLink(view, uri) }
-                        }, onEmpty = { showKeyboard() })
+                        }, onEmpty = { showKeyboard() }
+                    )
                 }
-                false
             }
+            accessibilityDelegate = AccessibilityDelegate(this@Base, uiStates)
+                customSelectionActionModeCallback = callbackEditText
+                customInsertionActionModeCallback = callbackEditText
             setOnClickListener { onClickAction() }
         }
 
-        override fun setText(newText: String) = with(editText) {
-            setText(Html.fromHtml(newText, htmlMode).trim())
+        override fun findEnglish() {
+            with(uiStates) {
+                with(editText) {
+                    if (text.contains(Regex("[А-я , ; ё]"))) {
+                        true.setTranslateEnable
+                        setText(text.replace(Regex("[А-я , ; ё]"), ""))
+                        setLinesCount()
+                    } else {
+                        setNewText(noteData.noteModelFullScreen.value.text)
+                        false.setTranslateEnable
+                    }
+                }
+            }
         }
 
-        override fun getHtmlText(text: String) = fromHtml(text).toString()
+        override fun setNewText(newText: String) = with(editText) {
+            CoroutineScope(Main).launch {
+                setText(Html.fromHtml(newText, htmlMode).trim())
+                setLinesCount()
+            }
+            Unit
+        }
+
+        override fun setLinesCount() {
+            with(editText) {
+                post {
+                    with(uiStates) { lineCount.setLinesCounter }
+                }
+            }
+        }
 
         override fun SpanType.removeSpan() {
             uiStates.setButtonWhite(this)
@@ -171,6 +211,7 @@ interface EditTextController {
 
         override fun updateText() = with(noteData.noteModelFullScreen.value) {
             text = editText.text.toHtml(); isChanged = true
+            with(uiStates) { LoadStatesEditText.Success.setIsSetTextInEditText }
         }
 
         override fun setRelativeSpan(scale: Float) = with(editText) {
@@ -274,6 +315,7 @@ interface EditTextController {
                 val line = getLineForVertical(y.toInt() - view.paddingTop)
                 onActionUp(getOffsetForHorizontal(line, x - view.paddingStart))
             }
+            false
         }
 
         override fun listOfUrlSpans(

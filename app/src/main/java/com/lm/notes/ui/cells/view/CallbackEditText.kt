@@ -4,9 +4,9 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.get
+import com.lm.notes.utils.log
 
 class CallbackEditText(
-    private val editTextController: EditTextController
 ) : ActionMode.Callback {
 
     override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) =
@@ -16,5 +16,7 @@ class CallbackEditText(
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?) = true
 
-    override fun onDestroyActionMode(mode: ActionMode?) = editTextController.onDestroyContextMenu()
+    override fun onDestroyActionMode(mode: ActionMode?) {
+      //  editTextController.onDestroyContextMenu()
+    }
 }

@@ -50,7 +50,7 @@ class LoginViewModel @Inject constructor(
 
     private fun LoginActivity.startOTGAuth(
         regLauncher: ActivityResultLauncher<IntentSenderRequest>
-    ) = oneTapGoogleAuth.startAuth() {
+    ) = oneTapGoogleAuth.startAuth {
         when (it) {
             is OTGRegState.OnSuccess ->
                 regLauncher.launch(IntentSenderRequest.Builder(it.intentSender).build())

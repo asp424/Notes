@@ -45,7 +45,7 @@ fun ShareCanvasButton(x: Dp, shareType: ShareType = ShareType.TextPlain) {
                                 .noRippleClickable(
                                     remember(this@apply) {
                                         {
-                                            val header = with(headerState.value.text) {
+                                            val header = with(header) {
                                                 getHeader(isNewHeader(this))
                                             }
                                             if (shareType == ShareType.TextPlain)

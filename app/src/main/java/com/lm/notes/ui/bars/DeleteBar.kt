@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.utils.log
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
@@ -32,23 +33,13 @@ fun DeleteBar(animScale: Float) {
                         modifier = Modifier.noRippleClickable (
                             remember {
                                 {
-                                    listDeleteAble.forEach { deleteNote(it) }
+                                    listDeleteAble.forEach {
+                                        deleteNote(it)
+                                    }
                                     cancelDeleteMode()
                                 }
                             }
                         ),
-                        tint = getSecondColor
-                    )
-                }
-                Box(
-                    Modifier
-                        .offset(width - 200.dp, 0.dp)
-                        .scale(animScale)
-                ) {
-                    Icon(
-                        Icons.Rounded.Close,
-                        null,
-                        modifier = Modifier.noRippleClickable(remember { { cancelDeleteMode() } }),
                         tint = getSecondColor
                     )
                 }

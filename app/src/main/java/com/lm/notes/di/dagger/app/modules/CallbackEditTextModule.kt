@@ -11,6 +11,6 @@ class CallbackEditTextModule {
 
     @Provides
     @AppScope
-    fun provideCallbackEditText(editTextController: EditTextController) =
-        CallbackEditText(editTextController)
+    fun provideCallbackEditText() =
+        CallbackEditText()
 }

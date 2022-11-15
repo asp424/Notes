@@ -5,7 +5,6 @@
         tools:ignore="ProtectedPermissions"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-    <uses-permission android:name="android.permission.SEND_SMS"/>
     <application
         android:allowBackup="false"
         android:name=".core.App"
@@ -17,6 +16,7 @@
         tools:ignore="DataExtractionRules">
         <activity
             android:name=".presentation.MainActivity"
+            android:launchMode="singleTask"
             android:exported="true"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:theme="@style/Theme.Notes">

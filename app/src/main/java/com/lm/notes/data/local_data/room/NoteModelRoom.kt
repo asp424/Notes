@@ -11,6 +11,7 @@ class NoteModelRoom(
     val timestampChange: Long = 0,
     val text: String = "",
     val header: String = "",
+    var preview: String = ""
 )
 
 

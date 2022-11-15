@@ -1,5 +1,7 @@
 package com.lm.notes.presentation
 
+import android.text.Editable
+import android.text.Spanned
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.input.TextFieldValue
@@ -27,10 +29,10 @@ class NotesViewModel @Inject constructor(
     fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) =
         notesRepository.addNewNote(coroutineScope) { onAdd() }
 
-    fun setFullscreenNoteModel(id: String, text: String) =
-        notesRepository.setFullscreenNoteModel(id, text)
+    fun setFullscreenNoteModel(id: String) =
+        notesRepository.setFullscreenNoteModel(id)
 
-    fun updateNoteFromUi(newText: String) = notesRepository.updateNoteFromUi(newText)
+    fun updateNoteFromUi(newText: Spanned) = notesRepository.updateNoteFromUi(newText)
 
     fun checkForEmptyText() = notesRepository.checkForEmptyText()
 

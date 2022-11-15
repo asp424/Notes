@@ -21,7 +21,6 @@ class NoteAppWidget : AppWidgetProvider() {
         appWidgetIds: IntArray?
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        "update".log
         context?.appComponent?.noteAppWidgetController()?.apply {
             CoroutineScope(IO).launch {
                 setUpTextToWidget(appWidgetIds?.toList()?.get(0).toString()).apply {

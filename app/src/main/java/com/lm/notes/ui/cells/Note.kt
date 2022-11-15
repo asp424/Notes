@@ -24,22 +24,7 @@ fun Note(modifier: Modifier, time: String, notesText: String, header: String, id
                 modifier = modifier
                     .padding(bottom = 10.dp)
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                   /* .size(
-                        animDp(
-                            target =
-                            getIsFullscreenMode,
-                            first = width,
-                            second = width - 20.dp
-                        ), animDp(
-                            target =
-                            getIsFullscreenMode,
-                            first = height - 75.dp,
-                            second =  80.dp
-                        )
-                    )
-                    */
-                ,
+                    .wrapContentHeight(),
                 shape = RoundedCornerShape(8.dp), border = getNoteCardBorder(id),
                 elevation = getNoteCardElevation(id)
             ) {
@@ -48,7 +33,7 @@ fun Note(modifier: Modifier, time: String, notesText: String, header: String, id
                         NoteCardText(header)
                         if (notesText.isNotEmpty()) {
                             Text(
-                                text = "$notesText...", maxLines = 1,
+                                text = notesText, maxLines = 1,
                                 fontSize = 12.sp, color = Color.Gray
                             )
                         }

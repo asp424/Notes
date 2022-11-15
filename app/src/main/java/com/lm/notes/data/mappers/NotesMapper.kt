@@ -5,6 +5,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.lm.notes.core.Mapper
+import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.remote_data.RemoteLoadStates
@@ -61,8 +62,9 @@ interface NotesMapper {
                     timestampChangeState = timestampChange.toMutableState(),
                     timestampCreate = timestampCreate,
                     text = text,
-                    headerState = TextFieldValue(header).toMutableState(),
-                    initTime = timestampChange
+                    initTime = timestampChange,
+                    preview = preview,
+                    header = header
                 )
             }
             return NoteModel()
@@ -74,8 +76,9 @@ interface NotesMapper {
                     id = id,
                     timestampChange = timestampChangeState.value,
                     timestampCreate = timestampCreate,
-                    header = headerState.value.text,
-                    text = text
+                    header = header,
+                    text = text,
+                    preview = preview
                 )
             }
 
@@ -92,7 +95,7 @@ interface NotesMapper {
             get() =
                 (getValue(NoteModel::class.java) ?: NoteModel()).apply {
                     timestampChangeState = timestampChange.toMutableState()
-                    headerState = TextFieldValue(header).toMutableState()
+                    header = header
                 }
 
         private fun <T : Any> T.toMutableState() = mutableStateOf(this)

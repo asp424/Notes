@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Widgets
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -21,33 +22,36 @@ import com.lm.notes.utils.noRippleClickable
 @Composable
 fun FullScreenIcon(source: ImageVector) {
     with(mainDep) {
-        with(notesViewModel.uiStates) {
-            val values = source.getFullScreenIconsValues(
-                coroutine, noteAppWidgetController, notesViewModel.noteModelFullScreen.value
-            )
-            if (source == listIconsFullScreen[0]) Canvas(
-                Modifier.offset(width - 126.dp, 0.dp).scale(
-                    animScale(getIsFullscreenMode && getTextIsEmpty)
+        with(notesViewModel) {
+            with(uiStates) {
+                val values = source.getFullScreenIconsValues(
+                    coroutine, noteAppWidgetController, notesViewModel.noteModelFullScreen.value,
+                    editTextController
                 )
+                if (source == listIconsFullScreen[0]) Canvas(
+                    Modifier.offset(width - 126.dp, 0.dp).scale(
+                        animScale(getIsFullscreenMode && getTextIsEmpty)
+                    )
                 ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
-            Box(
-                Modifier
-                    .offset(width - source.x, 0.dp)
-                    .scale(values.first)
-            ) {
-                Icon(
-                    source, null,
-                    Modifier.noRippleClickable(values.second), getSecondColor
-                )
+                Box(
+                    Modifier
+                        .offset(width - source.x, 0.dp)
+                        .scale(values.first)
+                ) {
+                    Icon(
+                        source, null,
+                        Modifier.noRippleClickable(values.second), getSecondColor
+                    )
+                }
             }
         }
     }
 }
-
 private val ImageVector.x
     get() = when (this) {
         Icons.Rounded.Share -> 135.dp
         Icons.Rounded.Widgets -> 195.dp
+        Icons.Rounded.Translate -> 255.dp
         else -> 195.dp
     }
 

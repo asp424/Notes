@@ -16,7 +16,8 @@ interface IntentController {
     fun checkForIntentAction(
         intent: Intent?,
         notesViewModel: NotesViewModel,
-        lifecycleScope: LifecycleCoroutineScope
+        lifecycleScope: LifecycleCoroutineScope,
+        result: (IntentStates) -> Unit
     )
 
     class Base @Inject constructor(
@@ -26,7 +27,8 @@ interface IntentController {
         override fun checkForIntentAction(
             intent: Intent?,
             notesViewModel: NotesViewModel,
-            lifecycleScope: LifecycleCoroutineScope
+            lifecycleScope: LifecycleCoroutineScope,
+            result: (IntentStates) -> Unit
         ) {
 
             intent?.apply {
@@ -34,18 +36,26 @@ interface IntentController {
                     Intent.ACTION_SEND ->
                         if ("text/plain" == type) {
                             getStringExtra(Intent.EXTRA_TEXT)
-                            toastCreator.invoke(R.string.text_plain)
+                            result(IntentStates.SendPlain(getStringExtra(Intent.EXTRA_TEXT)?:""))
+                            //toastCreator.invoke(R.string.text_plain)
                         }
+
                     Intent.ACTION_VIEW -> {
                         if ("text/plain" == type) {
-                            getStringExtra(Intent.EXTRA_TEXT)
-                            toastCreator.invoke(R.string.text_all)
+                            result(IntentStates.ViewPlain(data))
+                            //toastCreator.invoke(R.string.text_all)
                         }
+
                         if ("application/msword" == type) {
-                            toastCreator.invoke(R.string.application_msword)
+                            result(IntentStates.Word(getStringExtra(Intent.EXTRA_TEXT)?:""))
+                           // toastCreator.invoke(R.string.application_msword)
                         }
                     }
                     BaseActivity.IS_AUTH_ACTION -> notesViewModel.synchronize(lifecycleScope)
+                    else -> {
+                        result(IntentStates.Null)
+                        //toastCreator.invoke(R.string.empty_intent)
+                    }
                 }
             }
         }

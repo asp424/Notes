@@ -8,6 +8,7 @@
     <string name="text_plain">text/plain</string>
     <string name="text_all">text_file</string>
     <string name="application_msword">application/msword</string>
+    <string name="empty_intent">null</string>
     <string name="second_color">Second color</string>
     <string name="change_keyboard">Change keyboard</string>
     <string name="main_color">Main color</string>

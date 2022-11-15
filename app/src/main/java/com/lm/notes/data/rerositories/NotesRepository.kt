@@ -1,5 +1,7 @@
 package com.lm.notes.data.rerositories
 
+import android.text.Editable
+import android.text.Spanned
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel
@@ -17,13 +19,13 @@ interface NotesRepository {
 
     fun deleteNote(id: String)
 
-    fun checkForEmptyText(): Boolean
+    fun checkForEmptyText()
 
-    fun updateNoteFromUi(newText: String)
+    fun updateNoteFromUi(newText: Spanned)
 
     fun updateHeaderFromUi(text: TextFieldValue)
 
-    fun setFullscreenNoteModel(id: String, text: String)
+    fun setFullscreenNoteModel(id: String)
 
     suspend fun updateChangedNotes()
 
@@ -68,7 +70,7 @@ interface NotesRepository {
             coroutineScope.launch(coroutineDispatcher) {
                 with(roomRepository.newNote(firebaseRepository.randomId)) {
                     notesListData.add(this@with)
-                    notesListData.setFullscreenNoteModel(id, "")
+                    notesListData.setFullscreenNoteModel(id)
                     withContext(Main) { onAdd() }
                 }
             }
@@ -83,7 +85,7 @@ interface NotesRepository {
 
         override fun checkForEmptyText() = notesListData.checkForEmptyText()
 
-        override fun updateNoteFromUi(newText: String) =
+        override fun updateNoteFromUi(newText: Spanned) =
             notesListData.updateNoteFromUi(newText, roomRepository.actualTime)
 
         override fun updateHeaderFromUi(text: TextFieldValue) =
@@ -111,8 +113,8 @@ interface NotesRepository {
                 roomRepository.updateNote(it)
             }
 
-        override fun setFullscreenNoteModel(id: String, text: String) =
-            notesListData.setFullscreenNoteModel(id, text)
+        override fun setFullscreenNoteModel(id: String) =
+            notesListData.setFullscreenNoteModel(id)
 
         override val noteModelFullScreen get() = notesListData.noteModelFullScreen
     }

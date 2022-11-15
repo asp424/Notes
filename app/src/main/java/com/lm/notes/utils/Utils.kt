@@ -115,8 +115,6 @@ suspend fun backPressHandle(
                         with(notesViewModel) {
                             if (isMustRemoveFromList()) deleteNote(noteModelFullScreen.value.id)
                         }
-                        delay(1000)
-                        true.setIsClickableNote
                     }
                 }
                 removeSelection()

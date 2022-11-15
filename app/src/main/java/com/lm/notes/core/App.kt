@@ -17,14 +17,8 @@ class App : Application() {
         DaggerAppComponent.builder()
             .toastCreator { it.toast }
             .application(this@App)
-            .editText(EditTextBinding.inflate(LayoutInflater.from(this)).root)
-            .filesDir(filesDir).create().apply {
-                editText().apply {
-                    accessibilityDelegate = accessibilityDelegate()
-                    customSelectionActionModeCallback = callbackEditText()
-                    customInsertionActionModeCallback = callbackEditText()
-                }
-            }
+            .editText { EditTextBinding.inflate(LayoutInflater.from(this)).root }
+            .filesDir(filesDir).create()
     }
 }
 

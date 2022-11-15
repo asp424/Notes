@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.lm.notes.core.IntentStates
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.presentation.MainActivity
@@ -68,12 +69,12 @@ fun MainScreenDependencies(
             notesViewModel = remember {
                 ViewModelProvider(owner, viewModelFactory)[NotesViewModel::class.java]
             },
-            firebaseAuth = firebaseAuth,
-            sPreferences = sPreferences,
+            firebaseAuth = remember { firebaseAuth },
+            sPreferences = remember { sPreferences },
             listState = rememberLazyListState(),
-            filesProvider = filesProvider,
+            filesProvider = remember { filesProvider },
             navController = rememberAnimatedNavController(),
-            noteAppWidgetController = noteAppWidgetController
+            noteAppWidgetController = remember { noteAppWidgetController }
         ), content = content
     )
 }

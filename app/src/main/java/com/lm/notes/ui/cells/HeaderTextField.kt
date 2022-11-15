@@ -6,6 +6,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
@@ -15,42 +21,44 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
-import com.lm.notes.data.models.NoteModel
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.theme.gray
 
 @Composable
 fun HeaderTextField() {
     with(mainDep) {
-        with(notesViewModel.noteModelFullScreen.value) {
-            TextField(value =
-            if (notesViewModel.noteModelFullScreen.value.headerState.value.text.startsWith(NEW_TAG))
-                TextFieldValue("")
-            else headerState.value,
-                onValueChange = {
-                    notesViewModel.updateHeaderFromUi(it)
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    disabledTextColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    backgroundColor = gray
-                ),
-                modifier = Modifier.width(width),
-                maxLines = 1,
-                textStyle = TextStyle(
-                    fontWeight = FontWeight.Bold, fontSize = 18.sp
-                ),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                placeholder = {
-                    Text(
-                        text = headerState.value.text.substringAfter(NEW_TAG),
-                        color = LightGray
-                    )
-                }
-            )
+        val noteModel by notesViewModel.noteModelFullScreen.collectAsState()
+        var header by remember(noteModel) {
+            mutableStateOf(TextFieldValue(
+                if(noteModel.header.startsWith(NEW_TAG)) "" else noteModel.header
+            ))
         }
+
+        TextField(
+            header,
+            onValueChange = {
+                notesViewModel.updateHeaderFromUi(it)
+                header = it
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                disabledTextColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                backgroundColor = gray
+            ),
+            modifier = Modifier.width(width),
+            maxLines = 1,
+            textStyle = TextStyle(
+                fontWeight = FontWeight.Bold, fontSize = 18.sp
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+            placeholder = {
+                Text(
+                    text = noteModel.header.substringAfter(NEW_TAG)  ,
+                    color = LightGray
+                )
+            })
     }
 }

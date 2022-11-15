@@ -26,10 +26,12 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavHostController
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.EditTextController
+import com.lm.notes.ui.cells.view.LoadStatesEditText
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.theme.main
 import com.lm.notes.utils.animScale
+import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -40,6 +42,9 @@ import kotlinx.coroutines.launch
 @Stable
 data class UiStates(
     private var isFormatMode: MutableState<Boolean> = mutableStateOf(false),
+    private var translateEnable: MutableState<Boolean> = mutableStateOf(false),
+    private var linesCounter: MutableState<Int> = mutableStateOf(1),
+    private var pasteIconLabel: MutableState<String> = mutableStateOf(""),
     private var setSelectionEnable: MutableState<Boolean> = mutableStateOf(false),
     private var colorPickerBackgroundIsShow: MutableState<Boolean> = mutableStateOf(false),
     private var colorPickerForegroundIsShow: MutableState<Boolean> = mutableStateOf(false),
@@ -63,12 +68,15 @@ data class UiStates(
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
     val secondColor: MutableState<Color> = mutableStateOf(main),
-    val isClickableNote: MutableState<Boolean> = mutableStateOf(true),
+    val isSetTextInEditText: MutableState<LoadStatesEditText> = mutableStateOf(LoadStatesEditText.Loading),
     var selection: Pair<Int, Int> = Pair(-1, -1)
 ) {
     val getIsFormatMode get() = isFormatMode.value
+
+    val getTranslateEnable get() = translateEnable.value
+    val getLinesCounter get() = linesCounter.value
+    val getPasteIconLabel get() = pasteIconLabel.value
     val getSetSelectionEnable get() = setSelectionEnable.value
-    val getIsClickableNote get() = isClickableNote.value
     val getTextIsEmpty get() = textIsEmpty.value
     private val getNotShareVisible get() = notShareVisible.value
     val getMainColor get() = mainColor.value
@@ -105,6 +113,8 @@ data class UiStates(
         }
 
     private val Color.setColorButtonBackground get() = run { colorButtonBackground.value = this }
+
+    val Int.setLinesCounter get() = run { linesCounter.value = this }
     private val Color.setColorButtonForeground get() = run { colorButtonForeground.value = this }
     private val Color.setColorButtonUnderlined get() = run { colorButtonUnderlined.value = this }
     private val Color.setColorButtonBold get() = run { colorButtonBold.value = this }
@@ -112,6 +122,11 @@ data class UiStates(
     private val Color.setColorButtonClick get() = run { colorButtonClick.value = this }
     val Color.setMainColor get() = run { mainColor.value = this }
     val Color.setSecondColor get() = run { secondColor.value = this }
+    val String.setPasteIconLabel
+        get() = run {
+            pasteIconLabel.value = if (startsWith("text")) "text"
+            else this
+        }
     private val Color.setColorButtonStrikeThrough
         get() = run {
             colorButtonStrikeThrough.value = this
@@ -125,9 +140,9 @@ data class UiStates(
 
     val Boolean.setIsSelected get() = run { isSelected.value = this }
 
-    private val Boolean.setSetSelectionEnable get() = run { setSelectionEnable.value = this }
+    val Boolean.setTranslateEnable get() = run { translateEnable.value = this }
 
-    val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
+    private val Boolean.setSetSelectionEnable get() = run { setSelectionEnable.value = this }
 
     val Boolean.setTextIsEmpty get() = run { textIsEmpty.value = this }
 
@@ -138,6 +153,8 @@ data class UiStates(
     val Boolean.setClipboardIsEmpty get() = run { clipboardIsEmpty.value = this }
 
     val Boolean.setSettingsVisible get() = run { settingsVisible.value = this }
+
+    val LoadStatesEditText.setIsSetTextInEditText get() = run { isSetTextInEditText.value = this }
 
     infix fun Color.setColor(spanType: SpanType) = when (spanType) {
         is SpanType.Background -> setColorButtonBackground
@@ -223,7 +240,6 @@ data class UiStates(
     private fun setDeleteMode() {
         true.setIsDeleteMode
         false.setIsMainMode
-        false.setIsClickableNote
         listDeleteAble.clear()
     }
 
@@ -254,10 +270,6 @@ data class UiStates(
         listDeleteAble.clear()
         false.setIsDeleteMode
         true.setIsMainMode
-        CoroutineScope(IO).launch {
-            delay(300)
-            true.setIsClickableNote
-        }
     }
 
     fun expandShare(coroutineScope: CoroutineScope) {
@@ -283,6 +295,7 @@ data class UiStates(
             Icons.Rounded.ContentPaste -> animScale(getClipboardIsEmpty)
             Icons.Rounded.SelectAll -> animScale(textIsEmpty)
             Icons.Rounded.CopyAll -> animScale(textIsEmpty)
+            Icons.Rounded.ClearAll -> animScale(getClipboardIsEmpty)
             else -> animScale(getIsSelected && textIsEmpty)
         }
 
@@ -290,7 +303,8 @@ data class UiStates(
     fun ImageVector.getFullScreenIconsValues(
         coroutine: CoroutineScope,
         noteAppWidgetController: NoteAppWidgetController,
-        noteModel: NoteModel
+        noteModel: NoteModel,
+        editTextController: EditTextController
     ) = when (this@getFullScreenIconsValues) {
         Icons.Rounded.Share -> Pair(
             animScale(getIsFullscreenMode && getTextIsEmpty), remember {
@@ -301,6 +315,12 @@ data class UiStates(
             animScale(
                 getIsFullscreenMode && getTextIsEmpty && getNotShareVisible
             ), remember(noteModel) { { noteAppWidgetController.pinNoteWidget(noteModel.id) } })
+
+        Icons.Rounded.Translate -> Pair(
+            animScale(getIsFullscreenMode && getTextIsEmpty && getNotShareVisible), remember {
+                { editTextController.findEnglish() }
+            }
+        )
         else -> Pair(0f) {}
     }
 
@@ -335,11 +355,6 @@ data class UiStates(
     ) = pointerInput(Unit) {
         detectTapGestures(
             onTap = {
-                val press = PressInteraction.Press(Offset(it.x + 100f, 0f))
-                coroutine.launch {
-                    interactionSource.emit(press)
-                    interactionSource.emit(PressInteraction.Release(press))
-                }
                 with(notesViewModel) {
                     with(noteModel) {
                         if (getIsDeleteMode) {
@@ -350,21 +365,29 @@ data class UiStates(
                                 }
                             } else addToDeleteAbleList(id)
                         }
-                        if (getIsClickableNote && !getIsDeleteMode) {
-                            false.setIsClickableNote
-                            setFullscreenNoteModel(id, text)
-                            editTextController.setText(text)
-                            checkForEmptyText().setTextIsEmpty
-                            clipboardProvider.clipBoardIsNotEmpty?.setClipboardIsEmpty
-                            false.setIsSelected
-                            navController.navigate("fullScreenNote") {
-                                popUpTo("mainList")
+                        if (!getIsDeleteMode) {
+                            navController.navigate("fullScreenNote") { popUpTo("mainList") }
+                            val press = PressInteraction.Press(Offset(it.x + 100f, 0f))
+                            coroutine.launch(IO) {
+                                interactionSource.emit(press)
+                                interactionSource.emit(PressInteraction.Release(press))
                             }
+                            setFullscreenNoteModel(id)
+                            LoadStatesEditText.Loading.setIsSetTextInEditText
+                            editTextController.createEditText()
+                            editTextController.setNewText(text)
+                            editTextController.editText.post {
+                                editTextController.editText.lineCount.setLinesCounter
+                            }
+                            false.setTranslateEnable
+                            checkForEmptyText()
+                            false.setIsSelected
                         }
                     }
                 }
             },
-            onLongPress = {
+            onLongPress =
+            {
                 setDeleteMode()
                 addToDeleteAbleList(noteModel.id)
             })
@@ -381,11 +404,11 @@ data class UiStates(
         scope.launchWhenResumed {
             notesViewModel.editTextController.editText.isEnabled = true
             false.setSetSelectionEnable
-            delay(300)
-            notesViewModel.clipboardProvider.clipBoardIsNotEmpty?.setClipboardIsEmpty
-            delay(300)
+            false.setTranslateEnable
             notesViewModel.editTextController.setSelection()
+            delay(300)
             true.setSetSelectionEnable
+            notesViewModel.clipboardProvider.checkForEmpty()
         }
     }
 

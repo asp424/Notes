@@ -2,6 +2,7 @@ package com.lm.notes.ui.bars
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Widgets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
@@ -20,5 +21,7 @@ fun FullScreenBar() {
     }
 }
 
-val listIconsFullScreen by lazy { listOf(Icons.Rounded.Share, Icons.Rounded.Widgets) }
+val listIconsFullScreen by lazy {
+    listOf(Icons.Rounded.Share, Icons.Rounded.Widgets, Icons.Rounded.Translate)
+}
 

@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,16 +31,15 @@ fun BottomBar() {
                 val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
                 val click = remember {
                     {
-                        if (getIsClickableNote && !getIsDeleteMode) {
-                            false.setIsClickableNote
-                            addNewNote(lifecycleScope) {
-                                editTextController.setText("")
-                                checkForEmptyText().setTextIsEmpty
-                                (clipboardProvider.clipBoardIsNotEmpty)?.setClipboardIsEmpty
+                        editTextController.createEditText()
+                        if (!getIsDeleteMode) {
                                 navController.navigate("fullScreenNote") {
                                     popUpTo("mainList")
                                 }
-                            }
+                                addNewNote(lifecycleScope) {
+                                    editTextController.setNewText("")
+                                    checkForEmptyText()
+                                }
                         }
                     }
                 }
@@ -47,18 +47,17 @@ fun BottomBar() {
                     modifier = Modifier
                         .fillMaxSize()
                         .offset(0.dp, animDp(getIsMainMode, 0.dp, 100.dp))
-                        .alpha(0.8f)
                 ) {
                     Canvas(Modifier) {
                         drawRect(
                             getMainColor,
-                            Offset(0f, height.value * density - 60.dp.toPx()),
-                            size = Size(width.value * density, 100.dp.toPx())
+                            Offset(0f, height.value * density - 28.dp.toPx()),
+                            size = Size(width.value * density, 60.dp.toPx())
                         )
                     }
                     Button(
                         onClick = {}, modifier = Modifier
-                            .offset((width - 89.dp), (height - 89.dp))
+                            .offset((width - 89.dp), (height - 61.dp))
                             .scale(1.05f)
                             .size(60.dp), colors = ButtonDefaults.buttonColors(
                             containerColor = getSecondColor
@@ -66,7 +65,7 @@ fun BottomBar() {
                     ) {}
                     Button(
                         onClick = click, modifier = Modifier
-                            .offset((width - 89.dp), (height - 89.dp))
+                            .offset((width - 89.dp), (height - 61.dp))
                             .size(60.dp), colors = ButtonDefaults.buttonColors(
                             containerColor = getMainColor
                         )
