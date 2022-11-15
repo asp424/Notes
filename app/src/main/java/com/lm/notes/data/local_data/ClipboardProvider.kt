@@ -1,6 +1,5 @@
 package com.lm.notes.data.local_data
 
-import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Build
@@ -73,23 +72,10 @@ interface ClipboardProvider {
         }
 
         override fun paste() = with(uiStates) {
-            if (hasClip()) {
-                clipboardManager.primaryClip?.apply {
-                    (0 until itemCount).forEach {
-                        getItemAt(it).apply {
-                            {
-                                checkForEmpty()
-                                false.setIsSelected
-                            }.apply {
-                                htmlText?.apply {
-                                    removeSelected(this); invoke()
-                                } ?: text?.apply {
-                                    removeSelected(toSpanned().toHtml()); invoke()
-                                }
-                            }
-                        }
-                    }
-                }
+            if (hasClip()) clipboardManager.primaryClip?.getItemAt(0)?.apply {
+                htmlText?.apply { removeSelected(this) } ?: removeSelected(text ?: "")
+                checkForEmpty()
+                false.setIsSelected
             }
         }
 
@@ -115,9 +101,11 @@ interface ClipboardProvider {
             removeSelected()
         }
 
-        private fun removeSelected(new: String = "") =
-            with(editTextController.editText) {
-                text.replace(selectionStart, selectionEnd, editTextController.fromHtml(new).trim())
+        private fun removeSelected(new: Any = "") = with(editTextController.editText) {
+                text.replace(selectionStart, selectionEnd, if (new is String)
+                        editTextController.fromHtml(new).trim()
+                    else (new as CharSequence).toSpanned().trim()
+                )
                 editTextController.updateText()
             }
 

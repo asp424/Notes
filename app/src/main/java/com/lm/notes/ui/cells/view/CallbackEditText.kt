@@ -4,7 +4,6 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.get
-import com.lm.notes.utils.log
 
 class CallbackEditText(
 ) : ActionMode.Callback {

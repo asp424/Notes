@@ -3,6 +3,7 @@ package com.lm.notes.ui.theme
 import android.app.Activity
 import android.content.res.Configuration
 import android.os.Build
+import android.view.View
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -68,10 +69,16 @@ fun NotesTheme(
         }
         val view = LocalView.current
         if (!view.isInEditMode) {
+            val configuration = LocalConfiguration.current
+            val window = (view.context as Activity).window
             notesViewModel.uiStates.getMainColor.also { color ->
                 LaunchedEffect(color) {
-                    val window = (view.context as Activity).window
+
                     WindowCompat.getInsetsController(window, view).apply {
+                        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                                window.decorView.systemUiVisibility =
+                                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         isAppearanceLightStatusBars = darkTheme
                         window.statusBarColor = color.toArgb()
                         window.navigationBarColor =

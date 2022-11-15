@@ -13,7 +13,6 @@ import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.log
 import java.io.File
 import java.net.URLConnection
-import java.nio.charset.Charset
 import javax.inject.Inject
 
 interface FilesProvider {
@@ -55,10 +54,9 @@ interface FilesProvider {
         override fun readTextFileFromDeviceAndSetToEditText(uri: Uri?) {
             uri?.apply {
                 context.contentResolver.openInputStream(this)?.apply {
-                    reader(Charsets.UTF_8).encoding.log
-                    editTextController.setNewText(
-                        reader(Charsets.UTF_8).readText().toSpanned().toHtml()
-                    )
+                    editTextController.setText(reader().readText().apply {
+                        log
+                    })
                     close()
                 }
             }

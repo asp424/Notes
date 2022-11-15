@@ -31,7 +31,6 @@ import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.theme.main
 import com.lm.notes.utils.animScale
-import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay

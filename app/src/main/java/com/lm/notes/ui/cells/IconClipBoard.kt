@@ -1,5 +1,6 @@
 package com.lm.notes.ui.cells
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,22 +15,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
-fun IconClipBoard(source: ImageVector, textIsEmpty: Boolean) {
+fun IconClipBoard(
+    source: ImageVector,
+    textIsEmpty: Boolean,
+    color: Color,
+    bottomPadding: Dp = 0.dp
+) {
     with(mainDep.notesViewModel) {
         with(uiStates) {
             val scale = source.getScale(textIsEmpty)
+            val configuration = LocalConfiguration.current
             Box(
                 Modifier
                     .padding(
-                        start = 5.dp, end =
-                        if (source == Icons.Rounded.ContentPaste) 4.dp else 0.dp
+                        start = if (source == Icons.Rounded.ContentPaste &&
+                            configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2.dp else 5.dp,
+                        end = 0.dp,
+                        bottom = if (source == Icons.Rounded.ContentPaste &&
+                                configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                                ) 10.dp + bottomPadding else bottomPadding
                     )
                     .size(scale.dp * 30)
             ) {
@@ -46,11 +60,11 @@ fun IconClipBoard(source: ImageVector, textIsEmpty: Boolean) {
                                 .noRippleClickable(remember {
                                     { with(clipboardProvider) { source.clickOnButtonsClipboard() } }
                                 })
-                                .size(20.dp), getSecondColor
+                                .size(20.dp), color
                         )
                         Text(
                             text = getPasteIconLabel,
-                            color = getSecondColor, fontSize = 8.sp
+                            color = color, fontSize = 8.sp
                         )
                     } else Icon(
                     source, null,
@@ -61,7 +75,7 @@ fun IconClipBoard(source: ImageVector, textIsEmpty: Boolean) {
                                     with(clipboardProvider) { source.clickOnButtonsClipboard() }
                                 }
                             })
-                        .scale(scale), getSecondColor
+                        .scale(scale), color
                 )
             }
         }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.local_data.ShareType
+import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.FullScreenIcon
 import com.lm.notes.ui.cells.ShareCanvasButton
 
@@ -17,7 +18,7 @@ fun FullScreenBar() {
         ShareCanvasButton(160.dp, ShareType.AsHtml)
         ShareCanvasButton(195.dp, ShareType.AsTxt)
         ShareCanvasButton(230.dp)
-        listIconsFullScreen.forEach { FullScreenIcon(it) }
+        listIconsFullScreen.forEach { FullScreenIcon(it, with(mainDep.notesViewModel.uiStates){getSecondColor}) }
     }
 }
 

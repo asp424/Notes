@@ -12,14 +12,12 @@ import com.lm.notes.data.models.NoteModel
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.formatTimestamp
 import com.lm.notes.utils.getHeader
-import com.lm.notes.utils.log
 
 @Composable
 fun MainColumn() {
     with(mainDep) {
         with(notesViewModel) {
             val notesList by notesList.collectAsState()
-            notesList.log
             MainList(notesList) { i ->
                 val values = remember(notesList) {
                     listOf(

@@ -52,7 +52,7 @@ fun BottomBar() {
                         drawRect(
                             getMainColor,
                             Offset(0f, height.value * density - 28.dp.toPx()),
-                            size = Size(width.value * density, 60.dp.toPx())
+                            size = Size(width.value * density + 200f, 60.dp.toPx())
                         )
                     }
                     Button(

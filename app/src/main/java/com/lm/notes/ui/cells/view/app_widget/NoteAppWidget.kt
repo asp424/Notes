@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import com.lm.notes.R
 import com.lm.notes.core.appComponent
-import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch

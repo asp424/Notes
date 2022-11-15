@@ -19,6 +19,7 @@ import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.set
 import androidx.core.text.toHtml
+import androidx.core.text.toSpanned
 import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.ui.core.SpanType
@@ -96,6 +97,8 @@ interface EditTextController {
 
     fun setLinesCount()
 
+    fun setText(text: String)
+
     fun createEditText(): EditText
 
     class Base @Inject constructor(
@@ -135,9 +138,9 @@ interface EditTextController {
         override fun findEnglish() {
             with(uiStates) {
                 with(editText) {
-                    if (text.contains(Regex("[А-я , ; ё]"))) {
+                    if (text.contains(Regex("[А-я]"))) {
                         true.setTranslateEnable
-                        setText(text.replace(Regex("[А-я , ; ё]"), ""))
+                        setText(text.replace(Regex("[А-я?!*+<>{};ё\"%№й]"), ""))
                         setLinesCount()
                     } else {
                         setNewText(noteData.noteModelFullScreen.value.text)
@@ -150,6 +153,14 @@ interface EditTextController {
         override fun setNewText(newText: String) = with(editText) {
             CoroutineScope(Main).launch {
                 setText(Html.fromHtml(newText, htmlMode).trim())
+                setLinesCount()
+            }
+            Unit
+        }
+
+        override fun setText(text: String) = with(editText) {
+            CoroutineScope(Main).launch {
+                setText(text.toSpanned().trim())
                 setLinesCount()
             }
             Unit

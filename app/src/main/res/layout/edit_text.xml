@@ -11,6 +11,8 @@
     android:paddingBottom="200dp"
     android:theme="@style/Theme.Notes"
     android:hint="@string/note"
+    android:autoLink="web|email"
+    android:linksClickable="true"
     android:textSize="14.sp"
     android:autofillHints="" />
 

@@ -31,12 +31,10 @@ fun ClipboardBar() {
         with(notesViewModel.uiStates) {
             notesViewModel.noteModelFullScreen.value.text.apply {
                 val configuration = LocalConfiguration.current
-
-                    Configuration.ORIENTATION_PORTRAIT
                 Card(
                     Modifier
                         .height(if(configuration.orientation
-                            == Configuration.ORIENTATION_PORTRAIT ) 45.dp else 20.dp)
+                            == Configuration.ORIENTATION_PORTRAIT ) 45.dp else 0.dp)
                         .padding(1.dp)
                         .fillMaxWidth(),
                     RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp), getMainColor
@@ -50,7 +48,7 @@ fun ClipboardBar() {
                             listIconsClipboard.forEach {
                                 IconClipBoard(
                                     it,
-                                    getTextIsEmpty
+                                    getTextIsEmpty, getSecondColor
                                 )
                             }
                         }

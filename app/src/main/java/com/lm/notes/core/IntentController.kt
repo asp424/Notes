@@ -2,12 +2,9 @@ package com.lm.notes.core
 
 import android.content.Intent
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
-import com.lm.notes.R
 import com.lm.notes.presentation.BaseActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.app_widget.ToastCreator
-import com.lm.notes.utils.log
 import javax.inject.Inject
 
 

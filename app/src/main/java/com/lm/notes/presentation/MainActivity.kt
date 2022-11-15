@@ -66,6 +66,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
         start(intent)
+        intent?.action = ""
     }
 
     override fun onResume() {
@@ -83,6 +84,7 @@ class MainActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         start(intent)
+        intent?.action = ""
     }
 
     fun start(intent: Intent?) {
