@@ -94,7 +94,7 @@ private fun String.asTime(): String {
     return timeFormat.format(time)
 }
 
-suspend fun backPressHandle(
+fun backPressHandle(
     navController: NavController,
     notesViewModel: NotesViewModel,
     mainActivity: MainActivity

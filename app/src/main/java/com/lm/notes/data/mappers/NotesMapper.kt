@@ -10,6 +10,7 @@ import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.remote_data.RemoteLoadStates
 import com.lm.notes.data.remote_data.firebase.FBDataStates
+import com.lm.notes.utils.log
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -86,17 +87,18 @@ interface NotesMapper {
             stateFlow.collect { state ->
                 if (state is RemoteLoadStates.Success<*>)
                     if (state.data != null) {
-                        (state.data as DataSnapshot).children.map { emit(it.getNoteModel) }
+                        (state.data as DataSnapshot).children.map {
+                            emit(it.getNoteModel)
+                        }
                     }
             }
         }
 
         private val DataSnapshot.getNoteModel
-            get() =
-                (getValue(NoteModel::class.java) ?: NoteModel()).apply {
+            get() = (getValue(NoteModel::class.java) ?: NoteModel()).apply {
                     timestampChangeState = timestampChange.toMutableState()
-                    header = header
                 }
+
 
         private fun <T : Any> T.toMutableState() = mutableStateOf(this)
     }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Widgets
@@ -25,7 +26,11 @@ import com.lm.notes.utils.animScale
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
-fun FullScreenIcon(source: ImageVector, color: Color, bottomPadding: Dp = 0.dp, startPadding: Dp = 0.dp) {
+fun FullScreenIcon(
+    source: ImageVector, color: Color,
+    bottomPadding: Dp = 0.dp,
+    startPadding: Dp = 0.dp
+) {
     with(mainDep) {
         with(notesViewModel) {
             with(uiStates) {
@@ -34,18 +39,25 @@ fun FullScreenIcon(source: ImageVector, color: Color, bottomPadding: Dp = 0.dp, 
                     coroutine, noteAppWidgetController, notesViewModel.noteModelFullScreen.value,
                     editTextController
                 )
-                if (source == listIconsFullScreen[0]) Canvas(
-                    Modifier.offset(width - 126.dp, 0.dp).scale(
-                        animScale(getIsFullscreenMode && getTextIsEmpty)
-                    )
-                ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
+                if (source == listIconsFullScreen[0]) {
+                    Canvas(
+                        Modifier
+                            .offset(width - 126.dp, 0.dp)
+                            .scale(
+                                animScale(getIsFullscreenMode && getTextIsEmpty)
+                            )
+                    ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
+                }
                 Box(
                     Modifier
                         .offset(
                             if (configuration.orientation
-                                == Configuration.ORIENTATION_PORTRAIT)
-                                    (width - source.x) else 0.dp, 0.dp)
-                        .scale(values.first).padding(bottom = bottomPadding, start = startPadding)
+                                == Configuration.ORIENTATION_PORTRAIT
+                            )
+                                (width - source.x) else 0.dp, 0.dp
+                        )
+                        .scale(values.first)
+                        .padding(bottom = bottomPadding, start = startPadding)
                 ) {
                     Icon(
                         source, null,
@@ -56,11 +68,13 @@ fun FullScreenIcon(source: ImageVector, color: Color, bottomPadding: Dp = 0.dp, 
         }
     }
 }
+
 private val ImageVector.x
     get() = when (this) {
         Icons.Rounded.Share -> 135.dp
         Icons.Rounded.Widgets -> 195.dp
         Icons.Rounded.Translate -> 255.dp
+        Icons.Rounded.Save -> 315.dp
         else -> 195.dp
     }
 

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
@@ -24,10 +25,13 @@ import com.lm.notes.core.IntentController
 import com.lm.notes.core.appComponent
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.SPreferences
+import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainScreenDependencies
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.screens.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
+import com.lm.notes.utils.log
+import com.lm.notes.utils.longToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -38,6 +42,7 @@ import javax.inject.Inject
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+
 
 class MainActivity : BaseActivity() {
 
@@ -61,16 +66,40 @@ class MainActivity : BaseActivity() {
 
     private val notesViewModel by viewModels<NotesViewModel> { viewModelFactory.get() }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private val takeImageResult =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia())
+        {
+
+        }
+
+    val chooseFolderPath =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+        {
+            it.data?.data?.apply {
+                val file = filesProvider.saveText(
+                    0, notesViewModel.editTextController.editText.text.toString(),
+                    ShareType.AsTxt
+                )
+
+                filesProvider.saveFile(this, file, contentResolver)
+
+                it.data?.also {int ->
+                    longToast(filesProvider.getFolderNameFromUri(int)) }
+            }
+        }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //takeImageResult.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         appComponent.inject(this)
-        start(intent)
-        intent?.action = ""
     }
 
     override fun onResume() {
         super.onResume()
+        start(intent)
+        intent?.action = ""
         notesViewModel.clipboardProvider.addListener()
         with(notesViewModel) { uiStates.setSelection(lifecycleScope, this) }
     }
@@ -90,15 +119,15 @@ class MainActivity : BaseActivity() {
     fun start(intent: Intent?) {
         intentController.checkForIntentAction(intent, notesViewModel, lifecycleScope)
         {
-                setContent {
-                    NotesTheme(viewModelFactory = viewModelFactory.get()) {
-                        MainScreenDependencies(
-                            sPreferences,
-                            viewModelFactory.get(),
-                            firebaseAuth,
-                            filesProvider,
-                            noteAppWidgetController
-                        ) { MainScreen(it) }
+            setContent {
+                NotesTheme(viewModelFactory = viewModelFactory.get()) {
+                    MainScreenDependencies(
+                        sPreferences,
+                        viewModelFactory.get(),
+                        firebaseAuth,
+                        filesProvider,
+                        noteAppWidgetController
+                    ) { MainScreen(it) }
                 }
             }
         }
@@ -138,3 +167,5 @@ class MainActivity : BaseActivity() {
         )
     }
 }
+
+

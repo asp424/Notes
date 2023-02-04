@@ -75,7 +75,12 @@ fun MainScreenDependencies(
             filesProvider = remember { filesProvider },
             navController = rememberAnimatedNavController(),
             noteAppWidgetController = remember { noteAppWidgetController }
-        ), content = content
+        ).apply {
+                if(iconUri.toString().isNotEmpty()) {
+                    progressVisibility.value = false
+                    iconUri.value = sPreferences.readIconUri()?: Uri.EMPTY
+                }
+        }, content = content
     )
 }
 

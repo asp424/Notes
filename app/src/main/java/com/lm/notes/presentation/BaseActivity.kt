@@ -12,9 +12,8 @@ abstract class BaseActivity : ComponentActivity() {
 
     val FirebaseAuth.isAuth get() = currentUser?.uid != null
 
-    val startLoginActivity by lazy {
+    val startLoginActivity get() =
         startActivity(Intent(applicationContext, LoginActivity::class.java))
-    }
 
     val LoginActivity.startMainActivity
         get() = run {

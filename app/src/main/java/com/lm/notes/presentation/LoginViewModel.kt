@@ -12,6 +12,7 @@ import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.data.remote_data.firebase.FBRegStates
 import com.lm.notes.data.remote_data.one_tap_google.OTGRegState
 import com.lm.notes.data.remote_data.one_tap_google.OneTapGoogleAuth
+import com.lm.notes.utils.log
 import com.lm.notes.utils.longToast
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main

@@ -1,6 +1,5 @@
 package com.lm.notes.data.local_data
 
-import android.text.Editable
 import android.text.Spanned
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.models.NoteModel
@@ -78,8 +77,9 @@ interface NotesListData {
         override fun initList(notesModelList: List<NoteModel>) {
             mSFOfNotesList.value = notesModelList
         }
-        override fun updateNoteFromUi(newText: Spanned, actualTime: Long)
-        = noteData.updateNoteFromUi(newText, actualTime)
+
+        override fun updateNoteFromUi(newText: Spanned, actualTime: Long) =
+            noteData.updateNoteFromUi(newText, actualTime)
 
         override fun updateHeaderFromUi(text: TextFieldValue) = noteData.updateHeaderFromUi(text)
 

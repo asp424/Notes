@@ -1,5 +1,6 @@
 package com.lm.notes.ui.cells
 
+import android.content.res.Configuration
 import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.offset
@@ -9,10 +10,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -25,7 +26,11 @@ import com.lm.notes.utils.noRippleClickable
 import com.lm.notes.utils.shareDp
 
 @Composable
-fun ShareCanvasButton(x: Dp, shareType: ShareType = ShareType.TextPlain) {
+fun ShareCanvasButton(
+    x: Dp,
+    shareType: ShareType = ShareType.TextPlain,
+    start: Dp = 108.dp, y: Dp = 0.dp
+) {
     with(mainDep) {
         with(notesViewModel) {
             with(uiStates) {
@@ -38,10 +43,10 @@ fun ShareCanvasButton(x: Dp, shareType: ShareType = ShareType.TextPlain) {
                             }
                         }
                         val activity = LocalContext.current as MainActivity
-
+                        val conf = LocalConfiguration.current
                         Canvas(
                             Modifier
-                                .offset(shareDp(x, getIsExpandShare, width), 0.dp)
+                                .offset(shareDp(x, getIsExpandShare, start), y)
                                 .noRippleClickable(
                                     remember(this@apply) {
                                         {
@@ -56,7 +61,9 @@ fun ShareCanvasButton(x: Dp, shareType: ShareType = ShareType.TextPlain) {
                                     })
                                 .scale(animScale(getIsFullscreenMode && getTextIsEmpty))
                         ) {
-                            drawCircle(White, 15.dp.toPx(), Offset.Zero)
+                            drawCircle(
+                                if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                                    getMainColor else getSecondColor, 15.dp.toPx(), Offset.Zero)
                             paint.apply {
                                 textSize =
                                     (if (shareType == ShareType.AsHtml) 11.dp else 14.dp).toPx()

@@ -26,6 +26,7 @@ import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.core.SpanType.Bold.listClasses
 import com.lm.notes.utils.getAction
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import javax.inject.Inject
 

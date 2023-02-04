@@ -30,8 +30,9 @@ android {
     buildTypes {
 
         debug{
-          // isMinifyEnabled = true
+           //isMinifyEnabled = true
           // isShrinkResources = true
+            proguardFiles(getDefaultProguardFile(proGName), proGRules)
         }
         release {
             isMinifyEnabled = true
@@ -50,14 +51,14 @@ android {
 dependencies {
 
     //Dagger
-    implementation("com.google.dagger:dagger:2.42")
-    kapt("com.google.dagger:dagger-compiler:2.42")
+    implementation("com.google.dagger:dagger:2.44.2")
+    kapt("com.google.dagger:dagger-compiler:2.44.2")
 
     //Base
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha02")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha03")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha03")
 
     //Compose
     implementation("androidx.compose.ui:ui:$composeVersion")
@@ -68,10 +69,10 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     implementation("androidx.compose.animation:animation:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.0.0-rc01")
-    implementation("androidx.activity:activity-compose:1.6.0")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha02")
+    implementation("androidx.activity:activity-compose:1.6.1")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.24.1-alpha")
-    implementation ("com.google.accompanist:accompanist-pager:0.26.0-alpha")
+    implementation ("com.google.accompanist:accompanist-pager:0.27.1")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -81,16 +82,16 @@ dependencies {
     kapt("androidx.room:room-compiler:$roomVersion")
 
     //Tests
-    implementation("androidx.benchmark:benchmark-junit4:1.1.0")
+    implementation("androidx.benchmark:benchmark-junit4:1.1.1")
 
     //Firebase
-    implementation("com.google.firebase:firebase-bom:31.0.0")
+    implementation("com.google.firebase:firebase-bom:31.1.0")
     implementation("com.google.firebase:firebase-database-ktx:20.1.0")
     implementation("com.google.firebase:firebase-auth-ktx:21.1.0")
-    implementation("com.google.android.gms:play-services-auth:20.3.0")
+    implementation("com.google.android.gms:play-services-auth:20.4.0")
 
     //Coil
-    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
     //ColorPicker
     implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")

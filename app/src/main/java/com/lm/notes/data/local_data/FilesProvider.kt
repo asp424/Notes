@@ -1,7 +1,9 @@
 package com.lm.notes.data.local_data
 
 import android.app.Application
+import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
@@ -12,16 +14,20 @@ import com.lm.notes.presentation.MainActivity
 import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.log
 import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
 import java.net.URLConnection
 import javax.inject.Inject
 
 interface FilesProvider {
 
-    fun saveText(date: Long, text: String, shareType: ShareType, header: String): File
+    fun saveText(date: Long, text: String, shareType: ShareType, header: String = "file"): File
 
     fun takeAllFiles(): MutableList<File>
 
     fun readFile(name: String): String
+
+    fun saveFile(uri: Uri, file: File, contentResolver: ContentResolver)
 
     fun deleteFile(name: String): Boolean
 
@@ -34,6 +40,8 @@ interface FilesProvider {
     fun shareAsText(text: String, activity: MainActivity)
 
     fun readTextFileFromDeviceAndSetToEditText(uri: Uri?)
+
+    fun getFolderNameFromUri(intent: Intent): String
 
     class Base @Inject constructor(
         private val context: Application,
@@ -51,16 +59,34 @@ interface FilesProvider {
 
         override fun readFile(name: String) = name.file.readText()
 
-        override fun readTextFileFromDeviceAndSetToEditText(uri: Uri?) {
-            uri?.apply {
-                context.contentResolver.openInputStream(this)?.apply {
-                    editTextController.setText(reader().readText().apply {
-                        log
-                    })
+        override fun saveFile(uri: Uri, file: File, contentResolver: ContentResolver) {
+            runCatching {
+                contentResolver.openOutputStream(uri)?.apply {
+                    val fileInputStream = FileInputStream(file)
+                    val bytes = ByteArray(file.length().toInt())
+                    fileInputStream.read(bytes, 0, bytes.size)
+                    write(bytes)
+                    flush()
                     close()
                 }
             }
         }
+
+        override fun readTextFileFromDeviceAndSetToEditText(uri: Uri?) {
+            uri?.apply {
+                context.contentResolver.openInputStream(this)?.apply {
+                    editTextController.setText(reader().readText())
+                    close()
+                }
+            }
+        }
+
+        override fun getFolderNameFromUri(intent: Intent) =
+            with(intent.toString().substringAfter("primary:")) {
+                    "File was saved in \"${
+                        if (!contains("/")) "root" else substringBefore("/")
+                    }\" folder"
+            }
 
         override fun deleteFile(name: String) = name.file.delete()
 
@@ -73,8 +99,7 @@ interface FilesProvider {
                 saveText(
                     timestampChangeState.value, with(Pair(header, text)) {
                         if (shareType == ShareType.AsHtml) asHtml else asText
-                    }, shareType,
-                    newFileNameFromHeader(header, shareType)
+                    }, shareType, newFileNameFromHeader(header, shareType)
                 )
             ) {
                 activity.getIntentBuilder.setStream(provider)
@@ -102,8 +127,7 @@ interface FilesProvider {
         private val Pair<String, String>.asHtml get() = "${first}\n\n${second}"
 
         private val Context.getIntentBuilder
-            get() =
-                ShareCompat.IntentBuilder(this)
+            get() = ShareCompat.IntentBuilder(this)
     }
 }
 

@@ -1,5 +1,6 @@
 package com.lm.notes.data.models
 
+import android.content.Intent
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import androidx.compose.foundation.BorderStroke
@@ -9,8 +10,29 @@ import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.rounded.AddLink
+import androidx.compose.material.icons.rounded.ClearAll
+import androidx.compose.material.icons.rounded.ContentPaste
+import androidx.compose.material.icons.rounded.CopyAll
+import androidx.compose.material.icons.rounded.FormatBold
+import androidx.compose.material.icons.rounded.FormatClear
+import androidx.compose.material.icons.rounded.FormatColorFill
+import androidx.compose.material.icons.rounded.FormatColorText
+import androidx.compose.material.icons.rounded.FormatItalic
+import androidx.compose.material.icons.rounded.FormatStrikethrough
+import androidx.compose.material.icons.rounded.FormatUnderlined
+import androidx.compose.material.icons.rounded.Save
+import androidx.compose.material.icons.rounded.SelectAll
+import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Translate
+import androidx.compose.material.icons.rounded.Widgets
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -21,9 +43,13 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavHostController
+import com.lm.notes.data.local_data.FilesProvider
+import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
+import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.ui.cells.view.LoadStatesEditText
@@ -31,6 +57,8 @@ import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.theme.main
 import com.lm.notes.utils.animScale
+import com.lm.notes.utils.formatTimestamp
+import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -172,12 +200,16 @@ data class UiStates(
             when (type) {
                 is SpanType.Background ->
                     Color((list[0] as BackgroundColorSpan).backgroundColor).setColorButtonBackground
+
                 is SpanType.Foreground ->
                     Color((list[0] as ForegroundColorSpan).foregroundColor).setColorButtonForeground
+
                 is SpanType.Bold -> if (list.filteredByStyle(SpanType.Bold).isNotEmpty())
                     Green.setColorButtonBold
+
                 is SpanType.Italic -> if (list.filteredByStyle(SpanType.Italic).isNotEmpty())
                     Green.setColorButtonItalic
+
                 is SpanType.Underlined -> Green.setColorButtonUnderlined
                 is SpanType.StrikeThrough -> Green.setColorButtonStrikeThrough
                 is SpanType.Relative -> Unit
@@ -217,10 +249,12 @@ data class UiStates(
             if (!getColorPickerBackgroundIsShow) true.setColorPickerBackgroundIsShow
             else false.setColorPickerBackgroundIsShow
         }
+
         is SpanType.Foreground -> {
             if (!getColorPickerForegroundIsShow) true.setColorPickerForegroundIsShow
             else false.setColorPickerForegroundIsShow
         }
+
         else -> Unit
     }
 
@@ -303,21 +337,42 @@ data class UiStates(
         coroutine: CoroutineScope,
         noteAppWidgetController: NoteAppWidgetController,
         noteModel: NoteModel,
-        editTextController: EditTextController
+        editTextController: EditTextController,
+        activity: MainActivity = LocalContext.current as MainActivity,
+        animation: Float =
+            animScale(getIsFullscreenMode && getTextIsEmpty && getNotShareVisible)
     ) = when (this@getFullScreenIconsValues) {
         Icons.Rounded.Share -> Pair(
             animScale(getIsFullscreenMode && getTextIsEmpty), remember {
                 { expandShare(coroutine) }
             }
         )
+
         Icons.Rounded.Widgets -> Pair(
-            animScale(
-                getIsFullscreenMode && getTextIsEmpty && getNotShareVisible
-            ), remember(noteModel) { { noteAppWidgetController.pinNoteWidget(noteModel.id) } })
+            animation, remember(noteModel) {
+                { noteAppWidgetController.pinNoteWidget(noteModel.id) }
+            }
+        )
 
         Icons.Rounded.Translate -> Pair(
-            animScale(getIsFullscreenMode && getTextIsEmpty && getNotShareVisible), remember {
+            animation, remember {
                 { editTextController.findEnglish() }
+            }
+        )
+
+        Icons.Rounded.Save -> Pair(
+            animation, remember(noteModel) {
+                {
+                    activity.chooseFolderPath.launch(Intent(Intent.ACTION_CREATE_DOCUMENT)
+                        .apply {
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                            type = "application/txt"
+                            putExtra(Intent.EXTRA_TITLE, "${if(noteModel.header.startsWith(NEW_TAG))
+                                noteModel.header.substringAfter(NEW_TAG) else noteModel.header
+                            }.txt")
+                        }
+                    )
+                }
             }
         )
         else -> Pair(0f) {}
@@ -327,9 +382,11 @@ data class UiStates(
         Icons.Rounded.FormatColorFill -> with(getColorButtonBackground) {
             Pair(this, SpanType.Background(toArgb()))
         }
+
         Icons.Rounded.FormatColorText -> with(getColorButtonForeground) {
             Pair(this, SpanType.Foreground(toArgb()))
         }
+
         Icons.Rounded.FormatUnderlined -> Pair(getColorButtonUnderlined, SpanType.Underlined)
         Icons.Rounded.FormatBold -> Pair(getColorButtonBold, SpanType.Bold)
         Icons.Rounded.FormatItalic -> Pair(getColorButtonItalic, SpanType.Italic)
@@ -337,6 +394,7 @@ data class UiStates(
             getColorButtonStrikeThrough,
             SpanType.StrikeThrough
         )
+
         Icons.Rounded.AddLink -> Pair(getColorButtonClick, SpanType.Url)
         Icons.Rounded.FormatClear -> Pair(White, SpanType.Clear)
         else -> Pair(White, SpanType.Italic)
@@ -373,10 +431,12 @@ data class UiStates(
                             }
                             setFullscreenNoteModel(id)
                             LoadStatesEditText.Loading.setIsSetTextInEditText
-                            editTextController.createEditText()
-                            editTextController.setNewText(text)
-                            editTextController.editText.post {
-                                editTextController.editText.lineCount.setLinesCounter
+                            with(editTextController) {
+                                createEditText()
+                                setNewText(text)
+                                editText.post {
+                                    editText.lineCount.setLinesCounter
+                                }
                             }
                             false.setTranslateEnable
                             checkForEmptyText()
