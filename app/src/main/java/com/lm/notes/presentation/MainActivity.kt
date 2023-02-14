@@ -69,25 +69,11 @@ class MainActivity : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     private val takeImageResult =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia())
-        {
-
-        }
+        {}
 
     val chooseFolderPath =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
-        {
-            it.data?.data?.apply {
-                val file = filesProvider.saveText(
-                    0, notesViewModel.editTextController.editText.text.toString(),
-                    ShareType.AsTxt
-                )
-
-                filesProvider.saveFile(this, file, contentResolver)
-
-                it.data?.also {int ->
-                    longToast(filesProvider.getFolderNameFromUri(int)) }
-            }
-        }
+        { filesProvider.createAndSaveFile(it) }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {

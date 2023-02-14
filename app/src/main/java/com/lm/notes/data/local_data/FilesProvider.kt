@@ -1,21 +1,18 @@
 package com.lm.notes.data.local_data
 
 import android.app.Application
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.result.ActivityResult
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
-import androidx.core.text.toHtml
-import androidx.core.text.toSpanned
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.ui.cells.view.EditTextController
-import com.lm.notes.utils.log
+import com.lm.notes.utils.longToast
 import java.io.File
 import java.io.FileInputStream
-import java.io.IOException
 import java.net.URLConnection
 import javax.inject.Inject
 
@@ -27,7 +24,7 @@ interface FilesProvider {
 
     fun readFile(name: String): String
 
-    fun saveFile(uri: Uri, file: File, contentResolver: ContentResolver)
+    fun saveFile(uri: Uri, file: File)
 
     fun deleteFile(name: String): Boolean
 
@@ -42,6 +39,8 @@ interface FilesProvider {
     fun readTextFileFromDeviceAndSetToEditText(uri: Uri?)
 
     fun getFolderNameFromUri(intent: Intent): String
+
+    fun createAndSaveFile(result: ActivityResult): Uri?
 
     class Base @Inject constructor(
         private val context: Application,
@@ -59,9 +58,9 @@ interface FilesProvider {
 
         override fun readFile(name: String) = name.file.readText()
 
-        override fun saveFile(uri: Uri, file: File, contentResolver: ContentResolver) {
+        override fun saveFile(uri: Uri, file: File) {
             runCatching {
-                contentResolver.openOutputStream(uri)?.apply {
+                context.contentResolver.openOutputStream(uri)?.apply {
                     val fileInputStream = FileInputStream(file)
                     val bytes = ByteArray(file.length().toInt())
                     fileInputStream.read(bytes, 0, bytes.size)
@@ -83,9 +82,22 @@ interface FilesProvider {
 
         override fun getFolderNameFromUri(intent: Intent) =
             with(intent.toString().substringAfter("primary:")) {
-                    "File was saved in \"${
-                        if (!contains("/")) "root" else substringBefore("/")
-                    }\" folder"
+                "File was saved in \"${
+                    if (!contains("/")) "root" else substringBefore("/")
+                }\" folder"
+            }
+
+        override fun createAndSaveFile(result: ActivityResult) =
+            with(
+                saveText(
+                    0, editTextController.editText.text.toString(),
+                    ShareType.AsTxt
+                )
+            ) {
+                result.data?.data?.also {
+                    saveFile(it, this)
+                    result.data?.let { int -> context.longToast(getFolderNameFromUri(int)) }
+                }
             }
 
         override fun deleteFile(name: String) = name.file.delete()
