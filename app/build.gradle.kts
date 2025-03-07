@@ -5,7 +5,6 @@ plugins {
     id("com.google.gms.google-services")
 }
 
-@Suppress("UnstableApiUsage")
 android {
     namespace = appId
     compileSdk = 33
@@ -52,7 +51,7 @@ dependencies {
 
     //Dagger
     implementation("com.google.dagger:dagger:2.55")
-    //kapt("com.google.dagger:dagger-compiler:2.44.2")
+    //kapt("com.google.dagger:dagger-compiler:2.55")
     annotationProcessor ("com.google.dagger:dagger-compiler:2.55")
 
     //Base

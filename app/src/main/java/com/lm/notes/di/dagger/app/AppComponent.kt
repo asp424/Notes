@@ -10,7 +10,8 @@ import dagger.BindsInstance
 import dagger.Component
 import java.io.File
 
-@[Component(modules = [AppMapModules::class]) AppScope]
+@Component(modules = [AppMapModules::class])
+@AppScope
 interface AppComponent {
 
     @Component.Builder
