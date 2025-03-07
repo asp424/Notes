@@ -4,7 +4,6 @@ import android.app.Application
 import android.widget.EditText
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.ui.cells.view.AccessibilityDelegate
-import com.lm.notes.ui.cells.view.CallbackEditText
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.cells.view.app_widget.ToastCreator
 import dagger.BindsInstance

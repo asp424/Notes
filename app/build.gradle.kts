@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+   // id("kotlin-kapt")
     id("com.google.gms.google-services")
 }
 
@@ -45,14 +45,15 @@ android {
     composeOptions {  kotlinCompilerExtensionVersion = composeCompilerVersion }
     compileOptions { sourceCompatibility = javaVersion; targetCompatibility = javaVersion }
     kotlinOptions { jvmTarget = jvm; freeCompilerArgs = argsList }
-    packagingOptions { resources { excludes += res } }
+    packaging { resources { excludes += res } }
 }
 
 dependencies {
 
     //Dagger
-    implementation("com.google.dagger:dagger:2.44.2")
-    kapt("com.google.dagger:dagger-compiler:2.44.2")
+    implementation("com.google.dagger:dagger:2.55")
+    //kapt("com.google.dagger:dagger-compiler:2.44.2")
+    annotationProcessor ("com.google.dagger:dagger-compiler:2.55")
 
     //Base
     implementation("androidx.core:core-ktx:1.9.0")
@@ -79,7 +80,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-paging:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+   // kapt("androidx.room:room-compiler:$roomVersion")
 
     //Tests
     implementation("androidx.benchmark:benchmark-junit4:1.1.1")
