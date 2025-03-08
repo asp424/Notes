@@ -1,9 +1,9 @@
 package com.lm.notes.data.local_data
 
 sealed class ShareType {
-    object AsTxt: ShareType()
-    object AsHtml: ShareType()
-    object TextPlain: ShareType()
+    data object AsTxt: ShareType()
+    data object AsHtml: ShareType()
+    data object TextPlain: ShareType()
 
     val type get() = when(this){
         is AsTxt -> ".txt"

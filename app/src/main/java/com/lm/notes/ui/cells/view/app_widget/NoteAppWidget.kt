@@ -26,7 +26,7 @@ class NoteAppWidget : AppWidgetProvider() {
                     setOnClickPendingIntent(R.id.note_text,
                         PendingIntent.getBroadcast(context, 0, Intent(
                             context, NoteAppWidget::class.java
-                        ).apply { action = appWidgetIds?.toList()?.get(0).toString() }, 0)
+                        ).apply { action = appWidgetIds?.toList()?.get(0).toString() }, PendingIntent.FLAG_IMMUTABLE)
                     )
                     appWidgetManager?.updateAppWidget(appWidgetIds, this)
                 }

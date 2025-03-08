@@ -14,6 +14,6 @@ class SPreferencesModule {
     @RegScope
     fun providesSPreferences(loginActivity: LoginActivity): SPreferences =
         SPreferences.Base(
-            loginActivity.getSharedPreferences("user", ComponentActivity.MODE_PRIVATE)
+            loginActivity.getSharedPreferences("user", 0)
         )
 }

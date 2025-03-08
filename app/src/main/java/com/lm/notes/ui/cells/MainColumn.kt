@@ -1,7 +1,7 @@
 package com.lm.notes.ui.cells
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -31,7 +31,7 @@ fun MainColumn() {
                         getListFields<String> { it { id } }
                     )
                 }
-                val indication = rememberRipple(color = uiStates.getMainColor)
+                val indication = ripple(color = uiStates.getMainColor)
                 val interactionSource = remember { MutableInteractionSource() }
 
                 Note(

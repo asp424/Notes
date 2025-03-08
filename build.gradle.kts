@@ -9,6 +9,6 @@ buildscript {
 
 allprojects { repositories.repository }
 
-clearProject(rootProject.buildDir)
+clearProject(rootProject.buildFile)
 
 

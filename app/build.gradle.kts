@@ -1,13 +1,15 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-   // id("kotlin-kapt")
+    //id("kotlin-kapt")
+    kotlin("kapt")
     id("com.google.gms.google-services")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 android {
     namespace = appId
-    compileSdk = 33
+    compileSdk = 35
 
     defaultConfig {
         applicationId = appId
@@ -51,8 +53,7 @@ dependencies {
 
     //Dagger
     implementation("com.google.dagger:dagger:2.55")
-    //kapt("com.google.dagger:dagger-compiler:2.55")
-    annotationProcessor ("com.google.dagger:dagger-compiler:2.55")
+    kapt ("com.google.dagger:dagger-compiler:2.55")
 
     //Base
     implementation("androidx.core:core-ktx:1.9.0")
@@ -65,13 +66,13 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling:$composeVersion")
     implementation("androidx.compose.foundation:foundation:$composeVersion")
     implementation("androidx.compose.material:material:$composeVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.compose.material:material-icons-core:$composeVersion")
     implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     implementation("androidx.compose.animation:animation:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha02")
-    implementation("androidx.activity:activity-compose:1.6.1")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.24.1-alpha")
+    implementation("androidx.compose.material3:material3:1.3.1")
+    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation("androidx.navigation:navigation-compose:2.8.8")
     implementation ("com.google.accompanist:accompanist-pager:0.27.1")
 
     //Room
@@ -79,10 +80,8 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-paging:$roomVersion")
-   // kapt("androidx.room:room-compiler:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
 
-    //Tests
-    implementation("androidx.benchmark:benchmark-junit4:1.1.1")
 
     //Firebase
     implementation("com.google.firebase:firebase-bom:31.1.0")

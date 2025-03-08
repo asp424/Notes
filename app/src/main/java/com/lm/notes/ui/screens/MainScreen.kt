@@ -1,7 +1,6 @@
 package com.lm.notes.ui.screens
 
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -19,8 +18,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.core.text.toHtml
 import androidx.core.text.toSpanned
 import com.lm.notes.R
@@ -31,12 +28,10 @@ import com.lm.notes.ui.bars.BottomBar
 import com.lm.notes.ui.bars.FormatBar
 import com.lm.notes.ui.bars.LandscapeBar
 import com.lm.notes.ui.bars.TopBar
-import com.lm.notes.ui.cells.NavHost
+import com.lm.notes.ui.cells.NavHostAnim
 import com.lm.notes.ui.cells.SettingsCard
 import com.lm.notes.utils.backPressHandle
 import kotlinx.coroutines.launch
-import java.io.File
-import java.net.URI
 
 @Composable
 fun MainScreen(intentStates: IntentStates) {
@@ -74,7 +69,7 @@ fun MainScreen(intentStates: IntentStates) {
                 Configuration.ORIENTATION_PORTRAIT -> {
                     Column {
                         TopBar()
-                        NavHost()
+                        NavHostAnim()
                     }
                 }
 
@@ -83,7 +78,7 @@ fun MainScreen(intentStates: IntentStates) {
                         with(uiStates) {
                             if (getIsMainMode) TopBar()
                         }
-                        NavHost()
+                        NavHostAnim()
                     }
                     Box(
                         Modifier

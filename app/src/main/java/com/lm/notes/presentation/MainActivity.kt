@@ -96,10 +96,10 @@ class MainActivity : BaseActivity() {
         CoroutineScope(IO).launch { notesViewModel.updateChangedNotes() }
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         start(intent)
-        intent?.action = ""
+        intent.action = ""
     }
 
     fun start(intent: Intent?) {
