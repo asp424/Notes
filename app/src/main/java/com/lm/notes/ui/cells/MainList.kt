@@ -1,5 +1,6 @@
 package com.lm.notes.ui.cells
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,8 +41,10 @@ fun MainList(notesList: List<NoteModel>, note: @Composable List<NoteModel>.(Int)
                     modifier = Modifier
                         .fillMaxSize()
                         .noRippleClickable(remember { { cancelDeleteMode() } }),
+                    reverseLayout = getIsReversLayout,
                     contentPadding = PaddingValues(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top
                 )
             }
         }

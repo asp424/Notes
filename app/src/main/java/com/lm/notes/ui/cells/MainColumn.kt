@@ -44,7 +44,7 @@ fun MainColumn() {
                                 )
                             }
                         }
-                    }[i], values[0][i], values[1][i], values[2][i], values[3][i]
+                    }[i], values[0][i], values[1][i], values[2][i], values[3][i], i
                 )
             }
         }

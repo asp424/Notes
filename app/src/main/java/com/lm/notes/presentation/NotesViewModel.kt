@@ -1,7 +1,6 @@
 package com.lm.notes.presentation
 
 import android.text.Spanned
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.input.TextFieldValue
@@ -46,6 +45,8 @@ class NotesViewModel @Inject constructor(
         notesRepository.deleteNote(id)
 
     fun sortByChange() = notesRepository.sortByChange()
+
+    fun sortByCreate() = notesRepository.sortByCreate()
 
     fun synchronize(coroutineScope: CoroutineScope) = notesRepository.synchronize(coroutineScope)
 

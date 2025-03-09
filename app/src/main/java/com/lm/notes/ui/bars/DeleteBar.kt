@@ -21,7 +21,7 @@ fun DeleteBar(animScale: Float) {
             with(uiStates) {
                 Box(
                     Modifier
-                        .offset(width - 265.dp, 0.dp)
+                        .offset(width - 300.dp, 0.dp)
                         .scale(animScale)
                 ) {
 

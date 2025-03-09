@@ -5,18 +5,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.utils.animDp
 
 @Composable
-fun Note(modifier: Modifier, time: String, notesText: String, header: String, id: String
-         ) {
+fun Note(
+    modifier: Modifier, time: String, notesText: String, header: String, id: String, i: Int
+) {
     with(mainDep){
         with(notesViewModel.uiStates) {
 
@@ -38,6 +39,13 @@ fun Note(modifier: Modifier, time: String, notesText: String, header: String, id
                             )
                         }
                         NoteCardText(time, false)
+                    }
+                    Box(Modifier.fillMaxSize().padding(top = 10.dp, end = 10.dp),
+                        contentAlignment = BottomEnd) {
+                        CanvasCircle(0.dp, 8f, 22.dp, getMainColor)
+                        Text(i.toString(), Modifier.offset((-5).dp, 5.dp),
+                            color = getSecondColor, fontSize = 16.sp, fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }

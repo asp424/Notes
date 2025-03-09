@@ -1,7 +1,6 @@
 package com.lm.notes.data.rerositories
 
 import android.text.Spanned
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel
@@ -37,6 +36,8 @@ interface NotesRepository {
 
     fun sortByChange()
 
+    fun sortByCreate()
+
     suspend fun getItems(page: Int, pageSize: Int): Result<List<NoteModel>>
     class Base @Inject constructor(
         private val firebaseRepository: FirebaseRepository,
@@ -69,6 +70,8 @@ interface NotesRepository {
         override fun isNewHeader(text: String) = notesListData.isNewHeader(text)
 
         override fun sortByChange() = notesListData.sortByChange()
+
+        override fun sortByCreate() = notesListData.sortByCreate()
 
         override fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) {
             coroutineScope.launch(coroutineDispatcher) {

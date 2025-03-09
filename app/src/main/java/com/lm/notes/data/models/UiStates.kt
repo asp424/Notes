@@ -93,6 +93,7 @@ data class UiStates(
     private var settingsVisible: MutableState<Boolean> = mutableStateOf(false),
     private var notShareVisible: MutableState<Boolean> = mutableStateOf(true),
     private var textIsEmpty: MutableState<Boolean> = mutableStateOf(true),
+    private var isReversLayout: MutableState<Boolean> = mutableStateOf(false),
     private var isClickableNote: MutableState<Boolean> = mutableStateOf(true),
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
@@ -103,7 +104,8 @@ data class UiStates(
     val getIsFormatMode get() = isFormatMode.value
 
     val getTranslateEnable get() = translateEnable.value
-    val getIsClickableNote get() = isClickableNote.value
+    val getIsReversLayout get() = isReversLayout.value
+    private val getIsClickableNote get() = isClickableNote.value
     val getLinesCounter get() = linesCounter.value
     val getPasteIconLabel get() = pasteIconLabel.value
     val getSetSelectionEnable get() = setSelectionEnable.value
@@ -134,6 +136,7 @@ data class UiStates(
     private val Boolean.setIsMainMode get() = run { isMainMode.value = this }
     private val Boolean.setIsExpandShare get() = run { isExpandShare.value = this }
     private val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
+    private val Boolean.setReversLayout get() = run { isReversLayout.value = this }
     private val Boolean.setColorPickerBackgroundIsShow
         get() = run {
             colorPickerBackgroundIsShow.value = this
@@ -272,6 +275,11 @@ data class UiStates(
         hideFormatPanel()
         false.setAllColorPickerIsShow
         false.setIsSelected
+    }
+
+    fun setReversLayout(){
+        if (getIsReversLayout) false.setReversLayout
+        else true.setReversLayout
     }
 
     private fun setDeleteMode() {

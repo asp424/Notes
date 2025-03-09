@@ -386,7 +386,7 @@ interface EditTextController {
             }
 
         override fun onDestroyContextMenu() {
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(Main).launch {
                 with(uiStates) {
                     editText.clearFocus()
                     delay(200)

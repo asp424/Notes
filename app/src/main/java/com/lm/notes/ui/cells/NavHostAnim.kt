@@ -19,7 +19,7 @@ fun NavHostAnim() {
                     composable("mainList", enterTransition = { enterLeftToRight },
                         exitTransition = { exitRightToLeft }) {
                         MainColumn()
-                        LaunchedEffect(true) { setMainMode() }
+                        LaunchedEffect(true) { setMainMode(); notesViewModel.sortByChange() }
                     }
 
                     composable("fullScreenNote", content = {

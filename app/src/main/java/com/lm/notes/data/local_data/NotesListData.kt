@@ -1,18 +1,11 @@
 package com.lm.notes.data.local_data
 
 import android.text.Spanned
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.models.NoteModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface NotesListData {
@@ -67,14 +60,7 @@ interface NotesListData {
 
         override fun sortByChange() {
             with(mSFOfNotesList) {
-                if(sPreferences.getSortState() == 0) {
-                    value = value.sortedByDescending { l -> l.timestampChangeState.value }
-                    sPreferences.setSortState(1)
-                }
-                else {
-                    sortByCreate()
-                    sPreferences.setSortState(0)
-                }
+                value = value.sortedByDescending { l -> l.timestampChangeState.value }
             }
         }
 

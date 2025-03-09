@@ -63,7 +63,7 @@ fun AuthIcon(animScale: Float) {
 
             Box(
                 modifier = Modifier
-                    .offset(width - 157.dp + infoOffset.value, 0.dp)
+                    .offset(width - 200.dp + infoOffset.value, 0.dp)
                     .scale(animScale)
             ) {
                 AsyncImage(model =
