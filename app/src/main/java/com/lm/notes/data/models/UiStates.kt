@@ -309,7 +309,7 @@ data class UiStates(
         false.setIsDeleteMode
         true.setIsMainMode
         CoroutineScope(IO).launch {
-            delay(100)
+            delay(200)
             true.setIsClickableNote
         }
     }

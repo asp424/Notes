@@ -1,7 +1,7 @@
 package com.lm.notes.presentation
 
-import android.text.Editable
 import android.text.Spanned
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.input.TextFieldValue

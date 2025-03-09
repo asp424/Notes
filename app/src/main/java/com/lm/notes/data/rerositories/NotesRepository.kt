@@ -1,7 +1,7 @@
 package com.lm.notes.data.rerositories
 
-import android.text.Editable
 import android.text.Spanned
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel

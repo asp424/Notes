@@ -58,7 +58,8 @@ fun SettingsCard() {
                                         onColorChanged = { c ->
                                             Color(c.toColorInt()).setMainColor
                                             sPreferences.saveMainColor(c.toColorInt())
-                                        }
+                                        },
+                                        color = getMainColor
                                     )
                                 }
                                 Row(
@@ -75,7 +76,7 @@ fun SettingsCard() {
                                         onColorChanged = { c ->
                                             Color(c.toColorInt()).setSecondColor
                                             sPreferences.saveSecondColor(c.toColorInt())
-                                        }
+                                        }, color = getSecondColor
                                     )
                                 }
 

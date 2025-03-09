@@ -42,7 +42,7 @@ fun FullScreenIcon(
                 if (source == listIconsFullScreen[0]) {
                     Canvas(
                         Modifier
-                            .offset(width - 126.dp, 0.dp)
+                            .offset(width - 126.dp, 10.dp)
                             .scale(
                                 animScale(getIsFullscreenMode && getTextIsEmpty)
                             )

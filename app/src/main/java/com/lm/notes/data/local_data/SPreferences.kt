@@ -27,6 +27,10 @@ interface SPreferences {
 
     fun getPinnedNoteId(): String
 
+    fun getSortState(): Int
+
+    fun setSortState(state: Int)
+
     class Base @Inject constructor(
         private val sharedPreferences: SharedPreferences,
     ) : SPreferences {
@@ -64,6 +68,11 @@ interface SPreferences {
 
         override fun getPinnedNoteId() =
             sharedPreferences.getString("pinned", "")?:""
+
+        override fun getSortState(): Int = sharedPreferences.getInt("sort", 0)
+
+        override fun setSortState(state: Int) =
+            sharedPreferences.edit().putInt("sort", state).apply()
 
     }
 }

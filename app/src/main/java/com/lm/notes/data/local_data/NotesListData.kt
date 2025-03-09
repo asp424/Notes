@@ -1,11 +1,18 @@
 package com.lm.notes.data.local_data
 
 import android.text.Spanned
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.models.NoteModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface NotesListData {
@@ -43,7 +50,10 @@ interface NotesListData {
 
     fun checkForEmptyText()
 
-    class Base @Inject constructor(private val noteData: NoteData) : NotesListData {
+    class Base @Inject constructor(
+        private val noteData: NoteData,
+        private val sPreferences: SPreferences
+    ) : NotesListData {
 
         private val mSFOfNotesList = MutableStateFlow<List<NoteModel>>(emptyList())
 
@@ -55,8 +65,17 @@ interface NotesListData {
             value = value.sortedByDescending { l -> l.timestampCreate }
         }
 
-        override fun sortByChange() = with(mSFOfNotesList) {
-            value = value.sortedByDescending { l -> l.timestampChangeState.value }
+        override fun sortByChange() {
+            with(mSFOfNotesList) {
+                if(sPreferences.getSortState() == 0) {
+                    value = value.sortedByDescending { l -> l.timestampChangeState.value }
+                    sPreferences.setSortState(1)
+                }
+                else {
+                    sortByCreate()
+                    sPreferences.setSortState(0)
+                }
+            }
         }
 
         override fun findById(id: String) = mSFOfNotesList.value.find { it.id == id } ?: NoteModel()
@@ -76,6 +95,7 @@ interface NotesListData {
 
         override fun initList(notesModelList: List<NoteModel>) {
             mSFOfNotesList.value = notesModelList
+            sortByChange()
         }
 
         override fun updateNoteFromUi(newText: Spanned, actualTime: Long) =

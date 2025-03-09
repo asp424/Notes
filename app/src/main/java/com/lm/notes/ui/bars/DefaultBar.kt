@@ -35,7 +35,7 @@ fun DefaultBar(animScale: Float) {
         LogOutIcon(animScale)
         SettingsIcon()
 
-        /* Box(modifier = Modifier.padding(start = 15.dp)) {
+         Box(modifier = Modifier.padding(start = 15.dp)) {
             Icon(
                 Icons.AutoMirrored.Sharp.Sort, null,
                 modifier = Modifier
@@ -48,8 +48,6 @@ fun DefaultBar(animScale: Float) {
                         }), tint = White
             )
         }
-
-        */
 
         AuthIcon(animScale)
     }

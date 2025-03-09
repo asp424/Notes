@@ -17,9 +17,8 @@ import com.lm.notes.utils.noRippleClickable
 
 @Composable
 fun MainList(notesList: List<NoteModel>, note: @Composable List<NoteModel>.(Int) -> Unit) {
-    val listState = rememberLazyListState()
     with(mainDep) {
-        val modifierSize = remember { Modifier.size(width, height - 80.dp) }
+       // val modifierSize = remember { Modifier.size(width, height - 80.dp) }
         with(notesViewModel.uiStates) {
             with(notesList) {
                 LazyColumn(
@@ -31,7 +30,7 @@ fun MainList(notesList: List<NoteModel>, note: @Composable List<NoteModel>.(Int)
                             itemContent = {
                                 if (it == lastIndex) {
                                     Box(
-                                        modifier = modifierSize,
+                              //          modifier = modifierSize,
                                         contentAlignment = Alignment.TopCenter
                                     ) { note(notesList, it) }
                                 } else note(notesList, it)

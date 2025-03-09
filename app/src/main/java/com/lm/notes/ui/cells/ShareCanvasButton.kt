@@ -1,5 +1,6 @@
 package com.lm.notes.ui.cells
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
@@ -25,6 +26,7 @@ import com.lm.notes.utils.getHeader
 import com.lm.notes.utils.noRippleClickable
 import com.lm.notes.utils.shareDp
 
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun ShareCanvasButton(
     x: Dp,
