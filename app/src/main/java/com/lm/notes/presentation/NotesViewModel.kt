@@ -45,6 +45,8 @@ class NotesViewModel @Inject constructor(
     fun deleteNote(id: String) =
         notesRepository.deleteNote(id)
 
+    fun sortByChange() = notesRepository.sortByChange()
+
     fun synchronize(coroutineScope: CoroutineScope) = notesRepository.synchronize(coroutineScope)
 
     suspend fun updateChangedNotes() = notesRepository.updateChangedNotes()

@@ -1,5 +1,6 @@
 package com.lm.notes.ui.screens
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -33,6 +34,7 @@ import com.lm.notes.ui.cells.SettingsCard
 import com.lm.notes.utils.backPressHandle
 import kotlinx.coroutines.launch
 
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun MainScreen(intentStates: IntentStates) {
     Image(

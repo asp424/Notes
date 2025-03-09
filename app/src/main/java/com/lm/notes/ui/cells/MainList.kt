@@ -40,7 +40,7 @@ fun MainList(notesList: List<NoteModel>, note: @Composable List<NoteModel>.(Int)
                     },
                     modifier = Modifier
                         .fillMaxSize()
-                        .noRippleClickable(remember { { cancelDeleteMode () } }),
+                        .noRippleClickable(remember { { cancelDeleteMode() } }),
                     contentPadding = PaddingValues(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 )

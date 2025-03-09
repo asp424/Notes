@@ -93,6 +93,7 @@ data class UiStates(
     private var settingsVisible: MutableState<Boolean> = mutableStateOf(false),
     private var notShareVisible: MutableState<Boolean> = mutableStateOf(true),
     private var textIsEmpty: MutableState<Boolean> = mutableStateOf(true),
+    private var isClickableNote: MutableState<Boolean> = mutableStateOf(true),
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
     val secondColor: MutableState<Color> = mutableStateOf(main),
@@ -102,6 +103,7 @@ data class UiStates(
     val getIsFormatMode get() = isFormatMode.value
 
     val getTranslateEnable get() = translateEnable.value
+    val getIsClickableNote get() = isClickableNote.value
     val getLinesCounter get() = linesCounter.value
     val getPasteIconLabel get() = pasteIconLabel.value
     val getSetSelectionEnable get() = setSelectionEnable.value
@@ -131,6 +133,7 @@ data class UiStates(
     private val Boolean.setIsFullscreenMode get() = run { isFullscreenMode.value = this }
     private val Boolean.setIsMainMode get() = run { isMainMode.value = this }
     private val Boolean.setIsExpandShare get() = run { isExpandShare.value = this }
+    private val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
     private val Boolean.setColorPickerBackgroundIsShow
         get() = run {
             colorPickerBackgroundIsShow.value = this
@@ -274,6 +277,7 @@ data class UiStates(
     private fun setDeleteMode() {
         true.setIsDeleteMode
         false.setIsMainMode
+        false.setIsClickableNote
         listDeleteAble.clear()
     }
 
@@ -304,6 +308,10 @@ data class UiStates(
         listDeleteAble.clear()
         false.setIsDeleteMode
         true.setIsMainMode
+        CoroutineScope(IO).launch {
+            delay(100)
+            true.setIsClickableNote
+        }
     }
 
     fun expandShare(coroutineScope: CoroutineScope) {
@@ -424,7 +432,7 @@ data class UiStates(
                                 }
                             } else addToDeleteAbleList(id)
                         }
-                        if (!getIsDeleteMode) {
+                        if (!getIsDeleteMode && getIsClickableNote) {
                             navController.navigate("fullScreenNote") { popUpTo("mainList") }
                             val press = PressInteraction.Press(Offset(it.x + 100f, 0f))
                             coroutine.launch(IO) {

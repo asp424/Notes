@@ -1,5 +1,6 @@
 package com.lm.notes.ui.cells
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -21,11 +22,11 @@ import coil.compose.AsyncImage
 import com.lm.notes.R
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.presentation.MainActivity
-import com.lm.notes.utils.log
 import com.lm.notes.utils.noRippleClickable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("ContextCastToActivity", "UseOfNonLambdaOffsetOverload")
 @Composable
 fun AuthIcon(animScale: Float) {
     with(mainDep) {
@@ -52,7 +53,7 @@ fun AuthIcon(animScale: Float) {
                 }
             }
 
-            var icon by remember { mutableStateOf(R.drawable.face) }
+            var icon by remember { mutableIntStateOf(R.drawable.face) }
 
             var isError by remember { mutableStateOf(false) }
 

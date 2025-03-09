@@ -35,6 +35,8 @@ interface NotesRepository {
 
     fun isNewHeader(text: String): Boolean
 
+    fun sortByChange()
+
     suspend fun getItems(page: Int, pageSize: Int): Result<List<NoteModel>>
     class Base @Inject constructor(
         private val firebaseRepository: FirebaseRepository,
@@ -65,6 +67,8 @@ interface NotesRepository {
         override fun isMustRemoveFromList() = notesListData.isMustRemoveFromList()
 
         override fun isNewHeader(text: String) = notesListData.isNewHeader(text)
+
+        override fun sortByChange() = notesListData.sortByChange()
 
         override fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) {
             coroutineScope.launch(coroutineDispatcher) {

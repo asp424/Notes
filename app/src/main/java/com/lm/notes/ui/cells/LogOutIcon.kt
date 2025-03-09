@@ -1,12 +1,13 @@
 package com.lm.notes.ui.cells
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.Logout
+import androidx.compose.material.icons.automirrored.sharp.Logout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -16,8 +17,9 @@ import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.noRippleClickable
 
+@SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
-fun LogOut(animScale: Float) {
+fun LogOutIcon(animScale: Float) {
     with(mainDep) {
         Box(
             Modifier
@@ -26,7 +28,7 @@ fun LogOut(animScale: Float) {
         ) {
 
             Icon(
-                Icons.Sharp.Logout, null,
+                Icons.AutoMirrored.Sharp.Logout, null,
                 modifier = Modifier
                     .size(20.dp)
                     .noRippleClickable(
