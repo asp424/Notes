@@ -13,6 +13,7 @@ import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.rerositories.RoomRepository
 import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.getHeader
+import com.lm.notes.utils.log
 import javax.inject.Inject
 
 
@@ -36,6 +37,8 @@ interface NoteAppWidgetController {
         private val sPreferences: SPreferences,
         private val noteData: NoteData
     ) : NoteAppWidgetController {
+
+        private val textList = listOf<String>()
 
         override fun pinNoteWidget(noteId: String) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
@@ -77,7 +80,10 @@ interface NoteAppWidgetController {
         private val String.getHeader get() = getHeader(noteData.isNewHeader(this))
 
         private val String.strikeThroughSpan get() = "<strike>$this</strike>"
+
+
     }
+
 }
 
 typealias ToastCreator = (Int) -> Unit

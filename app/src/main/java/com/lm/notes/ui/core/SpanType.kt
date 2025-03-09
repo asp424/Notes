@@ -12,13 +12,13 @@ import androidx.compose.ui.graphics.toArgb
 sealed class SpanType {
     class Background(var color: Int = 0) : SpanType()
     class Foreground(var color: Int = 0) : SpanType()
-    object Bold : SpanType()
-    object Italic : SpanType()
-    object Underlined : SpanType()
-    object StrikeThrough : SpanType()
+    data object Bold : SpanType()
+    data object Italic : SpanType()
+    data object Underlined : SpanType()
+    data object StrikeThrough : SpanType()
     class Relative(var scale: Float = 0f) : SpanType()
-    object Url : SpanType()
-    object Clear : SpanType()
+    data object Url : SpanType()
+    data object Clear : SpanType()
 
     val getColor
         get() = when (this) {

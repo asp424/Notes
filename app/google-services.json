@@ -3,7 +3,7 @@
     "project_number": "178825274872",
     "firebase_url": "https://notes-354809-default-rtdb.firebaseio.com",
     "project_id": "notes-354809",
-    "storage_bucket": "notes-354809.appspot.com"
+    "storage_bucket": "notes-354809.firebasestorage.app"
   },
   "client": [
     {
@@ -15,19 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "178825274872-g07kad704dmvd3sjghnadkl0lbp1updt.apps.googleusercontent.com",
+          "client_id": "178825274872-86g962scb1ojr6va31j0k88pa2hb46ig.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.lm.notes",
-            "certificate_hash": "407b556467ed1a9e692112d4eee05d74e4b84246"
+            "certificate_hash": "72094166f62199968e06e56786df8d8500ee4b9b"
           }
         },
         {
-          "client_id": "178825274872-rjvvhn3dup8g5rako260fh52f5bpls4i.apps.googleusercontent.com",
+          "client_id": "178825274872-t4tjjub2i1v2gfcr6j42j6e0v0v793fi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.lm.notes",
-            "certificate_hash": "6edd0c9a00268d7c848365769847d1598136f0f4"
+            "certificate_hash": "01361d159e4a85e7f2771ffdbcbcbbf2c8aa3e06"
           }
         },
         {

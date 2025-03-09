@@ -7,5 +7,5 @@ sealed interface FBDataStates {
     data class Success(val flow: Flow<NoteModel>) : FBDataStates
     data class Update(val noteModel: NoteModel) : FBDataStates
     data class Failure(val message: String) : FBDataStates
-    object Loading : FBDataStates
+    data object Loading : FBDataStates
 }

@@ -1,10 +1,10 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    //id("kotlin-kapt")
     kotlin("kapt")
     id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -56,10 +56,10 @@ dependencies {
     kapt ("com.google.dagger:dagger-compiler:2.55")
 
     //Base
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha03")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha03")
+    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
 
     //Compose
     implementation("androidx.compose.ui:ui:$composeVersion")
@@ -84,13 +84,15 @@ dependencies {
 
 
     //Firebase
-    implementation("com.google.firebase:firebase-bom:31.1.0")
-    implementation("com.google.firebase:firebase-database-ktx:20.1.0")
-    implementation("com.google.firebase:firebase-auth-ktx:21.1.0")
-    implementation("com.google.android.gms:play-services-auth:20.4.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+    implementation("com.google.firebase:firebase-database-ktx:21.0.0")
+    implementation("com.google.firebase:firebase-auth-ktx:23.2.0")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 
     //Coil
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation("io.coil-kt:coil-compose:2.3.0")
 
     //ColorPicker
     implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")

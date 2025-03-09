@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(
@@ -41,8 +42,17 @@ class LoginViewModel @Inject constructor(
             }
             oneTapGoogleAuth.handleResultAndFBReg(result).collect {
                 when (it) {
-                    is FBRegStates.OnSuccess -> sPreferences.saveIconUri(it.iconUri)
-                    is FBRegStates.OnError -> longToast(it.message)
+                    is FBRegStates.OnSuccess -> {
+                        sPreferences.saveIconUri(it.iconUri)
+                        withContext(Main){
+                            longToast("Вход выполнен")
+                        }
+                    }
+                    is FBRegStates.OnError -> {
+                        withContext(Main){
+                            longToast(it.message.apply { log })
+                        }
+                    }
                     is FBRegStates.OnClose -> { delay(1000) }
                 }
                 startMainActivity

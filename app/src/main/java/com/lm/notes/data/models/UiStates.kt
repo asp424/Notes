@@ -1,5 +1,6 @@
 package com.lm.notes.data.models
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
@@ -338,6 +339,7 @@ data class UiStates(
         noteAppWidgetController: NoteAppWidgetController,
         noteModel: NoteModel,
         editTextController: EditTextController,
+        @SuppressLint("ContextCastToActivity")
         activity: MainActivity = LocalContext.current as MainActivity,
         animation: Float =
             animScale(getIsFullscreenMode && getTextIsEmpty && getNotShareVisible)

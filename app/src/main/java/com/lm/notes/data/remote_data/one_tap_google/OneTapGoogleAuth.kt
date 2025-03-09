@@ -9,6 +9,7 @@ import com.google.android.gms.common.api.CommonStatusCodes.CANCELED
 import com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR
 import com.lm.notes.data.remote_data.firebase.FBAuth
 import com.lm.notes.data.remote_data.firebase.FBRegStates
+import com.lm.notes.utils.log
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
