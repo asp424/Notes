@@ -38,6 +38,10 @@ interface NotesRepository {
 
     fun sortByCreate()
 
+    fun deleteFromFirebase(id: String)
+
+    val isAuth: Boolean
+
     suspend fun getItems(page: Int, pageSize: Int): Result<List<NoteModel>>
     class Base @Inject constructor(
         private val firebaseRepository: FirebaseRepository,
@@ -51,7 +55,7 @@ interface NotesRepository {
                 with(firebaseRepository) {
                     if (isAuth) withContext(coroutineDispatcher) {
                         roomRepository.notesList().forEach {
-                            firebaseRepository.saveNote(it)
+                            saveNote(it)
                         }
                         notesList().collect {
                             if (roomRepository.checkForNotContains(it.id) || notesListData.isEmpty()
@@ -72,6 +76,10 @@ interface NotesRepository {
         override fun sortByChange() = notesListData.sortByChange()
 
         override fun sortByCreate() = notesListData.sortByCreate()
+
+        override fun deleteFromFirebase(id: String) = firebaseRepository.deleteNote(id)
+
+        override val isAuth: Boolean get() = firebaseRepository.isAuth
 
         override fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) {
             coroutineScope.launch(coroutineDispatcher) {

@@ -31,7 +31,7 @@ fun ReversLayoutIcon(animScale: Float) {
                             {
                                 notesViewModel.uiStates.setReversLayout()
                             }
-                        }), tint = White
+                        }), tint = notesViewModel.uiStates.getSecondColor
             )
         }
     }

@@ -16,7 +16,13 @@ import com.lm.notes.di.compose.MainDep.mainDep
 
 @Composable
 fun Note(
-    modifier: Modifier, time: String, notesText: String, header: String, id: String, i: Int
+    modifier: Modifier,
+    time: String,
+    notesText: String,
+    header: String,
+    id: String,
+    timeCreate: String,
+    i: Int
 ) {
     with(mainDep){
         with(notesViewModel.uiStates) {
@@ -42,10 +48,14 @@ fun Note(
                     }
                     Box(Modifier.fillMaxSize().padding(top = 10.dp, end = 10.dp),
                         contentAlignment = BottomEnd) {
-                        CanvasCircle(0.dp, 8f, 22.dp, getMainColor)
-                        Text(i.toString(), Modifier.offset((-5).dp, 5.dp),
-                            color = getSecondColor, fontSize = 16.sp, fontWeight = FontWeight.Bold
+                        CanvasCircle(0.dp, 8f, 24.dp, getMainColor)
+                        Text(timeCreate, Modifier.offset(0.dp, 5.dp),
+                            color = getSecondColor, fontSize = 10.sp, fontWeight = FontWeight.Bold
                         )
+                        Text("создано", Modifier.offset(10.dp, 20.dp),
+                            color = getSecondColor, fontSize = 10.sp, fontWeight = FontWeight.Bold
+                        )
+
                     }
                 }
             }

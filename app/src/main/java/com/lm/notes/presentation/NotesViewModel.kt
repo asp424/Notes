@@ -21,12 +21,16 @@ class NotesViewModel @Inject constructor(
     val clipboardProvider: ClipboardProvider
 ) : ViewModel() {
 
+    val isAuth get() = notesRepository.isAuth
+
     val notesList = notesRepository.notesList
 
     val noteModelFullScreen = notesRepository.noteModelFullScreen
 
     fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) =
         notesRepository.addNewNote(coroutineScope) { onAdd() }
+
+    fun deleteNoteFromFirebase(id: String) = notesRepository.deleteFromFirebase(id)
 
     fun setFullscreenNoteModel(id: String) =
         notesRepository.setFullscreenNoteModel(id)

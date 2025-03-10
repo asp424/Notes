@@ -92,7 +92,7 @@ fun AuthIcon(animScale: Float) {
                 if (progressVisibility.value) CircularProgressIndicator(
                     modifier = Modifier
                         .size(30.dp)
-                        .alpha(0.5f), color = Color.Blue
+                        .alpha(0.5f), color = notesViewModel.uiStates.getSecondColor
                 )
             }
         }

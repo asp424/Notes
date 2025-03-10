@@ -28,7 +28,8 @@ fun MainColumn() {
                                 with(header) { getHeader(isNewHeader(this)) }
                             }
                         },
-                        getListFields<String> { it { id } }
+                        getListFields<String> { it { id } },
+                        getListFields<String> { it { formatTimestamp(timestampCreate) }}
                     )
                 }
                 val indication = ripple(color = uiStates.getMainColor)
@@ -44,7 +45,7 @@ fun MainColumn() {
                                 )
                             }
                         }
-                    }[i], values[0][i], values[1][i], values[2][i], values[3][i], i
+                    }[i], values[0][i], values[1][i], values[2][i], values[3][i], values[4][i], i
                 )
             }
         }

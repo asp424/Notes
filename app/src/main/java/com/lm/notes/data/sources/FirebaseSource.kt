@@ -34,6 +34,8 @@ interface FirebaseSource {
         timestampChange: Long, header: String, preview: String
     )
 
+    fun deleteNote(id: String)
+
     val randomId: String
 
     val isAuth: Boolean
@@ -101,6 +103,11 @@ interface FirebaseSource {
                     )
                 )
             )
+        }
+
+        override fun deleteNote(id: String) {
+            fireBaseDatabase.child(firebaseAuth.currentUser?.uid.toString()).child("notes")
+                .child(id).removeValue()
         }
 
         private val String.path

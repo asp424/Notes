@@ -14,6 +14,8 @@ interface FirebaseRepository {
 
     fun saveNote(noteModel: NoteModel)
 
+    fun deleteNote(id:String)
+
     val randomId: String
 
     val isAuth: Boolean
@@ -33,6 +35,8 @@ interface FirebaseRepository {
                 timestampChangeState.value, header, preview
             )
         }
+
+        override fun deleteNote(id:String) = firebaseSource.deleteNote(id)
 
         override val randomId get() = firebaseSource.randomId
 

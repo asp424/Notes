@@ -52,6 +52,12 @@ fun animScale(target: Boolean, duration: Int = 300) = animateFloatAsState(
 ).value
 
 @Composable
+fun animScaleDynamic(target: Boolean, first: Float, second: Float, duration: Int = 300)
+= animateFloatAsState(
+    if (target) first else second, tween(duration)
+).value
+
+@Composable
 fun shareDp(start: Dp, getIsExpandShare: Boolean, width: Dp, delay: Int = 300) = animDp(
     target = getIsExpandShare,
     first = width - start,
@@ -70,14 +76,14 @@ fun formatTimestamp(timestamp: Long): String {
     val dayOfYearWas = formatDate("D", timestamp)
     val yearNow = dateNow.get(Calendar.YEAR)
     return when (dateNow.get(Calendar.DAY_OF_YEAR) - dayOfYearWas.toInt()) {
-        1 -> "yesterday $timeWas"
-        2 -> "the day before yesterday $timeWas"
+        1 -> "вчера $timeWas"
+        2 -> "позавчера $timeWas"
         0 -> timeWas
         else -> {
             when (yearNow - yearWas.toInt()) {
-                1 -> " $dayOfMonthWas.$monthNumWas.$yearWasSmall at $timeWas"
+                1 -> " $dayOfMonthWas.$monthNumWas.$yearWasSmall в $timeWas"
                 0 -> " $dayOfMonthWas $monthLitWas в $timeWas"
-                else -> " $yearWas year"
+                else -> " $yearWas год"
             }
         }
     }
