@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -60,9 +61,9 @@ fun IconClipBoard(
                                 .noRippleClickable(remember {
                                     { with(clipboardProvider) { source.clickOnButtonsClipboard() } }
                                 })
-                                .size(20.dp), color
+                                .size(15.dp).offset(0.dp, 2.dp), color
                         )
-                        Text(
+                        Text(modifier = Modifier.offset(0.dp, (-4).dp),
                             text = getPasteIconLabel,
                             color = color, fontSize = 8.sp
                         )

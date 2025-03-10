@@ -2,19 +2,19 @@
 <EditText xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:autoLink="web|email"
+    android:autofillHints=""
     android:background="@color/white"
     android:gravity="top|start"
+    android:hint="@string/note"
+    android:imeOptions="flagNoFullscreen"
     android:inputType="textMultiLine|textCapSentences|textNoSuggestions"
-    android:paddingEnd="10dp"
+    android:linksClickable="true"
     android:paddingStart="45dp"
     android:paddingTop="15dp"
-    android:paddingBottom="200dp"
-    android:theme="@style/Theme.Notes"
-    android:hint="@string/note"
-    android:autoLink="web|email"
-    android:imeOptions="flagNoFullscreen"
-    android:linksClickable="true"
+    android:paddingEnd="10dp"
+    android:paddingBottom="20dp"
     android:textSize="14.sp"
-    android:autofillHints="" />
+    android:theme="@style/Theme.Notes" />
 
 

@@ -459,6 +459,7 @@ data class UiStates(
                                 editText.post {
                                     editText.lineCount.setLinesCounter
                                 }
+
                             }
                             false.setTranslateEnable
                             checkForEmptyText()

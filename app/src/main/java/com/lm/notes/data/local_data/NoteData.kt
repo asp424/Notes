@@ -43,8 +43,9 @@ interface NoteData {
         }
 
         override fun isMustRemoveFromList() = with(noteModelFullScreen.value) {
-            (text.isEmpty() && isNewHeader(header) &&
-                    timestampChangeState.value == timestampCreate)
+            (text.isEmpty()
+                    && isNewHeader(header)// && timestampChangeState.value == timestampCreate
+            )
         }
 
         override fun updateNoteFromUi(newText: Spanned, actualTime: Long) {

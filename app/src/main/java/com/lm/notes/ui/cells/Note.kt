@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.utils.log
 
 @Composable
 fun Note(
@@ -24,6 +25,9 @@ fun Note(
     timeCreate: String,
     i: Int
 ) {
+    time.log
+    header.log
+    notesText.log
     with(mainDep){
         with(notesViewModel.uiStates) {
 
@@ -38,12 +42,11 @@ fun Note(
                 Box(Modifier.padding(10.dp), CenterStart) {
                     Column {
                         NoteCardText(header)
-                        if (notesText.isNotEmpty()) {
                             Text(
-                                text = notesText, maxLines = 1,
-                                fontSize = 12.sp, color = Color.Gray
+                                text = notesText.ifEmpty { ".........................." }, maxLines = 1,
+                                fontSize =
+                                if(notesText.isEmpty()) 26.sp else 12.sp, color = Color.Gray
                             )
-                        }
                         NoteCardText(time, false)
                     }
                     Box(Modifier.fillMaxSize().padding(top = 10.dp, end = 10.dp),

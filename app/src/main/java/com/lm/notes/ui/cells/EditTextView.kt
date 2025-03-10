@@ -1,5 +1,6 @@
 package com.lm.notes.ui.cells
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -19,6 +20,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,11 +37,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.view.LoadStatesEditText
 
+@SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun EditTextAndroidView() {
-    var scale by remember { mutableStateOf(1f) }
-    val state = rememberTransformableState { zoomChange, _, _ -> //scale *= zoomChange
-    }
     with(mainDep.notesViewModel) {
         with(editTextController) {
             with(uiStates) {
@@ -48,19 +48,18 @@ fun EditTextAndroidView() {
                     Box(
                         Modifier
                             .border(2.dp, getMainColor)
-                            .transformable(state)
-                            .background(Color.White)
+                            .background(Color.White).fillMaxSize()
                             .alpha(0.8f)
-                            .graphicsLayer { editText.textSize = scale * 16 },
+                        ,
                         Alignment.TopStart
                     ) {
 
                         AndroidView(
-                            { editText },
-                            Modifier
+                            { editText.apply { editText.textSize = 16f } },
+                            modifier = Modifier
                                 .fillMaxSize()
                                 .verticalScroll(scrollState)
-                                .horizontalScroll(rememberScrollState())
+                            // .horizontalScroll(rememberScrollState())
                         )
                         Box(
                             Modifier
