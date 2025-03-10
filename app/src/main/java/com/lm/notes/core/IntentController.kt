@@ -48,7 +48,12 @@ interface IntentController {
                            // toastCreator.invoke(R.string.application_msword)
                         }
                     }
-                    BaseActivity.IS_AUTH_ACTION -> notesViewModel.synchronize(lifecycleScope)
+                    BaseActivity.IS_AUTH_ACTION -> {
+                        notesViewModel.synchronize(lifecycleScope)
+                        with(notesViewModel.uiStates){
+                            true.setIsAuth
+                        }
+                    }
                     else -> {
                         result(IntentStates.Null)
                         //toastCreator.invoke(R.string.empty_intent)

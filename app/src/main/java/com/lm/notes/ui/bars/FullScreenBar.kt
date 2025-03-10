@@ -18,7 +18,7 @@ import com.lm.notes.ui.cells.ShareCanvasButton
 
 @Composable
 fun FullScreenBar() {
-    Row(Modifier.offset((-80).dp, 0.dp)) {
+    Row(Modifier.offset((-120).dp, 0.dp)) {
         Row(Modifier.offset(0.dp, 10.dp)) {
             LocalDensity.current.apply {
                 ShareCanvasButton(160.dp, ShareType.AsHtml, mainDep.width)

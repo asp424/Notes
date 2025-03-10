@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,8 +71,9 @@ import kotlinx.coroutines.launch
 @Stable
 data class UiStates(
     private var isFormatMode: MutableState<Boolean> = mutableStateOf(false),
+    private var isAuth: MutableState<Boolean> = mutableStateOf(false),
     private var translateEnable: MutableState<Boolean> = mutableStateOf(false),
-    private var linesCounter: MutableState<Int> = mutableStateOf(1),
+    private var linesCounter: MutableState<Int> = mutableIntStateOf(1),
     private var pasteIconLabel: MutableState<String> = mutableStateOf(""),
     private var setSelectionEnable: MutableState<Boolean> = mutableStateOf(false),
     private var colorPickerBackgroundIsShow: MutableState<Boolean> = mutableStateOf(false),
@@ -104,6 +106,7 @@ data class UiStates(
     val getIsFormatMode get() = isFormatMode.value
 
     val getTranslateEnable get() = translateEnable.value
+    val getIsAuth get() = isAuth.value
     val getIsReversLayout get() = isReversLayout.value
     private val getIsClickableNote get() = isClickableNote.value
     val getLinesCounter get() = linesCounter.value
@@ -137,6 +140,7 @@ data class UiStates(
     private val Boolean.setIsExpandShare get() = run { isExpandShare.value = this }
     private val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
     private val Boolean.setReversLayout get() = run { isReversLayout.value = this }
+    val Boolean.setIsAuth get() = run { isAuth.value = this }
     private val Boolean.setColorPickerBackgroundIsShow
         get() = run {
             colorPickerBackgroundIsShow.value = this

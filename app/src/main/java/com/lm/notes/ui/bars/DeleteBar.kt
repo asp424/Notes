@@ -21,7 +21,7 @@ fun DeleteBar(animScale: Float) {
                 .offset(width - 300.dp, 0.dp)
                 .scale(animScale)
         ) {
-            Row(Modifier.offset((-30).dp, 0.dp).fillMaxWidth()) {
+            Row(Modifier.offset((-70).dp, 0.dp).fillMaxWidth()) {
                 DeleteForeverIcon()
                 DeleteIcon()
             }

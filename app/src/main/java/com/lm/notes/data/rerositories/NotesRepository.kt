@@ -4,9 +4,13 @@ import android.text.Spanned
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface NotesRepository {
@@ -40,6 +44,8 @@ interface NotesRepository {
 
     fun deleteFromFirebase(id: String)
 
+    fun downloadNotesFromFirebase(coroutineScope: CoroutineScope)
+
     val isAuth: Boolean
 
     suspend fun getItems(page: Int, pageSize: Int): Result<List<NoteModel>>
@@ -57,13 +63,6 @@ interface NotesRepository {
                         roomRepository.notesList().forEach {
                             saveNote(it)
                         }
-                        notesList().collect {
-                            if (roomRepository.checkForNotContains(it.id) || notesListData.isEmpty()
-                            ) {
-                                roomRepository.addNewNote(it)
-                                notesListData.add(it)
-                            }
-                        }
                     }
                 }
             }
@@ -78,6 +77,22 @@ interface NotesRepository {
         override fun sortByCreate() = notesListData.sortByCreate()
 
         override fun deleteFromFirebase(id: String) = firebaseRepository.deleteNote(id)
+
+        override fun downloadNotesFromFirebase(coroutineScope: CoroutineScope) {
+            coroutineScope.launch(coroutineDispatcher) {
+                with(firebaseRepository) {
+                    if (isAuth) withContext(coroutineDispatcher) {
+                        notesList().collect {
+                            if (roomRepository.checkForNotContains(it.id) || notesListData.isEmpty()
+                            ) {
+                                roomRepository.addNewNote(it)
+                                notesListData.add(it)
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         override val isAuth: Boolean get() = firebaseRepository.isAuth
 

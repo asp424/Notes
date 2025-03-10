@@ -38,6 +38,9 @@ fun LogOutIcon(animScale: Float) {
                                 if (firebaseAuth.currentUser?.uid == null) {
                                     sPreferences.saveIconUri(Uri.EMPTY)
                                     iconUri.value = Uri.EMPTY
+                                   with(notesViewModel.uiStates){
+                                       false.setIsAuth
+                                   }
                                 }
                             }
                         }), tint = Color.White

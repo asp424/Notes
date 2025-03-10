@@ -16,5 +16,5 @@ interface LoginViewModelModule {
     @Binds
     @RegScope
     @ViewModelKey(LoginViewModel::class)
-    fun bindsMainViewModel(viewModel: LoginViewModel): ViewModel
+    fun bindsLoginViewModel(viewModel: LoginViewModel): ViewModel
 }

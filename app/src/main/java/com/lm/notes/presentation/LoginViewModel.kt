@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lm.notes.data.local_data.SPreferences
+import com.lm.notes.data.models.UiStates
 import com.lm.notes.data.remote_data.firebase.FBRegStates
 import com.lm.notes.data.remote_data.one_tap_google.OTGRegState
 import com.lm.notes.data.remote_data.one_tap_google.OneTapGoogleAuth

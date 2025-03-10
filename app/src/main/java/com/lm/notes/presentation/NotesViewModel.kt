@@ -20,7 +20,9 @@ class NotesViewModel @Inject constructor(
     val uiStates: UiStates,
     val clipboardProvider: ClipboardProvider
 ) : ViewModel() {
-
+init {
+    with(uiStates){ isAuth.setIsAuth }
+}
     val isAuth get() = notesRepository.isAuth
 
     val notesList = notesRepository.notesList
@@ -29,6 +31,9 @@ class NotesViewModel @Inject constructor(
 
     fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) =
         notesRepository.addNewNote(coroutineScope) { onAdd() }
+
+    fun downloadNotesFromFirebase(coroutineScope: CoroutineScope)
+    = notesRepository.downloadNotesFromFirebase(coroutineScope)
 
     fun deleteNoteFromFirebase(id: String) = notesRepository.deleteFromFirebase(id)
 

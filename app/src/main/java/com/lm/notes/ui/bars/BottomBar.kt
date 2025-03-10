@@ -28,7 +28,7 @@ fun BottomBar() {
     with(mainDep) {
         with(notesViewModel) {
             with(uiStates) {
-                val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
+                val lifecycleScope = androidx.lifecycle.compose.LocalLifecycleOwner.current.lifecycleScope
                 val click = remember {
                     {
                         editTextController.createEditText()
