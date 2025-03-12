@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -49,6 +50,7 @@ interface NotesRepository {
     val isAuth: Boolean
 
     suspend fun getItems(page: Int, pageSize: Int): Result<List<NoteModel>>
+
     class Base @Inject constructor(
         private val firebaseRepository: FirebaseRepository,
         private val coroutineDispatcher: CoroutineDispatcher,

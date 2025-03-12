@@ -44,7 +44,9 @@ fun FullScreenIcon(
                         Modifier
                             .offset(width - 126.dp, 10.dp)
                             .scale(
-                                animScale(getIsFullscreenMode && getTextIsEmpty)
+                                if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+                                    animScale(getIsFullscreenMode && getTextIsEmpty) else
+                                0f
                             )
                     ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
                 }

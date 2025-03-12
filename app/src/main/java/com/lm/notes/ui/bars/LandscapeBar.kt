@@ -1,7 +1,10 @@
 package com.lm.notes.ui.bars
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -21,22 +24,34 @@ import com.lm.notes.ui.cells.IconClipBoard
 import com.lm.notes.ui.cells.ShareCanvasButton
 import com.lm.notes.utils.animScale
 
+@SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun LandscapeBar() {
     with(mainDep) {
         with(notesViewModel.uiStates) {
             val scrollState = rememberScrollState()
-            LocalDensity.current.apply {
-                ShareCanvasButton(160.dp, ShareType.AsHtml, y = 190.dp - scrollState.value.toDp())
-                ShareCanvasButton(195.dp, ShareType.AsTxt, y = 190.dp - scrollState.value.toDp())
-                ShareCanvasButton(230.dp, y = 190.dp - scrollState.value.toDp())
-                Canvas(
-                    Modifier
-                        .offset((-18).dp, 190.dp - scrollState.value.toDp())
-                        .scale(
-                            animScale(getIsFullscreenMode && getTextIsEmpty)
-                        )
-                ) { drawCircle(White, 16.dp.toPx(), Offset.Zero) }
+            Row {
+                LocalDensity.current.apply {
+                    ShareCanvasButton(
+                        160.dp,
+                        ShareType.AsHtml,
+                        y = 10.dp
+                    )
+                    ShareCanvasButton(
+                        195.dp,
+                        ShareType.AsTxt,
+                        y = 10.dp
+                    )
+                    ShareCanvasButton(230.dp, y = 10.dp)
+
+                    Canvas(
+                        Modifier
+                            .offset((-18).dp, 10.dp)
+                            .scale(
+                                animScale(getIsFullscreenMode && getTextIsEmpty)
+                            )
+                    ) { drawCircle(White, 16.dp.toPx(), Offset.Zero) }
+                }
             }
             Column(
                 Modifier
@@ -44,10 +59,12 @@ fun LandscapeBar() {
                     .verticalScroll(scrollState)
                     .padding(bottom = 40.dp)
             ) {
-                listIconsClipboard.forEach { im ->
-                    IconClipBoard(im, getTextIsEmpty, getMainColor, 8.dp)
+                listIconsFullScreen.forEach { FullScreenIcon(it, getMainColor, 3.dp, 0.dp) }
+                Column(Modifier.offset((-5).dp, 0.dp)) {
+                    listIconsClipboard.forEach { im ->
+                        IconClipBoard(im, getTextIsEmpty, getMainColor, 2.dp)
+                    }
                 }
-                listIconsFullScreen.forEach { FullScreenIcon(it, getMainColor, 15.dp, 3.dp) }
             }
 
         }

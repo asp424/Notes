@@ -11,9 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
@@ -33,6 +35,7 @@ fun ShareCanvasButton(
     shareType: ShareType = ShareType.TextPlain,
     start: Dp = 108.dp, y: Dp = 0.dp
 ) {
+    val configuration = LocalConfiguration.current
     with(mainDep) {
         with(notesViewModel) {
             with(uiStates) {
@@ -42,6 +45,8 @@ fun ShareCanvasButton(
                             Paint().asFrameworkPaint().apply {
                                 isAntiAlias = true
                                 typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                                color = if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                                    getSecondColor.toArgb() else getMainColor.toArgb()
                             }
                         }
                         val activity = LocalContext.current as MainActivity
