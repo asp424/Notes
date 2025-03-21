@@ -8,14 +8,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -29,6 +34,8 @@ import kotlinx.coroutines.launch
 @SuppressLint("ContextCastToActivity", "UseOfNonLambdaOffsetOverload")
 @Composable
 fun AuthIcon(animScale: Float) {
+    val dens = LocalDensity.current
+
     with(mainDep) {
         (LocalContext.current as MainActivity).apply {
 
@@ -60,40 +67,43 @@ fun AuthIcon(animScale: Float) {
             var padding by remember { mutableStateOf(0.dp) }
 
             var shape by remember { mutableStateOf(CircleShape) }
-
             Box(
                 modifier = Modifier
                     .offset(width - 243.dp + infoOffset.value, 0.dp)
                     .scale(animScale)
             ) {
-                AsyncImage(model =
-                if (iconUri.value.toString() != "") if (isError) icon else iconUri.value
-                else {
-                    shape = CircleShape
-                    padding = 0.dp
-                    R.drawable.face
-                },
-                    contentDescription = null,
-                    placeholder = painterResource(id = R.drawable.face),
-                    modifier = Modifier
-                        .size(if (!progressVisibility.value) 30.dp else 0.dp)
-                        .noRippleClickable(click).padding(padding)
-                        .clip(shape),
-                    contentScale = ContentScale.Crop,
-                    onLoading = { onLoading() },
-                    onSuccess = { progressVisibility.value = false },
-                    onError = {
-                        icon = R.drawable.is_auth
-                        isError = true
-                        padding = 3.dp
-                        shape = RoundedCornerShape(0.dp)
-                        progressVisibility.value = false
-                    })
-                if (progressVisibility.value) CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(30.dp)
-                        .alpha(0.5f), color = notesViewModel.uiStates.getSecondColor
-                )
+                with(dens) {
+                    AsyncImage(model =
+                    if (iconUri.value.toString() != "") if (isError) icon else iconUri.value
+                    else {
+                        shape = CircleShape
+                        padding = 0.dp
+                        R.drawable.face
+                    },
+                        contentDescription = null,
+                        placeholder = painterResource(id = R.drawable.face),
+                        modifier = Modifier
+                            .size(if (!progressVisibility.value) 30.dp else 0.dp)
+                            .noRippleClickable(click)
+                            .padding(padding)
+                            .clip(shape),
+                        contentScale = ContentScale.Crop,
+                        onLoading = { onLoading() },
+                        onSuccess = { progressVisibility.value = false },
+                        onError = {
+                            icon = R.drawable.is_auth
+                            isError = true
+                            padding = 3.dp
+                            shape = RoundedCornerShape(0.dp)
+                            progressVisibility.value = false
+                        })
+
+                    if (progressVisibility.value) CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .alpha(0.5f), color = notesViewModel.uiStates.getSecondColor
+                    )
+                }
             }
         }
     }
