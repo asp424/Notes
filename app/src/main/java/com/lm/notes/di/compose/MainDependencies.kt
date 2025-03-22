@@ -3,19 +3,24 @@ package com.lm.notes.di.compose
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -34,9 +39,10 @@ import kotlinx.coroutines.CoroutineScope
 data class MainDependencies(
     val width: Dp,
     val height: Dp,
+    val density: Density,
     var iconUri: MutableState<Uri>,
-    val infoVisibility: MutableState<Boolean>,
-    val infoOffset: State<Dp>,
+    val authButtonMenuVisibility: MutableState<Boolean>,
+    val authButtonMenuOffsetY: Dp,
     val progressVisibility: MutableState<Boolean>,
     val coroutine: CoroutineScope,
     val notesViewModel: NotesViewModel,
@@ -45,8 +51,18 @@ data class MainDependencies(
     val listState: LazyListState,
     val filesProvider: FilesProvider,
     val navController: NavHostController,
-    val noteAppWidgetController: NoteAppWidgetController
-)
+    val noteAppWidgetController: NoteAppWidgetController,
+) {
+    @Composable
+    fun Modifier.iconVisibility(target: Boolean, duration: Int = 300) = composed {
+        scale(animVisibility(target, duration))
+    }
+}
+
+@Composable
+
+fun animVisibility(target: Boolean, duration: Int = 300)
+= animateFloatAsState(if (target) 1f else 0f, tween(duration)).value
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -58,20 +74,21 @@ fun MainScreenDependencies(
     noteAppWidgetController: NoteAppWidgetController,
     content: @Composable () -> Unit
 ) = with(LocalConfiguration.current) {
-    val infoVisibility = remember { mutableStateOf(false) }
+    val authButtonMenuVisibility = remember { mutableStateOf(false) }
     val context = LocalContext.current as MainActivity
     val owner = LocalViewModelStoreOwner.current ?: context
     CompositionLocalProvider(
         Local provides MainDependencies(
             width = screenWidthDp.dp,
             height = screenHeightDp.dp,
+            density = LocalDensity.current,
             iconUri = remember { mutableStateOf(checkNotNull(sPreferences.readIconUri())) },
             progressVisibility = remember { mutableStateOf(false) },
-            infoVisibility = remember { infoVisibility },
+            authButtonMenuVisibility = authButtonMenuVisibility,
             coroutine = rememberCoroutineScope(),
-            infoOffset = animateDpAsState(
-                if (infoVisibility.value) 20.dp else 0.dp, tween(500)
-            ),
+            authButtonMenuOffsetY = animateDpAsState(
+                if (authButtonMenuVisibility.value) 20.dp else 0.dp, tween(500)
+            ).value,
             notesViewModel = remember {
                 ViewModelProvider(owner, viewModelFactory)[NotesViewModel::class.java]
             },

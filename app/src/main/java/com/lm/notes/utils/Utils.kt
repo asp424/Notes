@@ -14,20 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import com.lm.notes.data.local_data.NoteData
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
-import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
-import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.cells.view.EditTextController
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.lm.notes.ui.core.SpanType
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 val <T> T.log get() = Log.d("My", toString())
 
@@ -47,15 +44,10 @@ fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int = 300) = animateDp
 ).value
 
 @Composable
-fun animScale(target: Boolean, duration: Int = 300) = animateFloatAsState(
-    if (target) 1f else 0f, tween(duration)
-).value
-
-@Composable
-fun animScaleDynamic(target: Boolean, first: Float, second: Float, duration: Int = 300)
-= animateFloatAsState(
-    if (target) first else second, tween(duration)
-).value
+fun animScaleDynamic(target: Boolean, first: Float, second: Float, duration: Int = 300) =
+    animateFloatAsState(
+        if (target) first else second, tween(duration)
+    ).value
 
 @Composable
 fun shareDp(start: Dp, getIsExpandShare: Boolean, width: Dp, delay: Int = 300) = animDp(
@@ -129,8 +121,8 @@ fun backPressHandle(
     }
 }
 
-    fun String.getHeader(isNew: Boolean) = if (isNew)
-        substringAfter(NEW_TAG) else ifEmpty { "No name" }
+fun String.getHeader(isNew: Boolean) = if (isNew)
+    substringAfter(NEW_TAG) else ifEmpty { "No name" }
 
 fun EditTextController.getAction(uiStates: UiStates, spanType: SpanType) = with(uiStates) {
     with(spanType) {

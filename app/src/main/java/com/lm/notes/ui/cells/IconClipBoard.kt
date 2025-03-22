@@ -15,44 +15,42 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
-fun IconClipBoard(
+fun MainDependencies.IconClipBoard(
     source: ImageVector,
     textIsEmpty: Boolean,
     color: Color,
     bottomPadding: Dp = 0.dp
 ) {
-    with(mainDep.notesViewModel) {
+    with(notesViewModel) {
         with(uiStates) {
-            val scale = source.getScale(textIsEmpty)
+            val visibleModifier = Modifier.visibility(source, textIsEmpty)
             val configuration = LocalConfiguration.current
             Box(
                 Modifier
                     .padding(
                         start = if (source == Icons.Rounded.ContentPaste &&
-                            configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2.dp else 5.dp,
+                            configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                        ) 2.dp else 5.dp,
                         end = 0.dp,
                         bottom = if (source == Icons.Rounded.ContentPaste &&
-                                configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-                                ) 10.dp + bottomPadding else bottomPadding
-                    )
-                    .size(scale.dp * 30)
-            ) {
+                            configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                        ) 10.dp + bottomPadding else bottomPadding
+                    ).size(source.getScale(textIsEmpty).dp * 30)
+            )
+            {
                 if (source == Icons.Rounded.ContentPaste)
                     Column(
-                        Modifier
-                            .fillMaxWidth()
-                            .scale(scale),
+                        visibleModifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
@@ -61,22 +59,20 @@ fun IconClipBoard(
                                 .noRippleClickable(remember {
                                     { with(clipboardProvider) { source.clickOnButtonsClipboard() } }
                                 })
-                                .size(15.dp).offset(0.dp, 2.dp), color
+                                .size(15.dp)
+                                .offset(0.dp, 2.dp), color
                         )
-                        Text(modifier = Modifier.offset(0.dp, (-4).dp),
+                        Text(
+                            modifier = Modifier.offset(0.dp, (-4).dp),
                             text = getPasteIconLabel,
                             color = color, fontSize = 8.sp
                         )
                     } else Icon(
                     source, null,
-                    Modifier
-                        .noRippleClickable(
+                    visibleModifier.noRippleClickable(
                             remember {
-                                {
-                                    with(clipboardProvider) { source.clickOnButtonsClipboard() }
-                                }
-                            })
-                        .scale(scale), color
+                                { with(clipboardProvider) { source.clickOnButtonsClipboard() } }
+                            }), color
                 )
             }
         }

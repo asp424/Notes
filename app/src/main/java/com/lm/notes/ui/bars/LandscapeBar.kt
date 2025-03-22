@@ -2,7 +2,6 @@ package com.lm.notes.ui.bars
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
@@ -11,9 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -22,7 +19,6 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.FullScreenIcon
 import com.lm.notes.ui.cells.IconClipBoard
 import com.lm.notes.ui.cells.ShareCanvasButton
-import com.lm.notes.utils.animScale
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
@@ -46,16 +42,14 @@ fun LandscapeBar() {
 
                     Canvas(
                         Modifier
+                            .iconVisibility(getIsFullscreenMode && getTextIsEmpty)
                             .offset((-18).dp, 10.dp)
-                            .scale(
-                                animScale(getIsFullscreenMode && getTextIsEmpty)
-                            )
                     ) { drawCircle(White, 16.dp.toPx(), Offset.Zero) }
                 }
             }
             Column(
                 Modifier
-                    .scale(animScale(!getIsMainMode))
+                    .iconVisibility(!getIsMainMode)
                     .verticalScroll(scrollState)
                     .padding(bottom = 40.dp)
             ) {

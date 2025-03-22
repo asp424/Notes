@@ -21,8 +21,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.di.compose.animVisibility
 import com.lm.notes.ui.bars.listIconsFullScreen
-import com.lm.notes.utils.animScale
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
@@ -45,7 +45,7 @@ fun FullScreenIcon(
                             .offset(width - 126.dp, 10.dp)
                             .scale(
                                 if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                                    animScale(getIsFullscreenMode && getTextIsEmpty) else
+                                    animVisibility(getIsFullscreenMode && getTextIsEmpty) else
                                 0f
                             )
                     ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }

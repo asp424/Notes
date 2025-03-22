@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -49,8 +51,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavHostController
-import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
+import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.di.compose.animVisibility
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.EditTextController
@@ -58,9 +61,6 @@ import com.lm.notes.ui.cells.view.LoadStatesEditText
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.theme.main
-import com.lm.notes.utils.animScale
-import com.lm.notes.utils.formatTimestamp
-import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -106,7 +106,6 @@ data class UiStates(
     val getIsFormatMode get() = isFormatMode.value
 
     val getTranslateEnable get() = translateEnable.value
-    val getIsAuth get() = isAuth.value
     val getIsReversLayout get() = isReversLayout.value
     private val getIsClickableNote get() = isClickableNote.value
     val getLinesCounter get() = linesCounter.value
@@ -281,7 +280,7 @@ data class UiStates(
         false.setIsSelected
     }
 
-    fun setReversLayout(){
+    fun setReversLayout() {
         if (getIsReversLayout) false.setReversLayout
         else true.setReversLayout
     }
@@ -343,6 +342,24 @@ data class UiStates(
     fun SpanType.getColorPicker() = if (this is SpanType.Background)
         getColorPickerBackgroundIsShow else getColorPickerForegroundIsShow
 
+    @SuppressLint("ModifierFactoryUnreferencedReceiver")
+    @Composable
+    fun Modifier.visibility(icon: ImageVector, textIsEmpty: Boolean): Modifier = with(mainDep) {
+        with(Modifier) {
+            when (icon) {
+                Icons.Rounded.ContentPaste -> iconVisibility(getClipboardIsEmpty)
+                Icons.Rounded.SelectAll -> iconVisibility(textIsEmpty)
+                Icons.Rounded.CopyAll -> iconVisibility(textIsEmpty)
+                Icons.Rounded.ClearAll -> iconVisibility(getClipboardIsEmpty)
+                else -> iconVisibility(getIsSelected && textIsEmpty)
+            }
+        }
+    }
+    @Composable
+    fun animScale(target: Boolean, duration: Int = 300) = animateFloatAsState(
+        if (target) 1f else 0f, tween(duration)
+    ).value
+
     @Composable
     fun ImageVector.getScale(textIsEmpty: Boolean) =
         when (this) {
@@ -362,10 +379,10 @@ data class UiStates(
         @SuppressLint("ContextCastToActivity")
         activity: MainActivity = LocalContext.current as MainActivity,
         animation: Float =
-            animScale(getIsFullscreenMode && getTextIsEmpty && getNotShareVisible)
+            animVisibility(getIsFullscreenMode && getTextIsEmpty && getNotShareVisible)
     ) = when (this@getFullScreenIconsValues) {
         Icons.Rounded.Share -> Pair(
-            animScale(getIsFullscreenMode && getTextIsEmpty), remember {
+            animVisibility(getIsFullscreenMode && getTextIsEmpty), remember {
                 { expandShare(coroutine) }
             }
         )
@@ -389,14 +406,18 @@ data class UiStates(
                         .apply {
                             addCategory(Intent.CATEGORY_OPENABLE)
                             type = "application/txt"
-                            putExtra(Intent.EXTRA_TITLE, "${if(noteModel.header.startsWith(NEW_TAG))
-                                noteModel.header.substringAfter(NEW_TAG) else noteModel.header
-                            }.txt")
+                            putExtra(
+                                Intent.EXTRA_TITLE, "${
+                                    if (noteModel.header.startsWith(NEW_TAG))
+                                        noteModel.header.substringAfter(NEW_TAG) else noteModel.header
+                                }.txt"
+                            )
                         }
                     )
                 }
             }
         )
+
         else -> Pair(0f) {}
     }
 
@@ -483,7 +504,7 @@ data class UiStates(
     private fun checkNoteCardMode(id: String) = listDeleteAble.contains(id) && getIsDeleteMode
 
     fun setSelection(scope: LifecycleCoroutineScope, notesViewModel: NotesViewModel) {
-        scope.launchWhenResumed {
+        scope.launch {
             notesViewModel.editTextController.editText.isEnabled = true
             false.setSetSelectionEnable
             false.setTranslateEnable
