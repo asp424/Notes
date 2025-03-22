@@ -12,14 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.ColorPickers
 import com.lm.notes.ui.cells.IconFormat
 import com.lm.notes.ui.core.SpanType
-import com.lm.notes.ui.theme.back
 import com.lm.notes.utils.animDp
 
 @Composable

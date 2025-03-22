@@ -345,16 +345,15 @@ data class UiStates(
     @SuppressLint("ModifierFactoryUnreferencedReceiver")
     @Composable
     fun Modifier.visibility(icon: ImageVector, textIsEmpty: Boolean): Modifier = with(mainDep) {
-        with(Modifier) {
-            when (icon) {
-                Icons.Rounded.ContentPaste -> iconVisibility(getClipboardIsEmpty)
-                Icons.Rounded.SelectAll -> iconVisibility(textIsEmpty)
-                Icons.Rounded.CopyAll -> iconVisibility(textIsEmpty)
-                Icons.Rounded.ClearAll -> iconVisibility(getClipboardIsEmpty)
-                else -> iconVisibility(getIsSelected && textIsEmpty)
-            }
+        when (icon) {
+            Icons.Rounded.ContentPaste -> iconVisibility(getClipboardIsEmpty)
+            Icons.Rounded.SelectAll -> iconVisibility(textIsEmpty)
+            Icons.Rounded.CopyAll -> iconVisibility(textIsEmpty)
+            Icons.Rounded.ClearAll -> iconVisibility(getClipboardIsEmpty)
+            else -> iconVisibility(getIsSelected && textIsEmpty)
         }
     }
+
     @Composable
     fun animScale(target: Boolean, duration: Int = 300) = animateFloatAsState(
         if (target) 1f else 0f, tween(duration)
