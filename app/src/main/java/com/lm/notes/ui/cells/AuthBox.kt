@@ -59,13 +59,13 @@ fun MainDependencies.AuthBox(size: Dp) {
             ) {}
             with(progressVisibility) {
                 AsyncImage(if (iconUri.value.toString() == "" || isError) icon
-                else iconUri.value, null, Modifier.size(if (!value) size + 1.dp else 0.dp
+                else iconUri.value, null, Modifier.size(if (!value) size else 0.dp
                 ).noRippleClickable(click).clip(CircleShape), painterResource(icon),
                     contentScale = ContentScale.Crop,
                     onLoading = { if (iconUri.toString().isNotEmpty()) value = true },
                     onSuccess = { progressVisibility.value = false },
                     onError = { isError = true; value = false })
-                if (value) CircularProgressIndicator(Modifier.size(size + 1.dp).alpha(0.5f),
+                if (value) CircularProgressIndicator(Modifier.size(size).alpha(0.5f),
                     notesViewModel.uiStates.getSecondColor
                 )
             }
