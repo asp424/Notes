@@ -48,9 +48,7 @@ fun MainScreen(intentStates: IntentStates) {
         with(notesViewModel) {
             val actionOnNewIntent: (IntentStates) -> Unit = remember {
                 {
-                    navController.navigate("fullScreenNote") {
-                        popUpTo("mainList")
-                    }
+                    navController.navigate("fullScreenNote") { popUpTo("mainList") }
                     addNewNote(coroutine) {
                         when (it) {
                             is IntentStates.SendPlain ->

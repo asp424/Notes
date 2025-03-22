@@ -13,7 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDependencies
@@ -21,22 +22,16 @@ import com.lm.notes.utils.noRippleClickable
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
-fun MainDependencies.LogOutBox(size: Dp) {
-    Box(
-        Modifier
-            .offset(-authButtonMenuOffsetY, 0.dp)
-            .iconVisibility(notesViewModel.uiStates.getIsMainMode)
-    ) {
+fun MainDependencies.LogOutBox(size: Dp) = with(notesViewModel.uiStates) {
+    Box(Modifier
+        .offset(-authButtonMenuOffsetY, 0.dp)
+        .iconVisibility(getIsMainMode)) {
         Button(
-            onClick = {}, modifier = Modifier
-                .size(size), colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Red
-            )
-        ) {
-        }
+            {}, Modifier.size(size),
+            colors = ButtonDefaults.buttonColors(containerColor = Red)
+        ) {}
         Icon(
-            Icons.AutoMirrored.Sharp.Logout, null,
-            modifier = Modifier
+            Icons.AutoMirrored.Sharp.Logout, null, Modifier
                 .size(size - 2.dp)
                 .offset(x = 5.dp)
                 .noRippleClickable(
@@ -46,12 +41,10 @@ fun MainDependencies.LogOutBox(size: Dp) {
                             if (firebaseAuth.currentUser?.uid == null) {
                                 sPreferences.saveIconUri(Uri.EMPTY)
                                 iconUri.value = Uri.EMPTY
-                                with(notesViewModel.uiStates) {
-                                    false.setIsAuth
-                                }
+                                false.setIsAuth
                             }
                         }
-                    }), tint = Color.White
+                    }), White
         )
     }
 }

@@ -16,8 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("ContextCastToActivity", "UseOfNonLambdaOffsetOverload")
 @Composable
-fun MainDependencies.AuthBox(size: Dp) {
+fun MainDependencies.authBox(size: Dp) = with(notesViewModel.uiStates) {
     (LocalContext.current as MainActivity).apply {
         var isError by remember { mutableStateOf(false) }
         val click = remember(notesViewModel) {
@@ -40,33 +40,33 @@ fun MainDependencies.AuthBox(size: Dp) {
                 if (!firebaseAuth.isAuth) {
                     progressVisibility.value = true; isError = false; startLoginActivity
                 } else with(authButtonMenuVisibility) {
-                        if (!value) coroutine.launch {
-                            value = !value; delay(1000); value = !value
-                        }
+                    if (!value) coroutine.launch {
+                        value = !value; delay(1000); value = !value
                     }
                 }
             }
+        }
         val icon = remember { R.drawable.face }
 
-        Box(Modifier.offset(authButtonMenuOffsetY)
-                .iconVisibility(notesViewModel.uiStates.getIsMainMode)
-        ) {
-            Button(
-                onClick = {}, modifier = Modifier
-                    .size(size), colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White
-                )
-            ) {}
+        Box(Modifier
+            .offset(authButtonMenuOffsetY)
+            .iconVisibility(getIsMainMode)) {
+            Button({}, Modifier.size(size), colors = ButtonDefaults.buttonColors(White)) {}
             with(progressVisibility) {
                 AsyncImage(if (iconUri.value.toString() == "" || isError) icon
-                else iconUri.value, null, Modifier.size(if (!value) size else 0.dp
-                ).noRippleClickable(click).clip(CircleShape), painterResource(icon),
-                    contentScale = ContentScale.Crop,
+                else iconUri.value, null, Modifier
+                    .size(
+                        if (!value) size else 0.dp
+                    )
+                    .noRippleClickable(click)
+                    .clip(CircleShape), painterResource(icon),
+                    contentScale = Crop,
                     onLoading = { if (iconUri.toString().isNotEmpty()) value = true },
-                    onSuccess = { progressVisibility.value = false },
-                    onError = { isError = true; value = false })
-                if (value) CircularProgressIndicator(Modifier.size(size).alpha(0.5f),
-                    notesViewModel.uiStates.getSecondColor
+                    onSuccess = { value = false }, onError = { isError = true; value = false })
+                if (value) CircularProgressIndicator(
+                    Modifier
+                        .size(size)
+                        .alpha(0.5f), getSecondColor
                 )
             }
         }
