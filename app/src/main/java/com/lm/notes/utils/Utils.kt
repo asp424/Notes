@@ -9,19 +9,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.text.toHtml
-import androidx.core.text.toSpanned
-import androidx.navigation.NavController
-import com.lm.notes.core.IntentStates
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
+import com.lm.notes.data.models.NavControllerScreens
 import com.lm.notes.data.models.UiStates
-import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.EditTextController
@@ -98,14 +93,13 @@ private fun String.asTime(): String {
 }
 
 fun backPressHandle(
-    navController: NavController,
     notesViewModel: NotesViewModel,
     mainActivity: MainActivity
 ) {
     with(notesViewModel) {
         with(editTextController) {
             with(uiStates) {
-                if (navController.currentDestination?.route == "mainList") {
+                if (getNavControllerScreens == NavControllerScreens.Main) {
                     if (getSettingsVisible || getIsDeleteMode) {
                         false.setSettingsVisible
                         cancelDeleteMode()
@@ -114,7 +108,7 @@ fun backPressHandle(
                     if (getIsFormatMode) {
                         setEditMode(); onClickEditText(); editText.clearFocus()
                     } else {
-                        navController.navigate("mainList"); setEditMode()
+                        NavControllerScreens.Main.setNavControllerScreen; setEditMode()
                         with(notesViewModel) {
                             if (isMustRemoveFromList()) deleteNote(noteModelFullScreen.value.id)
                         }
@@ -144,38 +138,6 @@ inline fun <T> List<T>.forEachInList(
 ) {
     for (element in this) action(element)
 }
-
-@Composable
-fun MainDependencies.ActionOnNewIntent(intentStates: IntentStates) =
-    LaunchedEffect(intentStates) {
-        when (intentStates) {
-            IntentStates.Null -> Unit
-            else -> {
-                notesViewModel.editTextController.createEditText()
-                navController.navigate("fullScreenNote") { popUpTo("mainList") }
-                notesViewModel.addNewNote(coroutine) {
-                    when (intentStates) {
-                        is IntentStates.SendPlain ->
-                            notesViewModel.editTextController.setNewText(
-                                intentStates.text.toSpanned().toHtml()
-                            )
-
-                        is IntentStates.ViewPlain ->
-                            filesProvider.readTextFileFromDeviceAndSetToEditText(intentStates.uri)
-
-                        is IntentStates.Word ->
-                            notesViewModel.editTextController.setNewText(
-                                intentStates.inBox.toSpanned().toHtml()
-                            )
-
-                        else -> Unit
-                    }
-                    notesViewModel.checkForEmptyText()
-                }
-            }
-        }
-    }
-
 
 
 

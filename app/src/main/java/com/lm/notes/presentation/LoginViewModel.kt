@@ -9,11 +9,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lm.notes.data.local_data.SPreferences
-import com.lm.notes.data.models.UiStates
 import com.lm.notes.data.remote_data.firebase.FBRegStates
 import com.lm.notes.data.remote_data.one_tap_google.OTGRegState
 import com.lm.notes.data.remote_data.one_tap_google.OneTapGoogleAuth
-import com.lm.notes.utils.log
 import com.lm.notes.utils.longToast
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -51,7 +49,7 @@ class LoginViewModel @Inject constructor(
                     }
                     is FBRegStates.OnError -> {
                         withContext(Main){
-                            longToast(it.message.apply { log })
+                            longToast(it.message)
                         }
                     }
                     is FBRegStates.OnClose -> { delay(1000) }

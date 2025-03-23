@@ -53,6 +53,7 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.NavHostController
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.di.compose.animVisibility
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
@@ -97,6 +98,8 @@ data class UiStates(
     private var textIsEmpty: MutableState<Boolean> = mutableStateOf(true),
     private var isReversLayout: MutableState<Boolean> = mutableStateOf(false),
     private var isClickableNote: MutableState<Boolean> = mutableStateOf(true),
+    private var navControllerScreen: MutableState<NavControllerScreens>
+    = mutableStateOf(NavControllerScreens.Main),
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
     val secondColor: MutableState<Color> = mutableStateOf(main),
@@ -104,7 +107,7 @@ data class UiStates(
     var selection: Pair<Int, Int> = Pair(-1, -1)
 ) {
     val getIsFormatMode get() = isFormatMode.value
-
+    val getNavControllerScreens get() = navControllerScreen.value
     val getTranslateEnable get() = translateEnable.value
     val getIsReversLayout get() = isReversLayout.value
     private val getIsClickableNote get() = isClickableNote.value
@@ -141,6 +144,7 @@ data class UiStates(
     private val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
     private val Boolean.setReversLayout get() = run { isReversLayout.value = this }
     val Boolean.setIsAuth get() = run { isAuth.value = this }
+    val NavControllerScreens.setNavControllerScreen get() = run { navControllerScreen.value = this }
     private val Boolean.setColorPickerBackgroundIsShow
         get() = run {
             colorPickerBackgroundIsShow.value = this
@@ -449,7 +453,7 @@ data class UiStates(
     }
 
     fun Modifier.setClickOnNote(
-        notesViewModel: NotesViewModel, noteModel: NoteModel, navController: NavHostController,
+        notesViewModel: NotesViewModel, noteModel: NoteModel,
         interactionSource: MutableInteractionSource, indication: Indication?,
         coroutine: CoroutineScope
     ) = pointerInput(Unit) {
@@ -466,7 +470,7 @@ data class UiStates(
                             } else addToDeleteAbleList(id)
                         }
                         if (!getIsDeleteMode && getIsClickableNote) {
-                            navController.navigate("fullScreenNote") { popUpTo("mainList") }
+                            NavControllerScreens.Note.setNavControllerScreen
                             val press = PressInteraction.Press(Offset(it.x + 100f, 0f))
                             coroutine.launch(IO) {
                                 interactionSource.emit(press)
@@ -521,4 +525,14 @@ data class UiStates(
                 if (getSettingsVisible) false.setSettingsVisible else true.setSettingsVisible
             }
         }
+
+    @Composable
+    fun NavControllerController() = with(mainDep) {
+        when (getNavControllerScreens) {
+            NavControllerScreens.Main -> navController.navigate(NavControllerScreens.Main.screen)
+            NavControllerScreens.Note -> navController.navigate(NavControllerScreens.Note.screen)
+            { popUpTo(NavControllerScreens.Main.screen) }
+        }
+    }
 }
+

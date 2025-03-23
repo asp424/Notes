@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
+import com.lm.notes.data.models.NavControllerScreens
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.animDp
 
@@ -35,8 +36,7 @@ fun BottomBar() {
                     {
                         editTextController.createEditText()
                         if (!getIsDeleteMode) {
-                            navController.navigate("fullScreenNote") {
-                                popUpTo("mainList")
+                            NavControllerScreens.Note.setNavControllerScreen
                             }
                             addNewNote(lifecycleScope) {
                                 editTextController.setNewText("")
@@ -44,7 +44,6 @@ fun BottomBar() {
                             }
                         }
                     }
-                }
 
                 Box(
                     modifier = Modifier

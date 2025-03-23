@@ -13,7 +13,6 @@ import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.lm.notes.R
-import com.lm.notes.core.IntentStates
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.ui.bars.BottomBar
@@ -21,13 +20,12 @@ import com.lm.notes.ui.bars.FormatBar
 import com.lm.notes.ui.bars.TopBarFromOrientation
 import com.lm.notes.ui.cells.NavHostAnim
 import com.lm.notes.ui.cells.SettingsCard
-import com.lm.notes.utils.ActionOnNewIntent
 import com.lm.notes.utils.backPressHandle
 import kotlinx.coroutines.launch
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun MainDependencies.MainScreen(intentStates: IntentStates) {
+fun MainDependencies.MainScreen() {
     Image(
         painterResource(R.drawable.notebook_list), null,
         Modifier
@@ -42,11 +40,11 @@ fun MainDependencies.MainScreen(intentStates: IntentStates) {
     BackHandler(
         onBack = remember {
             {
-                coroutine.launch { backPressHandle(navController, notesViewModel, mainActivity) }
+                coroutine.launch { backPressHandle(notesViewModel, mainActivity) }
             }
         }
     )
 
-    ActionOnNewIntent(intentStates)
     SettingsCard()
+    notesViewModel.uiStates.NavControllerController()
 }

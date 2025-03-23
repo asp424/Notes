@@ -5,7 +5,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.di.dagger.app.AppScope
-import com.lm.notes.utils.log
 import dagger.Module
 import dagger.Provides
 
@@ -18,6 +17,6 @@ class UiStatesModule {
         UiStates().apply {
             Color(sPreferences.readMainColor()).setMainColor
             Color(sPreferences.readSecondColor()).setSecondColor
-            (firebaseAuth.currentUser?.uid != null).apply { log }.setIsAuth
+            (firebaseAuth.currentUser?.uid != null).setIsAuth
         }
 }

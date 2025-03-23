@@ -10,7 +10,6 @@ import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.remote_data.RemoteLoadStates
 import com.lm.notes.data.remote_data.firebase.FBDataStates
-import com.lm.notes.utils.log
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 

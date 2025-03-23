@@ -13,7 +13,6 @@ import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.rerositories.RoomRepository
 import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.getHeader
-import com.lm.notes.utils.log
 import javax.inject.Inject
 
 

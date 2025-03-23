@@ -9,7 +9,6 @@ import com.google.android.gms.common.api.CommonStatusCodes.CANCELED
 import com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR
 import com.lm.notes.data.remote_data.firebase.FBAuth
 import com.lm.notes.data.remote_data.firebase.FBRegStates
-import com.lm.notes.utils.log
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -43,6 +42,7 @@ interface OneTapGoogleAuth {
                                         is FBRegStates.OnSuccess -> FBRegStates.OnSuccess(
                                             profilePictureUri
                                         )
+
                                         is FBRegStates.OnError -> FBRegStates.OnError(it.message)
                                         is FBRegStates.OnClose -> FBRegStates.OnClose("close")
                                     }
@@ -51,12 +51,12 @@ interface OneTapGoogleAuth {
                             }
                         }
                     }
-                } catch(e: ApiException){
+                } catch (e: ApiException) {
                     trySend(
                         when (e.statusCode) {
-                            CANCELED ->  FBRegStates.OnClose(e.message?: "cancelled")
-                            NETWORK_ERROR ->  FBRegStates.OnClose(e.message?: "network error")
-                            else -> FBRegStates.OnError(e.message?: "error")
+                            CANCELED -> FBRegStates.OnClose(e.message ?: "cancelled")
+                            NETWORK_ERROR -> FBRegStates.OnClose(e.message ?: "network error")
+                            else -> FBRegStates.OnError(e.message ?: "error")
                         }
                     )
                     close(e)

@@ -40,8 +40,8 @@ fun MainColumn() {
                         it {
                             with(uiStates) {
                                 Modifier.setClickOnNote(
-                                    notesViewModel, this@it, navController,
-                                    interactionSource, indication, coroutine
+                                    notesViewModel, this@it, interactionSource,
+                                    indication, coroutine
                                 )
                             }
                         }

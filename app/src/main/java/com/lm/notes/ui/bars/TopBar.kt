@@ -19,14 +19,17 @@ import com.lm.notes.utils.noRippleClickable
 @Composable
 fun UiStates.TopBarFromOrientation() {
     if (LocalConfiguration.current.orientation == ORIENTATION_PORTRAIT) TopBar()
-    else { if (getIsMainMode) TopBar()
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(top = 15.dp),
-            contentAlignment = Alignment.TopEnd
-        ) {
-            LandscapeBar()
+    else {
+        if (getIsMainMode) {
+            TopBar()
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = 15.dp),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                LandscapeBar()
+            }
         }
     }
 }

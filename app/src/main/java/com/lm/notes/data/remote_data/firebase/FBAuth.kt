@@ -3,10 +3,8 @@ package com.lm.notes.data.remote_data.firebase
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.lm.notes.utils.log
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
@@ -25,14 +23,18 @@ interface FBAuth {
             firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener { task ->
                     trySend(
-                    if (task.isSuccessful) FBRegStates.OnSuccess(Uri.EMPTY)
-                    else FBRegStates.OnError(task.exception?.message ?: "null")
+                        if (task.isSuccessful) FBRegStates.OnSuccess(Uri.EMPTY)
+                        else FBRegStates.OnError(task.exception?.message ?: "null")
                     )
                     close()
-                }.addOnFailureListener { trySend(FBRegStates.OnError(it.message ?: "null"))
-                    close() }
-                .addOnCanceledListener { trySend(FBRegStates.OnError("cancelled"))
-                    close() }
+                }.addOnFailureListener {
+                    trySend(FBRegStates.OnError(it.message ?: "null"))
+                    close()
+                }
+                .addOnCanceledListener {
+                    trySend(FBRegStates.OnError("cancelled"))
+                    close()
+                }
             awaitClose()
         }.flowOn(IO)
     }
