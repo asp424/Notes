@@ -40,7 +40,6 @@ data class MainDependencies(
     val width: Dp,
     val height: Dp,
     val density: Density,
-    var iconUri: MutableState<Uri>,
     val authButtonMenuVisibility: MutableState<Boolean>,
     val authButtonMenuOffsetY: Dp,
     val progressVisibility: MutableState<Boolean>,
@@ -82,7 +81,6 @@ fun MainScreenDependencies(
             width = screenWidthDp.dp,
             height = screenHeightDp.dp,
             density = LocalDensity.current,
-            iconUri = remember { mutableStateOf(checkNotNull(sPreferences.readIconUri())) },
             progressVisibility = remember { mutableStateOf(false) },
             authButtonMenuVisibility = authButtonMenuVisibility,
             coroutine = rememberCoroutineScope(),
@@ -98,12 +96,7 @@ fun MainScreenDependencies(
             filesProvider = remember { filesProvider },
             navController = rememberNavController(),
             noteAppWidgetController = remember { noteAppWidgetController }
-        ).apply {
-            if (iconUri.toString().isNotEmpty()) {
-                progressVisibility.value = false
-                iconUri.value = sPreferences.readIconUri() ?: Uri.EMPTY
-            }
-        }, content = content
+        ), content = content
     )
 }
 

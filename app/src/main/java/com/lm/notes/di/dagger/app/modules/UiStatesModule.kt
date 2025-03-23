@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.data.local_data.SPreferences
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.di.dagger.app.AppScope
+import com.lm.notes.utils.setIsAuth
 import dagger.Module
 import dagger.Provides
 

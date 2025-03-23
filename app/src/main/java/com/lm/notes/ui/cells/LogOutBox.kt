@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.setIconUri
+import com.lm.notes.utils.setIsAuth
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
@@ -40,7 +42,7 @@ fun MainDependencies.LogOutBox(size: Dp) = with(notesViewModel.uiStates) {
                             firebaseAuth.signOut()
                             if (firebaseAuth.currentUser?.uid == null) {
                                 sPreferences.saveIconUri(Uri.EMPTY)
-                                iconUri.value = Uri.EMPTY
+                                Uri.EMPTY.setIconUri
                                 false.setIsAuth
                             }
                         }

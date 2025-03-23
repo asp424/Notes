@@ -15,9 +15,9 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.ui.cells.AuthBox
 import com.lm.notes.ui.cells.LogOutBox
 import com.lm.notes.ui.cells.MainBarIcon
-import com.lm.notes.ui.cells.authBox
 import com.lm.notes.utils.forEachInList
 
 @Composable
@@ -29,7 +29,7 @@ fun MainBar() {
             }
             Box(Modifier.padding(top = 5.dp, end = 20.dp)) {
                 LogOutBox(30.dp)
-                authBox(30.dp)
+                AuthBox(30.dp)
             }
         }
     }

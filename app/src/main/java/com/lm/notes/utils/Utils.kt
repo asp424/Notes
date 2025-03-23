@@ -1,6 +1,7 @@
 package com.lm.notes.utils
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
@@ -9,6 +10,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -27,6 +30,18 @@ import java.util.Date
 import java.util.Locale
 
 val <T> T.log get() = Log.d("My", toString())
+
+var isAuth: MutableState<Boolean> = mutableStateOf(false)
+
+val getIsAuth get() = isAuth.value
+
+val Boolean.setIsAuth get() = run { isAuth.value = this }
+
+val iconUri = mutableStateOf(Uri.EMPTY)
+
+val getIconUri get() = iconUri.value
+
+val Uri.setIconUri  get() = run { iconUri.value = this }
 
 fun Context.longToast(text: String) = Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 

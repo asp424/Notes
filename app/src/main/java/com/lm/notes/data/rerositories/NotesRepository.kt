@@ -6,10 +6,8 @@ import com.lm.notes.data.local_data.NotesListData
 import com.lm.notes.data.models.NoteModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -103,7 +101,7 @@ interface NotesRepository {
                 with(roomRepository.newNote(firebaseRepository.randomId)) {
                     notesListData.add(this@with)
                     notesListData.setFullscreenNoteModel(id)
-                    withContext(Main) { onAdd() }
+                    onAdd()
                 }
             }
         }

@@ -2,10 +2,11 @@ package com.lm.notes.core
 
 import android.content.Intent
 import androidx.lifecycle.LifecycleCoroutineScope
+import com.lm.notes.data.models.IntentStates
 import com.lm.notes.presentation.BaseActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.app_widget.ToastCreator
-import com.lm.notes.utils.log
+import com.lm.notes.utils.setIsAuth
 import javax.inject.Inject
 
 
@@ -28,34 +29,35 @@ interface IntentController {
             lifecycleScope: LifecycleCoroutineScope,
             result: (IntentStates) -> Unit
         ) {
-
             intent?.apply {
                 when (type) {
                     "text/plain" -> {
-                            getStringExtra(Intent.EXTRA_TEXT).log
-                            result(IntentStates.SendPlain(getStringExtra(Intent.EXTRA_TEXT)?:""))
-                            //toastCreator.invoke(R.string.text_plain)
-}
+                        result(
+                            IntentStates.SendPlain(
+                                text = getStringExtra(Intent.EXTRA_TEXT) ?: ""
+                            )
+                        )
+                    }
+
                     Intent.ACTION_VIEW -> {
                         if ("text/plain" == type) {
-                            result(IntentStates.ViewPlain(data))
-                            //toastCreator.invoke(R.string.text_all)
+                            result(IntentStates.ViewPlain(uri = data))
                         }
 
                         if ("application/msword" == type) {
-                            result(IntentStates.Word(getStringExtra(Intent.EXTRA_TEXT)?:""))
-                           // toastCreator.invoke(R.string.application_msword)
+                            result(
+                                IntentStates.Word(
+                                    inBox = getStringExtra(Intent.EXTRA_TEXT) ?: ""
+                                )
+                            )
                         }
                     }
+
                     BaseActivity.IS_AUTH_ACTION -> {
                         notesViewModel.synchronize(lifecycleScope)
-                        with(notesViewModel.uiStates){
+                        with(notesViewModel.uiStates) {
                             true.setIsAuth
                         }
-                    }
-                    else -> {
-                        result(IntentStates.Null)
-                        //toastCreator.invoke(R.string.empty_intent)
                     }
                 }
             }

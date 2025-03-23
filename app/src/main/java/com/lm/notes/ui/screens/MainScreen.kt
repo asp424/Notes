@@ -39,9 +39,7 @@ fun MainDependencies.MainScreen() {
     val mainActivity = LocalContext.current as MainActivity
     BackHandler(
         onBack = remember {
-            {
-                coroutine.launch { backPressHandle(notesViewModel, mainActivity) }
-            }
+            { coroutine.launch { backPressHandle(notesViewModel, mainActivity) } }
         }
     )
 

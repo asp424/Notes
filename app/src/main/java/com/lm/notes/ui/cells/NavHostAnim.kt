@@ -19,7 +19,8 @@ fun MainDependencies.NavHostAnim() {
                     exitTransition = { exitRightToLeft }) {
                     MainColumn()
                     LaunchedEffect(true) {
-                        setMainMode(); notesViewModel.sortByChange()
+                        setMainMode()
+                        //notesViewModel.sortByChange()
                     }
                 }
 

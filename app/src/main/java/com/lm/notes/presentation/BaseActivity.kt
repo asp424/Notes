@@ -2,15 +2,12 @@ package com.lm.notes.presentation
 
 import android.content.Intent
 import androidx.activity.ComponentActivity
-import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.di.dagger.reg.DaggerRegComponent
 
 abstract class BaseActivity : ComponentActivity() {
 
     protected val LoginActivity.regComponent
         get() = DaggerRegComponent.builder().loginActivity(this).create()
-
-    val FirebaseAuth.isAuth get() = currentUser?.uid != null
 
     val startLoginActivity get() =
         startActivity(Intent(applicationContext, LoginActivity::class.java))

@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.utils.animScaleDynamic
+import com.lm.notes.utils.getIsAuth
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
@@ -32,7 +33,7 @@ fun DeleteForeverIcon() {
                             }
                         }
                     ).offset((-20).dp, 0.dp)
-                        .scale(animScaleDynamic(notesViewModel.isAuth, 1.2f, 0f)),
+                        .scale(animScaleDynamic(getIsAuth, 1.2f, 0f)),
                     tint = getSecondColor
                 )
             }

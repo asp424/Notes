@@ -7,15 +7,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.text.toHtml
 import androidx.core.text.toSpanned
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.core.IntentController
-import com.lm.notes.core.IntentStates
 import com.lm.notes.core.appComponent
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.SPreferences
+import com.lm.notes.data.models.IntentStates
 import com.lm.notes.data.models.NavControllerScreens
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.di.compose.MainScreenDependencies
@@ -70,7 +71,10 @@ class MainActivity : BaseActivity() {
                     noteAppWidgetController
                 ) {
                     with(mainDep) { MainScreen() }
-                    getDataFromIntent(intent)
+                    if (intent.type != "null")
+                        LaunchedEffect(intent){
+                            getDataFromIntent(intent)
+                        }
                 }
             }
         }
@@ -90,42 +94,36 @@ class MainActivity : BaseActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        getDataFromIntent(intent)
+        if (intent.type != "null") getDataFromIntent(intent)
         "onNew: ${intent.type}".log
     }
 
     private fun getDataFromIntent(intent: Intent?) {
+        "d: $intent?.type}".log
         intentController.checkForIntentAction(intent, notesViewModel, lifecycleScope)
         { i ->
-            when (i) {
-                IntentStates.Null -> Unit
-                else -> {
-                    notesViewModel.editTextController.createEditText()
-                    with(notesViewModel.uiStates)
-                    { NavControllerScreens.Note.setNavControllerScreen }
+            notesViewModel.editTextController.createEditText()
+            with(notesViewModel.uiStates)
+            { NavControllerScreens.Note.setNavControllerScreen }
 
-                    notesViewModel.addNewNote(lifecycleScope) {
-                        when (i) {
-                            is IntentStates.SendPlain ->
-                                notesViewModel.editTextController.setNewText(
-                                    i.text.toSpanned().toHtml()
-                                )
+            notesViewModel.addNewNote(lifecycleScope) {
+                when (i) {
+                    is IntentStates.SendPlain ->
+                        notesViewModel.editTextController.setNewText(
+                            i.text.toSpanned().toHtml()
+                        )
 
-                            is IntentStates.ViewPlain ->
-                                filesProvider.readTextFileFromDeviceAndSetToEditText(
-                                    i.uri
-                                )
+                    is IntentStates.ViewPlain ->
+                        filesProvider.readTextFileFromDeviceAndSetToEditText(
+                            i.uri
+                        )
 
-                            is IntentStates.Word ->
-                                notesViewModel.editTextController.setNewText(
-                                    i.inBox.toSpanned().toHtml()
-                                )
-
-                            else -> Unit
-                        }
-                        notesViewModel.checkForEmptyText()
-                    }
+                    is IntentStates.Word ->
+                        notesViewModel.editTextController.setNewText(
+                            i.inBox.toSpanned().toHtml()
+                        )
                 }
+                notesViewModel.checkForEmptyText()
             }
         }
     }

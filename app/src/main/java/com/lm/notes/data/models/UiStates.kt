@@ -50,10 +50,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.navigation.NavHostController
 import com.lm.notes.data.local_data.NoteData.Base.Companion.NEW_TAG
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.di.compose.animVisibility
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
@@ -72,7 +70,6 @@ import kotlinx.coroutines.launch
 @Stable
 data class UiStates(
     private var isFormatMode: MutableState<Boolean> = mutableStateOf(false),
-    private var isAuth: MutableState<Boolean> = mutableStateOf(false),
     private var translateEnable: MutableState<Boolean> = mutableStateOf(false),
     private var linesCounter: MutableState<Int> = mutableIntStateOf(1),
     private var pasteIconLabel: MutableState<String> = mutableStateOf(""),
@@ -125,7 +122,6 @@ data class UiStates(
     val getIsFullscreenMode get() = isFullscreenMode.value
     val getIsDeleteMode get() = isDeleteMode.value
     private val getIsSelected get() = isSelected.value
-    val getIsAuth get() = isAuth.value
     private val getClipboardIsEmpty get() = clipboardIsEmpty.value
     private val getColorPickerBackgroundIsShow get() = colorPickerBackgroundIsShow.value
     private val getColorPickerForegroundIsShow get() = colorPickerForegroundIsShow.value
@@ -143,7 +139,6 @@ data class UiStates(
     private val Boolean.setIsExpandShare get() = run { isExpandShare.value = this }
     private val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
     private val Boolean.setReversLayout get() = run { isReversLayout.value = this }
-    val Boolean.setIsAuth get() = run { isAuth.value = this }
     val NavControllerScreens.setNavControllerScreen get() = run { navControllerScreen.value = this }
     private val Boolean.setColorPickerBackgroundIsShow
         get() = run {

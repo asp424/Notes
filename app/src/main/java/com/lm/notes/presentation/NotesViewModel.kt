@@ -5,10 +5,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
+import com.lm.notes.data.local_data.ClipboardProvider
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.data.rerositories.NotesRepository
 import com.lm.notes.ui.cells.view.EditTextController
-import com.lm.notes.data.local_data.ClipboardProvider
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
@@ -20,10 +20,6 @@ class NotesViewModel @Inject constructor(
     val uiStates: UiStates,
     val clipboardProvider: ClipboardProvider
 ) : ViewModel() {
-init {
-    with(uiStates){ isAuth.setIsAuth }
-}
-    val isAuth get() = notesRepository.isAuth
 
     val notesList = notesRepository.notesList
 
@@ -32,8 +28,8 @@ init {
     fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) =
         notesRepository.addNewNote(coroutineScope) { onAdd() }
 
-    fun downloadNotesFromFirebase(coroutineScope: CoroutineScope)
-    = notesRepository.downloadNotesFromFirebase(coroutineScope)
+    fun downloadNotesFromFirebase(coroutineScope: CoroutineScope) =
+        notesRepository.downloadNotesFromFirebase(coroutineScope)
 
     fun deleteNoteFromFirebase(id: String) = notesRepository.deleteFromFirebase(id)
 
@@ -57,7 +53,8 @@ init {
 
     fun sortByCreate() = notesRepository.sortByCreate()
 
-    fun synchronize(coroutineScope: CoroutineScope) = notesRepository.synchronize(coroutineScope)
+    fun synchronize(coroutineScope: CoroutineScope) =
+        notesRepository.synchronize(coroutineScope)
 
     suspend fun updateChangedNotes() = notesRepository.updateChangedNotes()
 }

@@ -13,6 +13,8 @@ import com.lm.notes.data.remote_data.firebase.FBRegStates
 import com.lm.notes.data.remote_data.one_tap_google.OTGRegState
 import com.lm.notes.data.remote_data.one_tap_google.OneTapGoogleAuth
 import com.lm.notes.utils.longToast
+import com.lm.notes.utils.setIconUri
+import com.lm.notes.utils.setIsAuth
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -42,9 +44,11 @@ class LoginViewModel @Inject constructor(
             oneTapGoogleAuth.handleResultAndFBReg(result).collect {
                 when (it) {
                     is FBRegStates.OnSuccess -> {
-                        sPreferences.saveIconUri(it.iconUri)
+                        sPreferences.saveIconUri(it.iconUri?.apply { setIconUri })
+
                         withContext(Main){
                             longToast("Вход выполнен")
+                            true.setIsAuth
                         }
                     }
                     is FBRegStates.OnError -> {

@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.presentation.NotesViewModel
+import com.lm.notes.utils.getIsAuth
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
@@ -30,8 +31,9 @@ fun MainDependencies.MainBarIcon(
         icon, null,
         Modifier
             .iconVisibility(
-                with(uiStates){ if (icon == Icons.Rounded.Public)
-                    getIsAuth && getIsMainMode else getIsMainMode
+                with(uiStates) {
+                    if (icon == Icons.Rounded.Public)
+                        getIsAuth && getIsMainMode else getIsMainMode
                 }
             )
             .offset(x = offsetY)
