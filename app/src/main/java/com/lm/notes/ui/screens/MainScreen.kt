@@ -28,9 +28,7 @@ import kotlinx.coroutines.launch
 fun MainDependencies.MainScreen() {
     Image(
         painterResource(R.drawable.notebook_list), null,
-        Modifier
-            .fillMaxSize()
-            .alpha(0.5f), contentScale = Crop
+        Modifier.fillMaxSize().alpha(0.5f), contentScale = Crop
     )
 
     Column { notesViewModel.uiStates.TopBarFromOrientation(); NavHostAnim() }

@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep
 import com.lm.notes.ui.cells.ColorPickers
-import com.lm.notes.ui.cells.IconFormat
+import com.lm.notes.ui.cells.icons.IconFormat
 import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.theme.back
 import com.lm.notes.utils.animDp

@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.Dp
 import com.lm.notes.di.compose.MainDependencies
+import com.lm.notes.ui.cells.icons.AuthStatusIcon
 
 @SuppressLint("ContextCastToActivity", "UseOfNonLambdaOffsetOverload")
 @Composable

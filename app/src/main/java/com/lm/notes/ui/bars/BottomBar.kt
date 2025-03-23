@@ -54,7 +54,7 @@ fun BottomBar() {
                 ) {
                     Box(Modifier.background(getMainColor).fillMaxWidth().height(70.dp))
                     Box(Modifier.padding(bottom = 40.dp, end = 40.dp)) {
-                        Button({}, Modifier.scale(1.30f).size(60.dp),
+                        Button({}, Modifier.scale(1.2f).size(60.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = White)
                         ) {}
 

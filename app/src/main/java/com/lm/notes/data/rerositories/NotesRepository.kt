@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface NotesRepository {
-    fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit)
+    fun addNewNote(coroutineScope: CoroutineScope, onAdd: (String) -> Unit)
 
     val noteModelFullScreen: StateFlow<NoteModel>
 
@@ -96,12 +96,14 @@ interface NotesRepository {
 
         override val isAuth: Boolean get() = firebaseRepository.isAuth
 
-        override fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) {
+        override fun addNewNote(coroutineScope: CoroutineScope, onAdd: (String) -> Unit) {
             coroutineScope.launch(coroutineDispatcher) {
-                with(roomRepository.newNote(firebaseRepository.randomId)) {
-                    notesListData.add(this@with)
-                    notesListData.setFullscreenNoteModel(id)
-                    onAdd()
+                firebaseRepository.randomId.also { id ->
+                    with(roomRepository.newNote(id)) {
+                        notesListData.add(this@with)
+                        notesListData.setFullscreenNoteModel(id)
+                        onAdd(id)
+                    }
                 }
             }
         }

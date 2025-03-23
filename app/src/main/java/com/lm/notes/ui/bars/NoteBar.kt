@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.ui.cells.FullScreenIcon
+import com.lm.notes.ui.cells.icons.FullScreenIcon
 import com.lm.notes.ui.cells.ShareCanvasButton
 
 @Composable
@@ -26,14 +26,14 @@ fun NoteBar() {
                 ShareCanvasButton(230.dp, start = mainDep.width)
             }
         }
-        listIconsFullScreen.forEach {
+        listIconsNote.forEach {
             FullScreenIcon(it,
                 with(mainDep.notesViewModel.uiStates) { getSecondColor })
         }
     }
 }
 
-val listIconsFullScreen by lazy {
+val listIconsNote by lazy {
     listOf(
         Icons.Rounded.Share,
         Icons.Rounded.Widgets,

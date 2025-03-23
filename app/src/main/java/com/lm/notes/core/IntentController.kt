@@ -1,12 +1,16 @@
 package com.lm.notes.core
 
 import android.content.Intent
+import androidx.core.text.toHtml
+import androidx.core.text.toSpanned
 import androidx.lifecycle.LifecycleCoroutineScope
+import com.lm.notes.R
+import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.models.IntentStates
+import com.lm.notes.data.models.NavControllerScreens
 import com.lm.notes.presentation.BaseActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.app_widget.ToastCreator
-import com.lm.notes.utils.setIsAuth
 import javax.inject.Inject
 
 
@@ -20,7 +24,8 @@ interface IntentController {
     )
 
     class Base @Inject constructor(
-        private val toastCreator: ToastCreator
+        private val toastCreator: ToastCreator,
+        private val filesProvider: FilesProvider
     ) : IntentController {
 
         override fun checkForIntentAction(
@@ -32,33 +37,40 @@ interface IntentController {
             intent?.apply {
                 when (type) {
                     "text/plain" -> {
-                        result(
-                            IntentStates.SendPlain(
-                                text = getStringExtra(Intent.EXTRA_TEXT) ?: ""
-                            )
-                        )
-                    }
-
-                    Intent.ACTION_VIEW -> {
-                        if ("text/plain" == type) {
-                            result(IntentStates.ViewPlain(uri = data))
-                        }
-
-                        if ("application/msword" == type) {
-                            result(
-                                IntentStates.Word(
-                                    inBox = getStringExtra(Intent.EXTRA_TEXT) ?: ""
+                        if ((getStringExtra(Intent.EXTRA_TEXT))?.isNotEmpty() == true){
+                            notesViewModel.editTextController.createEditText()
+                            with(notesViewModel.uiStates)
+                            { NavControllerScreens.Note.setNavControllerScreen }
+                            notesViewModel.addNewNote(lifecycleScope) { id ->
+                                notesViewModel.editTextController.setNewText(
+                                    (getStringExtra(Intent.EXTRA_TEXT) ?: "").toSpanned().toHtml()
                                 )
-                            )
-                        }
+                                notesViewModel.setFullscreenNoteModel(id)
+
+                                if (!notesViewModel.uiStates.getTranslateEnable)
+                                    notesViewModel.updateNoteFromUi(
+                                        (getStringExtra(Intent.EXTRA_TEXT) ?: "").toSpanned()
+                                    )
+                            }
+
+                        } else toastCreator(R.string.empty_file)
                     }
 
-                    BaseActivity.IS_AUTH_ACTION -> {
-                        notesViewModel.synchronize(lifecycleScope)
-                        with(notesViewModel.uiStates) {
-                            true.setIsAuth
-                        }
-                    }
+                    "file" -> result(
+                        IntentStates.ViewPlain(
+                         data
+                        )
+                    )
+
+                    "application/msword" -> result(
+                        IntentStates.Word(getStringExtra(Intent.EXTRA_TEXT) ?: "")
+                    )
+
+                    "content" -> result(
+                        IntentStates.Null
+                    )
+
+                    BaseActivity.IS_AUTH_ACTION -> notesViewModel.synchronize(lifecycleScope)
                 }
             }
         }

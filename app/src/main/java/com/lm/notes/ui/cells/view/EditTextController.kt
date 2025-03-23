@@ -10,7 +10,6 @@ import android.text.Spanned
 import android.text.style.*
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_UP
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
@@ -26,7 +25,6 @@ import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.core.SpanType.Bold.listClasses
 import com.lm.notes.utils.getAction
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import javax.inject.Inject
 
@@ -345,7 +343,7 @@ interface EditTextController {
             if (offset in (first..second) &&
                 !uiStates.getIsFormatMode && offset in editText.text.indices
             ) {
-                onCheck(); editText.isEnabled = false
+                onCheck() // editText.isEnabled = false
             } else Unit
 
         override fun Pair<Int, Int>.setHighLightAndOpenLink(view: TextView, uri: Uri) {

@@ -1,7 +1,6 @@
 package com.lm.notes.di.compose
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -59,7 +58,6 @@ data class MainDependencies(
 }
 
 @Composable
-
 fun animVisibility(target: Boolean, duration: Int = 300)
 = animateFloatAsState(if (target) 1f else 0f, tween(duration)).value
 

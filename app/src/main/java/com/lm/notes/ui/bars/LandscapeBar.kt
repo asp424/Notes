@@ -16,9 +16,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.ui.cells.FullScreenIcon
-import com.lm.notes.ui.cells.IconClipBoard
+import com.lm.notes.ui.cells.icons.FullScreenIcon
+import com.lm.notes.ui.cells.icons.IconClipBoard
 import com.lm.notes.ui.cells.ShareCanvasButton
+import com.lm.notes.utils.listIconsClipboard
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
@@ -53,14 +54,13 @@ fun LandscapeBar() {
                     .verticalScroll(scrollState)
                     .padding(bottom = 40.dp)
             ) {
-                listIconsFullScreen.forEach { FullScreenIcon(it, getMainColor, 3.dp, 0.dp) }
+                listIconsNote.forEach { FullScreenIcon(it, getMainColor, 3.dp, 0.dp) }
                 Column(Modifier.offset((-5).dp, 0.dp)) {
                     listIconsClipboard.forEach { im ->
                         IconClipBoard(im, getTextIsEmpty, getMainColor, 2.dp)
                     }
                 }
             }
-
         }
     }
 }

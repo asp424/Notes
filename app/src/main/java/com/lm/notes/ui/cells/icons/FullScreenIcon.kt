@@ -1,4 +1,4 @@
-package com.lm.notes.ui.cells
+package com.lm.notes.ui.cells.icons
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.di.compose.animVisibility
-import com.lm.notes.ui.bars.listIconsFullScreen
+import com.lm.notes.ui.bars.listIconsNote
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
@@ -39,7 +39,7 @@ fun FullScreenIcon(
                     coroutine, noteAppWidgetController, notesViewModel.noteModelFullScreen.value,
                     editTextController
                 )
-                if (source == listIconsFullScreen[0]) {
+                if (source == listIconsNote[0]) {
                     Canvas(
                         Modifier
                             .offset(width - 126.dp, 10.dp)

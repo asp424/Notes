@@ -9,6 +9,19 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.sharp.Sort
+import androidx.compose.material.icons.rounded.ClearAll
+import androidx.compose.material.icons.rounded.ContentCopy
+import androidx.compose.material.icons.rounded.ContentCut
+import androidx.compose.material.icons.rounded.ContentPaste
+import androidx.compose.material.icons.rounded.CopyAll
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DeleteForever
+import androidx.compose.material.icons.rounded.Public
+import androidx.compose.material.icons.rounded.SelectAll
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.SwapVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +42,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-val <T> T.log get() = Log.d("My", toString())
+val <T> T.log get() = Log.d("Asshole", toString())
 
 var isAuth: MutableState<Boolean> = mutableStateOf(false)
 
@@ -41,7 +54,7 @@ val iconUri = mutableStateOf(Uri.EMPTY)
 
 val getIconUri get() = iconUri.value
 
-val Uri.setIconUri  get() = run { iconUri.value = this }
+val Uri.setIconUri get() = run { iconUri.value = this }
 
 fun Context.longToast(text: String) = Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 
@@ -121,12 +134,15 @@ fun backPressHandle(
                     } else mainActivity.finish()
                 } else {
                     if (getIsFormatMode) {
-                        setEditMode(); onClickEditText(); editText.clearFocus()
+                        onClickEditText()
+                        editText.clearFocus()
+                        setEditMode()
                     } else {
-                        NavControllerScreens.Main.setNavControllerScreen; setEditMode()
+                        NavControllerScreens.Main.setNavControllerScreen
                         with(notesViewModel) {
                             if (isMustRemoveFromList()) deleteNote(noteModelFullScreen.value.id)
                         }
+                        setEditMode()
                     }
                 }
                 removeSelection()
@@ -152,6 +168,33 @@ inline fun <T> List<T>.forEachInList(
     action: T.() -> Unit
 ) {
     for (element in this) action(element)
+}
+
+val listIconsMainBar by lazy {
+    listOf(
+        Pair(Icons.Rounded.Settings, 0.dp),
+        Pair(Icons.AutoMirrored.Sharp.Sort, 10.dp),
+        Pair(Icons.Rounded.SwapVert, 20.dp),
+        Pair(Icons.Rounded.Public, 30.dp),
+    )
+}
+
+val listIconsClipboard
+        by lazy {
+            listOf(
+                Icons.Rounded.ClearAll,
+                Icons.Rounded.ContentPaste,
+                Icons.Rounded.SelectAll,
+                Icons.Rounded.ContentCopy,
+                Icons.Rounded.CopyAll,
+                Icons.Rounded.ContentCut,
+            )
+        }
+val listOfDeleteBarIcon by lazy {
+    listOf(
+        Icons.Rounded.Delete,
+        Icons.Rounded.DeleteForever
+    )
 }
 
 

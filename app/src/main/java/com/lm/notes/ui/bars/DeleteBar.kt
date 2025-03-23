@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.ui.cells.DeleteForeverIcon
-import com.lm.notes.ui.cells.DeleteIcon
+import com.lm.notes.ui.cells.icons.DeleteBarIcon
+import com.lm.notes.utils.listOfDeleteBarIcon
 
 @Composable
 fun DeleteBar() {
@@ -22,9 +22,11 @@ fun DeleteBar() {
             Row(Modifier
                 .offset((-70).dp, 0.dp)
                 .fillMaxWidth()) {
-                DeleteForeverIcon()
-                DeleteIcon()
+                listOfDeleteBarIcon.forEach { icon ->
+                    DeleteBarIcon(icon)
+                }
             }
         }
     }
 }
+

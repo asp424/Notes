@@ -25,8 +25,8 @@ class NotesViewModel @Inject constructor(
 
     val noteModelFullScreen = notesRepository.noteModelFullScreen
 
-    fun addNewNote(coroutineScope: CoroutineScope, onAdd: () -> Unit) =
-        notesRepository.addNewNote(coroutineScope) { onAdd() }
+    fun addNewNote(coroutineScope: CoroutineScope, onAdd: (String) -> Unit) =
+        notesRepository.addNewNote(coroutineScope) { onAdd(it) }
 
     fun downloadNotesFromFirebase(coroutineScope: CoroutineScope) =
         notesRepository.downloadNotesFromFirebase(coroutineScope)

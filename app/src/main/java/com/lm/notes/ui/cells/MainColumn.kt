@@ -21,7 +21,7 @@ fun MainColumn() {
             MainList(notesList) { i ->
                 val values = remember(notesList) {
                     listOf(
-                        getListFields<String> { it { formatTimestamp(timestampChangeState.value) } },
+                        getListFields { it { formatTimestamp(timestampChangeState.value) } },
                         getListFields<String> { it { preview } },
                         getListFields<String> {
                             it {

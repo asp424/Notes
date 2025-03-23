@@ -37,8 +37,6 @@ interface NoteAppWidgetController {
         private val noteData: NoteData
     ) : NoteAppWidgetController {
 
-        private val textList = listOf<String>()
-
         override fun pinNoteWidget(noteId: String) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 && appWidgetManager.isRequestPinAppWidgetSupported

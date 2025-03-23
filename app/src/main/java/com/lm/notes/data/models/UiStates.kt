@@ -268,11 +268,11 @@ data class UiStates(
         else -> Unit
     }
 
-    private fun hideFormatPanel() = with(false) {
-        setIsFormatMode
-        setColorPickerBackgroundIsShow
-        setColorPickerForegroundIsShow
-    }
+    fun hideFormatPanel() {
+        false.setIsFormatMode
+        false.setColorPickerBackgroundIsShow
+        false.setColorPickerForegroundIsShow
+}
 
     fun onClickEditText() {
         hideFormatPanel()

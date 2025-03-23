@@ -1,4 +1,4 @@
-package com.lm.notes.ui.cells
+package com.lm.notes.ui.cells.icons
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.size
@@ -18,7 +18,6 @@ import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.utils.getIconUri
 import com.lm.notes.utils.getIsAuth
-import com.lm.notes.utils.log
 import com.lm.notes.utils.noRippleClickable
 import com.lm.notes.utils.setIconUri
 import kotlinx.coroutines.delay
@@ -29,7 +28,6 @@ import kotlinx.coroutines.launch
 fun MainDependencies.AuthStatusIcon(size: Dp) {
     LaunchedEffect(size) {
         sPreferences.readIconUri()?.setIconUri
-        "fff".log
     }
     val icon = remember { R.drawable.face }
     val mainActivity = LocalContext.current as MainActivity

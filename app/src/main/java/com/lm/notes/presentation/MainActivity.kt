@@ -59,7 +59,6 @@ class MainActivity : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        "onStart: ${intent.type}".log
         appComponent.inject(this)
         setContent {
             NotesTheme(viewModelFactory = viewModelFactory.get()) {
@@ -95,11 +94,11 @@ class MainActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (intent.type != "null") getDataFromIntent(intent)
-        "onNew: ${intent.type}".log
     }
 
     private fun getDataFromIntent(intent: Intent?) {
-        "d: $intent?.type}".log
+        "d: ${intent?.type}".log
+        "d: ${intent?.action}".log
         intentController.checkForIntentAction(intent, notesViewModel, lifecycleScope)
         { i ->
             notesViewModel.editTextController.createEditText()
@@ -122,6 +121,9 @@ class MainActivity : BaseActivity() {
                         notesViewModel.editTextController.setNewText(
                             i.inBox.toSpanned().toHtml()
                         )
+
+                    is IntentStates.Content -> TODO()
+                    IntentStates.Null -> TODO()
                 }
                 notesViewModel.checkForEmptyText()
             }

@@ -1,4 +1,4 @@
-package com.lm.notes.ui.cells
+package com.lm.notes.ui.cells.icons
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box

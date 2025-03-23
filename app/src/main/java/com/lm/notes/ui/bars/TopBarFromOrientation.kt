@@ -1,15 +1,12 @@
 package com.lm.notes.ui.bars
 
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
@@ -20,20 +17,10 @@ import com.lm.notes.utils.noRippleClickable
 fun UiStates.TopBarFromOrientation() {
     if (LocalConfiguration.current.orientation == ORIENTATION_PORTRAIT) TopBar()
     else {
-        if (getIsMainMode) {
-            TopBar()
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(top = 15.dp),
-                contentAlignment = Alignment.TopEnd
-            ) {
-                LandscapeBar()
-            }
-        }
+        if (getIsMainMode) TopBar()
+
     }
 }
-
 @Composable
 fun UiStates.TopBar() {
     TopAppBar(

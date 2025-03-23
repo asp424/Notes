@@ -1,15 +1,16 @@
 <resources>
     <string name="app_name">Notes</string>
-    <string name="note">Note</string>
+    <string name="note">Заметка</string>
     <string name="note_widget_description">Note</string>
-    <string name="widget_not_compatible">Device not compatible this function</string>
-    <string name="selected_text_was_copied">Selected text was copied to clipboard</string>
-    <string name="all_text_was_copied">All text was copied to clipboard</string>
+    <string name="empty_file">Пустой файл</string>
+    <string name="widget_not_compatible">Не поддерживатся устройством</string>
+    <string name="selected_text_was_copied">Выбранный текст скопирован в буфер обмена</string>
+    <string name="all_text_was_copied">Весь текст скопирован в буфер обмена</string>
     <string name="text_plain">text/plain</string>
     <string name="text_all">text_file</string>
     <string name="application_msword">application/msword</string>
     <string name="empty_intent">null</string>
     <string name="second_color">Second color</string>
-    <string name="change_keyboard">Change keyboard</string>
-    <string name="main_color">Main color</string>
+    <string name="change_keyboard">Цвет иконок</string>
+    <string name="main_color">Основной цвет</string>
 </resources>
