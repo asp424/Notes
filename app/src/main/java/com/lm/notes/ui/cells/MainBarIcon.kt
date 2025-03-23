@@ -21,17 +21,24 @@ import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
-fun MainDependencies.MainBarIcon(icon: ImageVector, offsetY: Dp = 0.dp) =
-    with(notesViewModel) {
-        val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
-        Icon(
-            icon, null,
-            Modifier
-                .iconVisibility(uiStates.getIsMainMode).offset(x = offsetY)
-                .noRippleClickable(getAction(icon, lifecycleScope)),
-            uiStates.getSecondColor
-        )
-    }
+fun MainDependencies.MainBarIcon(
+    icon: ImageVector,
+    offsetY: Dp = 0.dp
+) = with(notesViewModel) {
+    val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
+    Icon(
+        icon, null,
+        Modifier
+            .iconVisibility(
+                with(uiStates){ if (icon == Icons.Rounded.Public)
+                    getIsAuth && getIsMainMode else getIsMainMode
+                }
+            )
+            .offset(x = offsetY)
+            .noRippleClickable(getAction(icon, lifecycleScope)),
+        uiStates.getSecondColor
+    )
+}
 
 @Composable
 fun NotesViewModel.getAction(
@@ -41,7 +48,11 @@ fun NotesViewModel.getAction(
     Icons.Rounded.Settings -> uiStates.settingsIconClick
     Icons.AutoMirrored.Sharp.Sort -> remember { { sortByCreate() } }
     Icons.Rounded.SwapVert -> remember { { uiStates.setReversLayout() } }
-    Icons.Rounded.Public -> remember { { downloadNotesFromFirebase(lifecycleScope) }
+    Icons.Rounded.Public -> remember {
+        { downloadNotesFromFirebase(lifecycleScope) }
     }
-    else -> {{}}
+
+    else -> {
+        {}
+    }
 }

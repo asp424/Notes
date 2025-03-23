@@ -25,13 +25,11 @@ import com.lm.notes.core.IntentController
 import com.lm.notes.core.appComponent
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.SPreferences
-import com.lm.notes.data.local_data.ShareType
+import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.di.compose.MainScreenDependencies
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.screens.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
-import com.lm.notes.utils.log
-import com.lm.notes.utils.longToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
@@ -113,7 +111,10 @@ class MainActivity : BaseActivity() {
                         firebaseAuth,
                         filesProvider,
                         noteAppWidgetController
-                    ) { MainScreen(it) }
+                    ) {
+                       // with(mainDep) { MainScreen(it) }
+                        Main()
+                    }
                 }
             }
         }

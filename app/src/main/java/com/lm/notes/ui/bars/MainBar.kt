@@ -18,21 +18,28 @@ import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.LogOutBox
 import com.lm.notes.ui.cells.MainBarIcon
 import com.lm.notes.ui.cells.authBox
+import com.lm.notes.utils.forEachInList
 
 @Composable
 fun MainBar() {
     with(mainDep) {
         Row(Modifier.fillMaxSize(), SpaceBetween, CenterVertically) {
             Row(Modifier.padding(top = 10.dp)) {
-                MainBarIcon(Icons.Rounded.Settings)
-                MainBarIcon(Icons.AutoMirrored.Sharp.Sort, 10.dp)
-                MainBarIcon(Icons.Rounded.SwapVert, 20.dp)
-                MainBarIcon(Icons.Rounded.Public, 30.dp)
+                listIconsMainBar.forEachInList { MainBarIcon(first, second) }
             }
-            Box(Modifier.padding(end = 20.dp)) {
+            Box(Modifier.padding(top = 5.dp, end = 20.dp)) {
                 LogOutBox(30.dp)
                 authBox(30.dp)
             }
         }
     }
+}
+
+private val listIconsMainBar by lazy {
+    listOf(
+        Pair(Icons.Rounded.Settings, 0.dp),
+        Pair(Icons.AutoMirrored.Sharp.Sort, 10.dp),
+        Pair(Icons.Rounded.SwapVert, 20.dp),
+        Pair(Icons.Rounded.Public, 30.dp),
+    )
 }

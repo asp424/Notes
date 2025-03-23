@@ -122,6 +122,7 @@ data class UiStates(
     val getIsFullscreenMode get() = isFullscreenMode.value
     val getIsDeleteMode get() = isDeleteMode.value
     private val getIsSelected get() = isSelected.value
+    val getIsAuth get() = isAuth.value
     private val getClipboardIsEmpty get() = clipboardIsEmpty.value
     private val getColorPickerBackgroundIsShow get() = colorPickerBackgroundIsShow.value
     private val getColorPickerForegroundIsShow get() = colorPickerForegroundIsShow.value
