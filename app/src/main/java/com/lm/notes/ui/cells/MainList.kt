@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.Start
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.models.NoteModel
@@ -17,33 +19,17 @@ import com.lm.notes.utils.noRippleClickable
 @Composable
 fun MainList(notesList: List<NoteModel>, note: @Composable List<NoteModel>.(Int) -> Unit) {
     with(mainDep) {
-       // val modifierSize = remember { Modifier.size(width, height - 80.dp) }
         with(notesViewModel.uiStates) {
             with(notesList) {
                 LazyColumn(
-                    state = listState,
-                    content = {
-                        items(
-                            count = size,
-                            key = { get(it).id },
-                            itemContent = {
-                                if (it == lastIndex) {
-                                    Box(
-                              //          modifier = modifierSize,
-                                        contentAlignment = Alignment.TopCenter
-                                    ) { note(notesList, it) }
-                                } else note(notesList, it)
-                            }
-                        )
-                    },
-                    modifier = Modifier
+                    Modifier
                         .fillMaxSize()
                         .noRippleClickable(remember { { cancelDeleteMode() } }),
-                    reverseLayout = getIsReversLayout,
-                    contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 120.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
-                )
+                         listState,
+                    PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 120.dp),
+                    getIsReversLayout, Arrangement.Top, CenterHorizontally){
+                    items(size, { get(it).id }, { get(it) }, { note(notesList, it) })
+                }
             }
         }
     }

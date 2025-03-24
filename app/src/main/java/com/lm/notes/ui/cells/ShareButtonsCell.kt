@@ -1,6 +1,6 @@
 package com.lm.notes.ui.cells
 
-import androidx.compose.foundation.layout.offset
+
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text

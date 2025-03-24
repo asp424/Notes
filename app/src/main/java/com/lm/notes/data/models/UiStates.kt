@@ -97,6 +97,8 @@ data class UiStates(
     private var isClickableNote: MutableState<Boolean> = mutableStateOf(true),
     private var navControllerScreen: MutableState<NavControllerScreens>
     = mutableStateOf(NavControllerScreens.Main),
+    var progressVisibility: MutableState<Boolean> = mutableStateOf(false),
+    var authButtonMenuVisibility: MutableState<Boolean> = mutableStateOf(false),
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
     val secondColor: MutableState<Color> = mutableStateOf(main),

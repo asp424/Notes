@@ -31,27 +31,29 @@ fun MainDependencies.AuthStatusIcon(size: Dp) {
     }
     val icon = remember { R.drawable.face }
     val mainActivity = LocalContext.current as MainActivity
-    val click = remember(notesViewModel) {
-        {
-            if (!getIsAuth) {
-                progressVisibility.value = true
-                mainActivity.startLoginActivity
-            } else with(authButtonMenuVisibility) {
-                if (!value) coroutine.launch {
-                    value = !value; delay(1000); value = !value
+    with(notesViewModel.uiStates) {
+        val click = remember(notesViewModel) {
+            {
+                if (!getIsAuth) {
+                    progressVisibility.value = true
+                    mainActivity.startLoginActivity
+                } else with(authButtonMenuVisibility) {
+                    if (!value) coroutine.launch {
+                        value = !value; delay(1000); value = !value
+                    }
                 }
             }
         }
-    }
 
-    AsyncImage(if (getIsAuth) getIconUri else icon, null,
-        Modifier
-            .size(size)
-            .noRippleClickable(click)
-            .clip(CircleShape),
-        painterResource(icon),
-        contentScale = Crop,
-        onLoading = { progressVisibility.value = true },
-        onSuccess = { progressVisibility.value = false },
-        onError = { progressVisibility.value = false })
+        AsyncImage(if (getIsAuth) getIconUri else icon, null,
+            Modifier
+                .size(size)
+                .noRippleClickable(click)
+                .clip(CircleShape),
+            painterResource(icon),
+            contentScale = Crop,
+            onLoading = { progressVisibility.value = true },
+            onSuccess = { progressVisibility.value = false },
+            onError = { progressVisibility.value = false })
+    }
 }

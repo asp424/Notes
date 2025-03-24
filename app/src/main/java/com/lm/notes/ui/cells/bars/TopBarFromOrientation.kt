@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.utils.noRippleClickable
 
@@ -22,15 +23,22 @@ fun MainDependencies.TopBarFromOrientation() {
 }
 
 @Composable
-fun MainDependencies.TopBar() = with(notesViewModel.uiStates) {
-    TopAppBar(
-        Modifier
-            .fillMaxWidth().height(60.dp)
-            .noRippleClickable(remember { { false.setSettingsVisible } }), getMainColor,
-        contentPadding = AppBarDefaults.ContentPadding
-    ) {
-        MainBar()
-        NoteBar()
-        DeleteBar()
+fun TopBar() {
+    with(mainDep) {
+        with(notesViewModel.uiStates) {
+            TopAppBar(
+                Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+                    .noRippleClickable(
+                        remember { { false.setSettingsVisible } }
+                    ), getMainColor,
+                contentPadding = AppBarDefaults.ContentPadding
+            ) {
+                MainBar()
+                NoteBar()
+                DeleteBar()
+            }
+        }
     }
 }

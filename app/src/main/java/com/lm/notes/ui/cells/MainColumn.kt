@@ -17,8 +17,7 @@ import com.lm.notes.utils.getHeader
 fun MainColumn() {
     with(mainDep) {
         with(notesViewModel) {
-            val notesList by notesList.collectAsState()
-            MainList(notesList) { i ->
+            MainList(notesList.value) { i ->
                 val values = remember(notesList) {
                     listOf(
                         getListFields { it { formatTimestamp(timestampChangeState.value) } },

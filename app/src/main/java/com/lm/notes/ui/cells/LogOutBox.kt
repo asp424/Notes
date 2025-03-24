@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDependencies
+import com.lm.notes.utils.animDp
 import com.lm.notes.utils.noRippleClickable
 import com.lm.notes.utils.setIconUri
 import com.lm.notes.utils.setIsAuth
@@ -26,7 +27,7 @@ import com.lm.notes.utils.setIsAuth
 @Composable
 fun MainDependencies.LogOutBox(size: Dp) = with(notesViewModel.uiStates) {
     Box(Modifier
-       //.offset(-authButtonMenuOffsetY, 0.dp)
+       .offset(-animDp(authButtonMenuVisibility.value, 20.dp, 0.dp), 0.dp)
         .iconVisibility(getIsMainMode)) {
         Button(
             {}, Modifier.size(size),

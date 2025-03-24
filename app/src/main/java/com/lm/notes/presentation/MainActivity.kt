@@ -97,8 +97,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getDataFromIntent(intent: Intent?) {
-        "d: ${intent?.type}".log
-        "d: ${intent?.action}".log
         intentController.checkForIntentAction(intent, notesViewModel, lifecycleScope)
         { i ->
             notesViewModel.editTextController.createEditText()

@@ -4,7 +4,6 @@ import android.view.View
 import android.view.accessibility.AccessibilityEvent.TYPE_VIEW_LONG_CLICKED
 import android.view.accessibility.AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED
 import com.lm.notes.data.models.UiStates
-import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -19,7 +18,6 @@ class AccessibilityDelegate(
         super.sendAccessibilityEvent(host, eventType)
         with(uiStates) {
             with(editTextController) {
-                eventType.log
                 if (eventType == TYPE_VIEW_LONG_CLICKED) {
                     setFormatMode(); setAllButtonsWhite()
                 }

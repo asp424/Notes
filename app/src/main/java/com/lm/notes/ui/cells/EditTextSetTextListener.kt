@@ -6,7 +6,6 @@ import androidx.compose.runtime.remember
 import androidx.core.text.toSpanned
 import androidx.core.widget.addTextChangedListener
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.utils.log
 
 @Composable
 fun EditTextSetTextListener() {
@@ -18,7 +17,6 @@ fun EditTextSetTextListener() {
                         val textListener = remember {
                             run {
                                 addTextChangedListener {
-                                    "listenText".log
                                     if (!getTranslateEnable) updateNoteFromUi(text.toSpanned())
                                     setLinesCount()
                                 }

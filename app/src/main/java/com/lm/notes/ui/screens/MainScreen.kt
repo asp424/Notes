@@ -31,9 +31,12 @@ fun MainDependencies.MainScreen() {
         Modifier.fillMaxSize().alpha(0.5f), contentScale = Crop
     )
 
-    Column { TopBarFromOrientation(); NavHostAnim() }
-    BottomBar()
-    FormatBar()
+    Column {
+        TopBarFromOrientation()
+        NavHostAnim()
+    }
+   // BottomBar()
+ //   FormatBar()
     val mainActivity = LocalContext.current as MainActivity
     BackHandler(
         onBack = remember {
@@ -41,6 +44,6 @@ fun MainDependencies.MainScreen() {
         }
     )
 
-    SettingsCard()
+  //  SettingsCard()
     notesViewModel.uiStates.NavControllerController()
 }

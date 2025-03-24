@@ -1,5 +1,6 @@
 package com.lm.notes.ui.cells
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -13,12 +14,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.ui.cells.icons.AuthStatusIcon
+import com.lm.notes.utils.animDp
 
+@SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun MainDependencies.AuthBox(size: Dp) = with(notesViewModel.uiStates) {
-    Box(Modifier
-        .offset(authButtonMenuOffsetY, 0.dp)
-        .iconVisibility(getIsMainMode)) {
+    Box(
+        Modifier
+            .offset(animDp(authButtonMenuVisibility.value, 20.dp, 0.dp))
+            .iconVisibility(getIsMainMode)
+    ) {
         Button({}, Modifier.size(size), colors = ButtonDefaults.buttonColors(White)) {}
         AuthStatusIcon(size)
         if (progressVisibility.value) CircularProgressIndicator(
