@@ -26,7 +26,7 @@ import com.lm.notes.utils.setIsAuth
 @Composable
 fun MainDependencies.LogOutBox(size: Dp) = with(notesViewModel.uiStates) {
     Box(Modifier
-        .offset(-authButtonMenuOffsetY, 0.dp)
+       //.offset(-authButtonMenuOffsetY, 0.dp)
         .iconVisibility(getIsMainMode)) {
         Button(
             {}, Modifier.size(size),

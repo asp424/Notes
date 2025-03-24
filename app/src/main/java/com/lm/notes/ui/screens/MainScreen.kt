@@ -15,9 +15,9 @@ import androidx.compose.ui.res.painterResource
 import com.lm.notes.R
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.presentation.MainActivity
-import com.lm.notes.ui.bars.BottomBar
-import com.lm.notes.ui.bars.FormatBar
-import com.lm.notes.ui.bars.TopBarFromOrientation
+import com.lm.notes.ui.cells.bars.BottomBar
+import com.lm.notes.ui.cells.bars.FormatBar
+import com.lm.notes.ui.cells.bars.TopBarFromOrientation
 import com.lm.notes.ui.cells.NavHostAnim
 import com.lm.notes.ui.cells.SettingsCard
 import com.lm.notes.utils.backPressHandle
@@ -31,7 +31,7 @@ fun MainDependencies.MainScreen() {
         Modifier.fillMaxSize().alpha(0.5f), contentScale = Crop
     )
 
-    Column { notesViewModel.uiStates.TopBarFromOrientation(); NavHostAnim() }
+    Column { TopBarFromOrientation(); NavHostAnim() }
     BottomBar()
     FormatBar()
     val mainActivity = LocalContext.current as MainActivity

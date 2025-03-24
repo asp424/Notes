@@ -12,19 +12,19 @@ val AnimatedContentTransitionScope<NavBackStackEntry>.enterDownToUp
     get() = slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Up, tween(100))
 
 val AnimatedContentTransitionScope<NavBackStackEntry>.enterLeftToRight
-    get() = slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(100))
+    get() = slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(1000))
 
 val AnimatedContentTransitionScope<NavBackStackEntry>.enterRightToLeft
-    get() = slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(100))
+    get() = slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(1000))
 
 val AnimatedContentTransitionScope<NavBackStackEntry>.exitDownToUp
-    get() = slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Down, animationSpec = tween(500))
+    get() = slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Down, tween(500))
 
 val AnimatedContentTransitionScope<NavBackStackEntry>.exitUpToDown
-    get() = slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up, animationSpec = tween(500))
+    get() = slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Up, tween(500))
 
 val AnimatedContentTransitionScope<NavBackStackEntry>.exitLeftToRight
-    get() = slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = tween(100))
+    get() = slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right, tween(1000))
 
 val AnimatedContentTransitionScope<NavBackStackEntry>.exitRightToLeft
-    get() = slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(100))
+    get() = slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left, tween(1000))

@@ -1,4 +1,4 @@
-package com.lm.notes.ui.bars
+package com.lm.notes.ui.cells.bars
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*

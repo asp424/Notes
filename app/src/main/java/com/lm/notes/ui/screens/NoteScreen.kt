@@ -5,27 +5,29 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.input.TextFieldValue
-import com.lm.notes.ui.bars.ClipboardBar
+import com.lm.notes.ui.cells.bars.ClipboardBar
+import com.lm.notes.ui.cells.bars.LandscapeBar
 import com.lm.notes.ui.cells.EditText
 import com.lm.notes.ui.cells.HeaderTextField
 
 @Composable
 fun FullScreenNote() {
-    Box(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize()) {
-            ClipboardBar()
-            val configuration = LocalConfiguration.current
-            when (configuration.orientation) {
-                Configuration.ORIENTATION_LANDSCAPE -> {
-
+    Column(Modifier.fillMaxSize()) {
+        when (LocalConfiguration.current.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
+                    EditText(); LandscapeBar()
                 }
-                else -> HeaderTextField()
             }
-            EditText()
+
+            else -> {
+                ClipboardBar(); HeaderTextField(); EditText()
+            }
         }
+
     }
 }
 

@@ -87,7 +87,7 @@ data class UiStates(
     private var isSelected: MutableState<Boolean> = mutableStateOf(false),
     private var clipboardIsEmpty: MutableState<Boolean> = mutableStateOf(false),
     private var isDeleteMode: MutableState<Boolean> = mutableStateOf(false),
-    private var isFullscreenMode: MutableState<Boolean> = mutableStateOf(false),
+    private var isNoteMode: MutableState<Boolean> = mutableStateOf(false),
     private var isMainMode: MutableState<Boolean> = mutableStateOf(true),
     private var isExpandShare: MutableState<Boolean> = mutableStateOf(false),
     private var settingsVisible: MutableState<Boolean> = mutableStateOf(false),
@@ -119,7 +119,7 @@ data class UiStates(
     val getSelection get() = selection
     val getIsExpandShare get() = isExpandShare.value
     val getIsMainMode get() = isMainMode.value
-    val getIsFullscreenMode get() = isFullscreenMode.value
+    val getNoteMode get() = isNoteMode.value
     val getIsDeleteMode get() = isDeleteMode.value
     private val getIsSelected get() = isSelected.value
     private val getClipboardIsEmpty get() = clipboardIsEmpty.value
@@ -134,7 +134,7 @@ data class UiStates(
     private val getColorButtonStrikeThrough get() = colorButtonStrikeThrough.value
     private val Boolean.setIsFormatMode get() = run { isFormatMode.value = this }
     private val Boolean.setIsDeleteMode get() = run { isDeleteMode.value = this }
-    private val Boolean.setIsFullscreenMode get() = run { isFullscreenMode.value = this }
+    private val Boolean.setIsNodeMode get() = run { isNoteMode.value = this }
     private val Boolean.setIsMainMode get() = run { isMainMode.value = this }
     private val Boolean.setIsExpandShare get() = run { isExpandShare.value = this }
     private val Boolean.setIsClickableNote get() = run { isClickableNote.value = this }
@@ -293,7 +293,7 @@ data class UiStates(
     }
 
     suspend fun setMainMode() {
-        false.setIsFullscreenMode
+        false.setIsNodeMode
         false.setIsExpandShare
         true.setNotShareVisible
         delay(100)
@@ -304,7 +304,7 @@ data class UiStates(
     suspend fun setFullScreenMode() {
         false.setIsMainMode
         delay(100)
-        true.setIsFullscreenMode
+        true.setIsNodeMode
     }
 
     private fun addToDeleteAbleList(id: String) {
@@ -378,13 +378,9 @@ data class UiStates(
         @SuppressLint("ContextCastToActivity")
         activity: MainActivity = LocalContext.current as MainActivity,
         animation: Float =
-            animVisibility(getIsFullscreenMode && getTextIsEmpty && getNotShareVisible)
+            animVisibility(getNoteMode && getTextIsEmpty)
     ) = when (this@getFullScreenIconsValues) {
-        Icons.Rounded.Share -> Pair(
-            animVisibility(getIsFullscreenMode && getTextIsEmpty), remember {
-                { expandShare(coroutine) }
-            }
-        )
+        Icons.Rounded.Share -> Pair(animation, remember { { expandShare(coroutine) } })
 
         Icons.Rounded.Widgets -> Pair(
             animation, remember(noteModel) {
@@ -393,10 +389,7 @@ data class UiStates(
         )
 
         Icons.Rounded.Translate -> Pair(
-            animation, remember {
-                { editTextController.findEnglish() }
-            }
-        )
+            animation, remember { { editTextController.findEnglish() } })
 
         Icons.Rounded.Save -> Pair(
             animation, remember(noteModel) {

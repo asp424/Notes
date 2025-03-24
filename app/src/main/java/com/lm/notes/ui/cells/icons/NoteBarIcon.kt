@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Share
@@ -21,13 +22,15 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.di.compose.animVisibility
-import com.lm.notes.ui.bars.listIconsNote
+import com.lm.notes.utils.listIconsNote
 import com.lm.notes.utils.noRippleClickable
 
 @Composable
-fun FullScreenIcon(
-    source: ImageVector, color: Color,
+fun NoteBarIcon(
+    source: ImageVector,
+    color: Color,
     bottomPadding: Dp = 0.dp,
     startPadding: Dp = 0.dp
 ) {
@@ -39,14 +42,14 @@ fun FullScreenIcon(
                     coroutine, noteAppWidgetController, notesViewModel.noteModelFullScreen.value,
                     editTextController
                 )
-                if (source == listIconsNote[0]) {
+                if (source == listIconsNote[0].first) {
                     Canvas(
                         Modifier
                             .offset(width - 126.dp, 10.dp)
                             .scale(
-                                if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                                    animVisibility(getIsFullscreenMode && getTextIsEmpty) else
-                                0f
+                                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+                                    animVisibility(getNoteMode && getTextIsEmpty) else
+                                    0f
                             )
                     ) { drawCircle(getMainColor, 18.dp.toPx(), Offset.Zero) }
                 }
@@ -69,6 +72,24 @@ fun FullScreenIcon(
             }
         }
     }
+}
+
+@Composable
+fun MainDependencies.NoteBarIcon(
+    icon: ImageVector,
+    offsetX: Dp = 0.dp
+) = with(notesViewModel.uiStates) {
+
+    Icon(
+        icon, null,
+        Modifier
+            .size(25.dp).offset(offsetX, 0.dp)
+            .noRippleClickable(
+                 icon.getFullScreenIconsValues(
+                coroutine, noteAppWidgetController, notesViewModel.noteModelFullScreen.value,
+                notesViewModel.editTextController
+            ).second).iconVisibility(getNoteMode, 600), getSecondColor
+    )
 }
 
 private val ImageVector.x

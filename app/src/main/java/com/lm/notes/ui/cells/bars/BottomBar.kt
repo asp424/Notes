@@ -1,4 +1,4 @@
-package com.lm.notes.ui.bars
+package com.lm.notes.ui.cells.bars
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

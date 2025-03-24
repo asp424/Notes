@@ -64,7 +64,7 @@ fun ShareCanvasButton(
                                             expandShare(coroutine)
                                         }
                                     })
-                                .iconVisibility(getIsFullscreenMode && getTextIsEmpty)
+                                .iconVisibility(getNoteMode && getTextIsEmpty)
                         ) {
                             drawCircle(
                                 if (conf.orientation == Configuration.ORIENTATION_LANDSCAPE)

@@ -1,6 +1,7 @@
 package com.lm.notes.ui.cells.icons
 
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.Sort
 import androidx.compose.material.icons.rounded.Public
@@ -30,13 +31,9 @@ fun MainDependencies.MainBarIcon(
     Icon(
         icon, null,
         Modifier
-            .iconVisibility(
-                with(uiStates) {
-                    if (icon == Icons.Rounded.Public)
-                        getIsAuth && getIsMainMode else getIsMainMode
-                }
-            )
-            .offset(x = offsetY)
+            .iconVisibility(with(uiStates)
+            { if (icon == Icons.Rounded.Public) getIsAuth else getIsMainMode })
+            .offset(x = offsetY).size(25.dp)
             .noRippleClickable(getAction(icon, lifecycleScope)),
         uiStates.getSecondColor
     )

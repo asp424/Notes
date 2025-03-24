@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import com.lm.notes.data.models.NavControllerScreens
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.ui.enterLeftToRight
+import com.lm.notes.ui.enterRightToLeft
+import com.lm.notes.ui.exitLeftToRight
 import com.lm.notes.ui.exitRightToLeft
 import com.lm.notes.ui.screens.FullScreenNote
 
@@ -20,14 +22,15 @@ fun MainDependencies.NavHostAnim() {
                     MainColumn()
                     LaunchedEffect(true) {
                         setMainMode()
-                        //notesViewModel.sortByChange()
+                        //  notesViewModel.sortByChange()
                     }
                 }
 
-                composable(NavControllerScreens.Note.screen, content = {
-                    FullScreenNote()
-                    LaunchedEffect(true) { setFullScreenMode() }
-                })
+                composable(NavControllerScreens.Note.screen, enterTransition = { enterRightToLeft },
+                    exitTransition = { exitLeftToRight }, content = {
+                        FullScreenNote()
+                        LaunchedEffect(true) { setFullScreenMode() }
+                    })
             }
         }
     }

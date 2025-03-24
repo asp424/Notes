@@ -1,4 +1,4 @@
-package com.lm.notes.ui.bars
+package com.lm.notes.ui.cells.bars
 
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import androidx.compose.foundation.layout.Arrangement.Start

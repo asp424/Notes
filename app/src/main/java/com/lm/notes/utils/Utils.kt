@@ -1,5 +1,6 @@
 package com.lm.notes.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -9,6 +10,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.Sort
 import androidx.compose.material.icons.rounded.ClearAll
@@ -19,9 +21,13 @@ import androidx.compose.material.icons.rounded.CopyAll
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Public
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.SelectAll
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.SwapVert
+import androidx.compose.material.icons.rounded.Translate
+import androidx.compose.material.icons.rounded.Widgets
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +58,7 @@ val Boolean.setIsAuth get() = run { isAuth.value = this }
 
 val iconUri = mutableStateOf(Uri.EMPTY)
 
-val getIconUri get() = iconUri.value
+val getIconUri: Uri get() = iconUri.value
 
 val Uri.setIconUri get() = run { iconUri.value = this }
 
@@ -66,8 +72,14 @@ inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier
         }
     }
 
+@SuppressLint("UnnecessaryComposedModifier")
+fun Modifier.paddingInt(start: Int = 0, top: Int = 0, end: Int = 0, bottom: Int = 0): Modifier =
+    composed {
+        padding(start.dp, top.dp, end.dp, bottom.dp)
+    }
+
 @Composable
-fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int = 300) = animateDpAsState(
+fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int = 800) = animateDpAsState(
     if (target) first else second, tween(delay)
 ).value
 
@@ -194,6 +206,15 @@ val listOfDeleteBarIcon by lazy {
     listOf(
         Icons.Rounded.Delete,
         Icons.Rounded.DeleteForever
+    )
+}
+
+val listIconsNote by lazy {
+    listOf(
+        Pair(Icons.Rounded.Share, (-30).dp),
+        Pair(Icons.Rounded.Widgets, (-20).dp),
+        Pair(Icons.Rounded.Translate, (-10).dp),
+        Pair(Icons.Rounded.Save, 0.dp)
     )
 }
 
