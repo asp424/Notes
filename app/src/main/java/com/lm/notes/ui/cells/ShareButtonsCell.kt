@@ -19,7 +19,7 @@ fun MainDependencies.ShareButtonsCell(shareType: ShareType) =
     FloatingActionButton(
         {},
         Modifier
-            .size(25.dp).offset(((-30).dp), 0.dp)
+            .size(25.dp)
             .iconVisibility(notesViewModel.uiStates.getNoteMode, 600),
         containerColor = if (shareType == ShareType.Null) notesViewModel.uiStates.getMainColor
         else White

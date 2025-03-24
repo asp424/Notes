@@ -25,21 +25,18 @@ fun MainDependencies.NoteBar() {
             .fillMaxWidth()
             .paddingInt(start = 20, end = 20, top = 20)
             .size(animDp(notesViewModel.uiStates.getNoteMode, width, 0.dp)),
-        Arrangement.End
+        Arrangement.SpaceBetween
     ) {
         Row {
-            listIconsNote.forEachInList {
-                if (listIconsNote[0].first == first)
-                    Box {
-                    ShareButtonsCell(ShareType.AsTxt)
-                    ShareButtonsCell(ShareType.AsHtml)
-                    ShareButtonsCell(ShareType.TextPlain)
-                    ShareButtonsCell(ShareType.Null)
-                    NoteBarIcon(first, second)
-                }
-                else NoteBarIcon(first, second)
+            Box {
+                ShareButtonsCell(ShareType.AsTxt)
+                ShareButtonsCell(ShareType.AsHtml)
+                ShareButtonsCell(ShareType.TextPlain)
+                ShareButtonsCell(ShareType.Null)
+                with(listIconsNote[0]) { NoteBarIcon(first, second) }
             }
         }
+        Row { listIconsNote.subList(1, 4).forEachInList { NoteBarIcon(first, second) } }
     }
 }
 

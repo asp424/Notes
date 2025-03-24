@@ -211,7 +211,7 @@ val listOfDeleteBarIcon by lazy {
 
 val listIconsNote by lazy {
     listOf(
-        Pair(Icons.Rounded.Share, (-30).dp),
+        Pair(Icons.Rounded.Share, 0.dp),
         Pair(Icons.Rounded.Widgets, (-20).dp),
         Pair(Icons.Rounded.Translate, (-10).dp),
         Pair(Icons.Rounded.Save, 0.dp)
