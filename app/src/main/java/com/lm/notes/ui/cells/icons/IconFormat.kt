@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.modifiers.noRippleClickable
 
 @Composable
 fun IconFormat(source: ImageVector) {

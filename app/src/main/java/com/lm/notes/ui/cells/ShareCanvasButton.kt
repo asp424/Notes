@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Paint
@@ -22,7 +23,7 @@ import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.utils.getHeader
-import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.modifiers.noRippleClickable
 import com.lm.notes.utils.shareDp
 
 @SuppressLint("ContextCastToActivity")
@@ -33,6 +34,7 @@ fun ShareCanvasButton(
     start: Dp = 108.dp, y: Dp = 0.dp
 ) {
     val configuration = LocalConfiguration.current
+    val coroutine = rememberCoroutineScope()
     with(mainDep) {
         with(notesViewModel) {
             with(uiStates) {
@@ -77,7 +79,7 @@ fun ShareCanvasButton(
 
                             drawIntoCanvas {
                                 it.nativeCanvas.drawText(
-                                    shareType.type, -12.dp.toPx(), 5.dp.toPx(), paint
+                                    shareType.text, -12.dp.toPx(), 5.dp.toPx(), paint
                                 )
                             }
                         }

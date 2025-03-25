@@ -8,14 +8,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainDependencies
-import com.lm.notes.ui.cells.ShareButtonsCell
 import com.lm.notes.ui.cells.icons.NoteBarIcon
+import com.lm.notes.ui.cells.icons.icons_lists.listIconsNote
+import com.lm.notes.ui.cells.icons.icons_lists.listShareTypes
+import com.lm.notes.ui.cells.shareButton
 import com.lm.notes.utils.animDp
 import com.lm.notes.utils.forEachInList
-import com.lm.notes.utils.listIconsNote
-import com.lm.notes.utils.paddingInt
+import com.lm.notes.utils.modifiers.paddingInt
 
 @Composable
 fun MainDependencies.NoteBar() {
@@ -28,13 +28,10 @@ fun MainDependencies.NoteBar() {
         Arrangement.SpaceBetween
     ) {
         Row {
-            Box {
-                ShareButtonsCell(ShareType.AsTxt)
-                ShareButtonsCell(ShareType.AsHtml)
-                ShareButtonsCell(ShareType.TextPlain)
-                ShareButtonsCell(ShareType.Null)
+          //  Box {
+                listShareTypes.forEach { shareButton(it) }
                 with(listIconsNote[0]) { NoteBarIcon(first, second) }
-            }
+          //  }
         }
         Row { listIconsNote.subList(1, 4).forEachInList { NoteBarIcon(first, second) } }
     }

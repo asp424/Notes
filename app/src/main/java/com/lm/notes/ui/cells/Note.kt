@@ -1,6 +1,5 @@
 package com.lm.notes.ui.cells
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,8 +29,7 @@ fun Note(
     notesText: String,
     header: String,
     id: String,
-    timeCreate: String,
-    i: Int
+    timeCreate: String
 ) {
     val dens = LocalDensity.current
     with(dens) {

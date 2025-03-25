@@ -5,29 +5,21 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.core.text.toSpanned
 import androidx.core.widget.addTextChangedListener
-import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.presentation.NotesViewModel
 
 @Composable
-fun EditTextSetTextListener() {
-    with(mainDep) {
-        with(notesViewModel) {
-            with(editTextController) {
-                with(editText) {
-                    with(uiStates) {
-                        val textListener = remember {
-                            run {
-                                addTextChangedListener {
-                                    if (!getTranslateEnable) updateNoteFromUi(text.toSpanned())
-                                    setLinesCount()
-                                }
-                            }
-                        }
-                        DisposableEffect(true) {
-                            onDispose { removeTextChangedListener(textListener) }
-                        }
-                    }
+fun NotesViewModel.EditTextSetTextListener() {
+    with(editTextController.editText) {
+        val textListener = remember {
+            run {
+                addTextChangedListener {
+                    if (!uiStates.getTranslateEnable) updateNoteFromUi(text.toSpanned())
+                    editTextController.setLinesCount()
                 }
             }
+        }
+        DisposableEffect(true) {
+            onDispose { removeTextChangedListener(textListener) }
         }
     }
 }

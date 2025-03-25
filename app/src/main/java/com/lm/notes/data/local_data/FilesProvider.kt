@@ -131,7 +131,7 @@ interface FilesProvider {
         private val authority by lazy { "com.lm.notes.fileProvider" }
 
         private fun newFileNameFromHeader(header: String, shareType: ShareType) =
-            "$header${shareType.type}"
+            "$header${shareType.text}"
 
         private val Pair<String, String>.asText
             get() = "${first}\n\n${editTextController.fromHtml(second)}"

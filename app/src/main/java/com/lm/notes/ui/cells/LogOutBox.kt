@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.utils.animDp
-import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.modifiers.noRippleClickable
 import com.lm.notes.utils.setIconUri
 import com.lm.notes.utils.setIsAuth
 

@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.icons.IconClipBoard
-import com.lm.notes.utils.listIconsClipboard
+import com.lm.notes.ui.cells.icons.icons_lists.listIconsClipboard
 
 @Composable
 fun ClipboardBar() {

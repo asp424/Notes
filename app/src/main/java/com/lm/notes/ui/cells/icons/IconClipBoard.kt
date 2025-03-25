@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lm.notes.di.compose.MainDependencies
-import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.modifiers.noRippleClickable
 
 @Composable
 fun MainDependencies.IconClipBoard(

@@ -15,20 +15,17 @@ import com.lm.notes.ui.cells.LogOutBox
 import com.lm.notes.ui.cells.icons.MainBarIcon
 import com.lm.notes.utils.animDp
 import com.lm.notes.utils.forEachInList
-import com.lm.notes.utils.listIconsMainBar
+import com.lm.notes.ui.cells.icons.icons_lists.listIconsMainBar
 
 @Composable
 fun MainDependencies.MainBar() {
     Row(
         Modifier
             .size(animDp(notesViewModel.uiStates.getIsMainMode, width, 0.dp))
-            .padding(start = 20.dp, top = 20.dp, end = 20.dp),
-        SpaceBetween
+            .padding(start = 20.dp, top = 20.dp, end = 20.dp), SpaceBetween
     )
     {
-        Row {
-            listIconsMainBar.forEachInList { MainBarIcon(first, second) }
-        }
+        Row { listIconsMainBar.forEachInList { MainBarIcon(first, second) } }
         Box(Modifier.offset(0.dp, (-5).dp)) {
             LogOutBox(30.dp)
             AuthBox(30.dp)

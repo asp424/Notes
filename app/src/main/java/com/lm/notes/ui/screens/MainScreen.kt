@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale.Companion.Crop
@@ -26,6 +27,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("ContextCastToActivity")
 @Composable
 fun MainDependencies.MainScreen() {
+    val coroutine = rememberCoroutineScope()
     Image(
         painterResource(R.drawable.notebook_list), null,
         Modifier.fillMaxSize().alpha(0.5f), contentScale = Crop
@@ -35,8 +37,8 @@ fun MainDependencies.MainScreen() {
         TopBarFromOrientation()
         NavHostAnim()
     }
-   // BottomBar()
- //   FormatBar()
+    BottomBar()
+    FormatBar()
     val mainActivity = LocalContext.current as MainActivity
     BackHandler(
         onBack = remember {
@@ -44,6 +46,6 @@ fun MainDependencies.MainScreen() {
         }
     )
 
-  //  SettingsCard()
+    SettingsCard()
     notesViewModel.uiStates.NavControllerController()
 }

@@ -19,8 +19,10 @@ import com.lm.notes.data.local_data.ShareType
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.ui.cells.ShareCanvasButton
 import com.lm.notes.ui.cells.icons.IconClipBoard
-import com.lm.notes.utils.listIconsClipboard
-import com.lm.notes.utils.listIconsNote
+import com.lm.notes.ui.cells.icons.NoteBarIcon
+import com.lm.notes.utils.forEachInList
+import com.lm.notes.ui.cells.icons.icons_lists.listIconsClipboard
+import com.lm.notes.ui.cells.icons.icons_lists.listIconsNote
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
@@ -56,8 +58,8 @@ fun LandscapeBar() {
                     .padding(bottom = 40.dp)
                     .scale(0.8f)
             ) {
-                listIconsNote.forEach {
-                   // NoteBarIcon(it, getMainColor, 3.dp, 0.dp)
+                listIconsNote.forEachInList {
+                    NoteBarIcon(first, second)
                 }
                 Column(Modifier.offset((-5).dp, 0.dp)) {
                     listIconsClipboard.forEach { im ->

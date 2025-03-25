@@ -7,16 +7,13 @@ import android.text.style.ForegroundColorSpan
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Indication
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AddLink
 import androidx.compose.material.icons.rounded.ClearAll
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.CopyAll
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.FormatBold
 import androidx.compose.material.icons.rounded.FormatClear
 import androidx.compose.material.icons.rounded.FormatColorFill
@@ -39,14 +36,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -109,12 +104,11 @@ data class UiStates(
     val getNavControllerScreens get() = navControllerScreen.value
     val getTranslateEnable get() = translateEnable.value
     val getIsReversLayout get() = isReversLayout.value
-    private val getIsClickableNote get() = isClickableNote.value
+    val getIsClickableNote get() = isClickableNote.value
     val getLinesCounter get() = linesCounter.value
     val getPasteIconLabel get() = pasteIconLabel.value
     val getSetSelectionEnable get() = setSelectionEnable.value
     val getTextIsEmpty get() = textIsEmpty.value
-    private val getNotShareVisible get() = notShareVisible.value
     val getMainColor get() = mainColor.value
     val getSecondColor get() = secondColor.value
     val getSettingsVisible get() = settingsVisible.value
@@ -274,7 +268,7 @@ data class UiStates(
         false.setIsFormatMode
         false.setColorPickerBackgroundIsShow
         false.setColorPickerForegroundIsShow
-}
+    }
 
     fun onClickEditText() {
         hideFormatPanel()
@@ -287,10 +281,11 @@ data class UiStates(
         else true.setReversLayout
     }
 
-    private fun setDeleteMode() {
+    fun setDeleteMode() {
         true.setIsDeleteMode
         false.setIsMainMode
         false.setIsClickableNote
+        false.setIsNodeMode
         listDeleteAble.clear()
     }
 
@@ -309,11 +304,11 @@ data class UiStates(
         true.setIsNodeMode
     }
 
-    private fun addToDeleteAbleList(id: String) {
+    fun addToDeleteAbleList(id: String) {
         listDeleteAble.add(id)
     }
 
-    private fun removeFromDeleteAbleList(id: String) {
+    fun removeFromDeleteAbleList(id: String) {
         listDeleteAble.remove(id)
     }
 
@@ -372,7 +367,7 @@ data class UiStates(
         }
 
     @Composable
-    fun ImageVector.getFullScreenIconsValues(
+    fun ImageVector.getNoteBarIconsActions(
         coroutine: CoroutineScope,
         noteAppWidgetController: NoteAppWidgetController,
         noteModel: NoteModel,
@@ -381,7 +376,7 @@ data class UiStates(
         activity: MainActivity = LocalContext.current as MainActivity,
         animation: Float =
             animVisibility(getNoteMode && getTextIsEmpty)
-    ) = when (this@getFullScreenIconsValues) {
+    ) = when (this@getNoteBarIconsActions) {
         Icons.Rounded.Share -> Pair(animation, remember { { expandShare(coroutine) } })
 
         Icons.Rounded.Widgets -> Pair(
@@ -415,6 +410,26 @@ data class UiStates(
         else -> Pair(0f) {}
     }
 
+    @Composable
+    fun ImageVector.getDeleteBarIconsActions(
+        deleteAction: () -> Unit =
+            with(mainDep.notesViewModel) {
+                remember { { listDeleteAble.forEach { deleteNote(it) }; cancelDeleteMode() } }
+            },
+        deleteForeverAction: () -> Unit = with(mainDep.notesViewModel) {
+            remember {
+                {
+                    listDeleteAble.forEach { deleteNote(it);deleteNoteFromFirebase(it) }
+                    cancelDeleteMode()
+                }
+            }
+        }
+    ): () -> Unit = when (this) {
+        Icons.Rounded.Delete -> deleteAction
+        Icons.Rounded.DeleteForever -> deleteForeverAction
+        else -> {{}}
+    }
+
     fun ImageVector.getButtonFormatValues() = when (this) {
         Icons.Rounded.FormatColorFill -> with(getColorButtonBackground) {
             Pair(this, SpanType.Background(toArgb()))
@@ -441,54 +456,6 @@ data class UiStates(
         true.setIsFormatMode
         true.setIsSelected
     }
-
-    fun Modifier.setClickOnNote(
-        notesViewModel: NotesViewModel, noteModel: NoteModel,
-        interactionSource: MutableInteractionSource, indication: Indication?,
-        coroutine: CoroutineScope
-    ) = pointerInput(Unit) {
-        detectTapGestures(
-            onTap = {
-                with(notesViewModel) {
-                    with(noteModel) {
-                        if (getIsDeleteMode) {
-                            if (listDeleteAble.contains(id)) {
-                                removeFromDeleteAbleList(id)
-                                if (listDeleteAble.isEmpty()) {
-                                    cancelDeleteMode()
-                                }
-                            } else addToDeleteAbleList(id)
-                        }
-                        if (!getIsDeleteMode && getIsClickableNote) {
-                            NavControllerScreens.Note.setNavControllerScreen
-                            val press = PressInteraction.Press(Offset(it.x + 100f, 0f))
-                            coroutine.launch(IO) {
-                                interactionSource.emit(press)
-                                interactionSource.emit(PressInteraction.Release(press))
-                            }
-                            setFullscreenNoteModel(id)
-                            LoadStatesEditText.Loading.setIsSetTextInEditText
-                            with(editTextController) {
-                                createEditText()
-                                setNewText(text)
-                                editText.post {
-                                    editText.lineCount.setLinesCounter
-                                }
-
-                            }
-                            false.setTranslateEnable
-                            checkForEmptyText()
-                            false.setIsSelected
-                        }
-                    }
-                }
-            },
-            onLongPress =
-            {
-                setDeleteMode()
-                addToDeleteAbleList(noteModel.id)
-            })
-    }.indication(interactionSource, indication)
 
     fun getNoteCardBorder(id: String) = if (checkNoteCardMode(id)) BorderStroke(3.dp, Color.Red)
     else BorderStroke(2.dp, getMainColor)

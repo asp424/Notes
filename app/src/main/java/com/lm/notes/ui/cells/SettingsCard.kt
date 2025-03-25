@@ -20,7 +20,7 @@ import com.godaddy.android.colorpicker.harmony.HarmonyColorPicker
 import com.godaddy.android.colorpicker.toColorInt
 import com.lm.notes.R
 import com.lm.notes.di.compose.MainDep.mainDep
-import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.modifiers.noRippleClickable
 
 @Composable
 fun SettingsCard() {

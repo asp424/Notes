@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale.Companion.Crop
@@ -18,7 +19,7 @@ import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.utils.getIconUri
 import com.lm.notes.utils.getIsAuth
-import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.modifiers.noRippleClickable
 import com.lm.notes.utils.setIconUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ fun MainDependencies.AuthStatusIcon(size: Dp) {
         sPreferences.readIconUri()?.setIconUri
     }
     val icon = remember { R.drawable.face }
+    val coroutine = rememberCoroutineScope()
     val mainActivity = LocalContext.current as MainActivity
     with(notesViewModel.uiStates) {
         val click = remember(notesViewModel) {

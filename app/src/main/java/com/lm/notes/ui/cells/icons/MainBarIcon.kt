@@ -20,7 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import com.lm.notes.di.compose.MainDependencies
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.utils.getIsAuth
-import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.modifiers.noRippleClickable
 
 @Composable
 fun MainDependencies.MainBarIcon(

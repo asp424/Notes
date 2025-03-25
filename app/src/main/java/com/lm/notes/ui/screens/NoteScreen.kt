@@ -8,13 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.bars.ClipboardBar
 import com.lm.notes.ui.cells.bars.LandscapeBar
 import com.lm.notes.ui.cells.EditText
 import com.lm.notes.ui.cells.HeaderTextField
 
 @Composable
-fun FullScreenNote() {
+fun NotesViewModel.NoteScreen() {
     Column(Modifier.fillMaxSize()) {
         when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {

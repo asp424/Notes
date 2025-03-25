@@ -3,7 +3,9 @@ package com.lm.notes.ui.cells.bars
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.AppBarDefaults
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -12,7 +14,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.lm.notes.di.compose.MainDep.mainDep
 import com.lm.notes.di.compose.MainDependencies
-import com.lm.notes.utils.noRippleClickable
+import com.lm.notes.utils.log
+import com.lm.notes.utils.modifiers.noRippleClickable
 
 @Composable
 fun MainDependencies.TopBarFromOrientation() {
@@ -38,6 +41,7 @@ fun TopBar() {
                 MainBar()
                 NoteBar()
                 DeleteBar()
+                getNoteMode.log
             }
         }
     }
