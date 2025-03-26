@@ -1,10 +1,10 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
-    id("com.google.gms.google-services")
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
-    id("com.google.firebase.crashlytics")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics.ktx)
 }
 
 android {
@@ -13,11 +13,10 @@ android {
 
     defaultConfig {
         applicationId = appId
-        minSdk = 24
-        targetSdk = 33
+        minSdk = 28
+        targetSdk = 35
         versionCode = 1
         versionName = appVersion
-        testInstrumentationRunner = testRunner
         vectorDrawables { useSupportLibrary = true }
         javaCompileOptions {
             annotationProcessorOptions {
@@ -30,9 +29,9 @@ android {
 
     buildTypes {
 
-        debug{
-           //isMinifyEnabled = true
-          // isShrinkResources = true
+        debug {
+            //isMinifyEnabled = true
+            // isShrinkResources = true
             proguardFiles(getDefaultProguardFile(proGName), proGRules)
         }
         release {
@@ -41,9 +40,8 @@ android {
             proguardFiles(getDefaultProguardFile(proGName), proGRules)
         }
     }
-
     buildFeatures { compose = true; viewBinding = true }
-    composeOptions {  kotlinCompilerExtensionVersion = composeCompilerVersion }
+    composeOptions { kotlinCompilerExtensionVersion = composeCompilerVersion }
     compileOptions { sourceCompatibility = javaVersion; targetCompatibility = javaVersion }
     kotlinOptions { jvmTarget = jvm; freeCompilerArgs = argsList }
     packaging { resources { excludes += res } }
@@ -52,61 +50,60 @@ android {
 dependencies {
 
     //Dagger
-    implementation("com.google.dagger:dagger:2.55")
-    kapt ("com.google.dagger:dagger-compiler:2.55")
+    implementation(libs.dagger.v255)
+    ksp(libs.dagger.compiler.v255)
 
     //Base
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation(libs.androidx.core.ktx.v1150)
+    implementation(libs.kotlinx.coroutines.core.v173)
+    implementation(libs.androidx.lifecycle.runtime.ktx.v287)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx.v287)
 
     //Compose
-    implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.ui:ui-tooling:$composeVersion")
-    implementation("androidx.compose.foundation:foundation:$composeVersion")
-    implementation("androidx.compose.material:material:$composeVersion")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.compose.material:material-icons-core:$composeVersion")
-    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
-    implementation("androidx.compose.animation:animation:$composeVersion")
-    implementation("androidx.compose.material3:material3:1.3.1")
-    implementation("androidx.activity:activity-compose:1.10.1")
-    implementation("androidx.navigation:navigation-compose:2.8.8")
-    implementation ("com.google.accompanist:accompanist-pager:0.27.1")
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.foundation)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.lifecycle.viewmodel.compose.v287)
+    implementation(libs.androidx.material.icons.core)
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.animation)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.activity.compose.v1101)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.accompanist.pager)
 
     //Room
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-paging:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
-
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.paging)
+    ksp(libs.androidx.room.compiler)
 
     //Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
-    implementation("com.google.firebase:firebase-database-ktx:21.0.0")
-    implementation("com.google.firebase:firebase-auth-ktx:23.2.0")
-    implementation("com.google.android.gms:play-services-auth:21.3.0")
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
+
+    //Auth with google
+    implementation(libs.play.services.auth.v2130)
+    // implementation(libs.androidx.credentials)
+    // implementation(libs.androidx.credentials.play.services.auth)
+    //implementation(libs.googleid)
 
     //Coil
-    implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation(libs.coil.compose)
 
     //ColorPicker
-    implementation ("com.godaddy.android.colorpicker:compose-color-picker:0.5.0")
+    implementation(libs.compose.color.picker)
 
     //Keyboard listener
-    implementation (
-        "net.yslibrary" +
-                ".keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3")
+    implementation(libs.keyboardvisibilityevent)
 
     //UiController
-    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
-
-    //Leak Canary
-   // debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.9.1")
+    implementation(libs.accompanist.systemuicontroller)
 }
 
 
