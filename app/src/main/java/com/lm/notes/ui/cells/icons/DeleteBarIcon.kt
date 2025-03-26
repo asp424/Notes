@@ -14,7 +14,7 @@ import com.lm.notes.utils.modifiers.noRippleClickable
 @Composable
 fun DeleteBarIcon(icon: ImageVector, offsetY: Dp = 0.dp) {
     with(mainDep) {
-        with(notesViewModel) {
+        with(nVM) {
             with(uiStates) {
                 Icon(
                     icon, null, Modifier

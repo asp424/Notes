@@ -3,7 +3,7 @@ package com.lm.notes.ui.cells
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
@@ -18,7 +18,7 @@ import com.lm.notes.utils.animDp
 @Composable
 fun ColorPickers(list: List<SpanType>) {
     with(mainDep) {
-        with(notesViewModel) {
+        with(nVM) {
             with(uiStates) {
                 with(editTextController) {
                     list.forEach { type ->

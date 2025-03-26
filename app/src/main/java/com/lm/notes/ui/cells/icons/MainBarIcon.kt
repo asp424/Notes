@@ -26,7 +26,7 @@ import com.lm.notes.utils.modifiers.noRippleClickable
 fun MainDependencies.MainBarIcon(
     icon: ImageVector,
     offsetY: Dp = 0.dp
-) = with(notesViewModel) {
+) = with(nVM) {
     val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
     Icon(
         icon, null,

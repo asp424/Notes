@@ -2,6 +2,7 @@ package com.lm.notes.ui.cells.icons.icons_lists
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.Sort
+import androidx.compose.material.icons.rounded.AddLink
 import androidx.compose.material.icons.rounded.ClearAll
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.ContentCut
@@ -9,6 +10,13 @@ import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.CopyAll
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteForever
+import androidx.compose.material.icons.rounded.FormatBold
+import androidx.compose.material.icons.rounded.FormatClear
+import androidx.compose.material.icons.rounded.FormatColorFill
+import androidx.compose.material.icons.rounded.FormatColorText
+import androidx.compose.material.icons.rounded.FormatItalic
+import androidx.compose.material.icons.rounded.FormatStrikethrough
+import androidx.compose.material.icons.rounded.FormatUnderlined
 import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.SelectAll
@@ -18,7 +26,7 @@ import androidx.compose.material.icons.rounded.SwapVert
 import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Widgets
 import androidx.compose.ui.unit.dp
-import com.lm.notes.data.local_data.ShareType
+import com.lm.notes.data.models.ShareType
 
 
 val listIconsMainBar by lazy {
@@ -39,12 +47,13 @@ val listIconsClipboard
                 Icons.Rounded.ContentCopy,
                 Icons.Rounded.CopyAll,
                 Icons.Rounded.ContentCut,
+                Icons.Rounded.Delete
             )
         }
 val listOfDeleteBarIcon by lazy {
     listOf(
         Pair(Icons.Rounded.Delete, 0.dp),
-        Pair(Icons.Rounded.DeleteForever, (-10).dp)
+        Pair(Icons.Rounded.DeleteForever, 7.dp)
     )
 }
 
@@ -59,9 +68,22 @@ val listIconsNote by lazy {
 
 val listShareTypes by lazy {
     listOf(
-       ShareType.AsTxt,
-       ShareType.AsHtml,
-       ShareType.TextPlain,
-       ShareType.Null
+        Pair(ShareType.AsTxt, (-30).dp),
+        Pair(ShareType.AsHtml, (-60).dp),
+        Pair(ShareType.TextPlain, (-90).dp),
+        Pair(ShareType.Null, 0.dp)
+    )
+}
+
+val listFormatBarIcons by lazy {
+    listOf(
+        Icons.Rounded.AddLink,
+        Icons.Rounded.FormatBold,
+        Icons.Rounded.FormatItalic,
+        Icons.Rounded.FormatUnderlined,
+        Icons.Rounded.FormatStrikethrough,
+        Icons.Rounded.FormatColorText,
+        Icons.Rounded.FormatColorFill,
+        Icons.Rounded.FormatClear
     )
 }

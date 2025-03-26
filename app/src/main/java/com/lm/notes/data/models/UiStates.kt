@@ -413,10 +413,10 @@ data class UiStates(
     @Composable
     fun ImageVector.getDeleteBarIconsActions(
         deleteAction: () -> Unit =
-            with(mainDep.notesViewModel) {
+            with(mainDep.nVM) {
                 remember { { listDeleteAble.forEach { deleteNote(it) }; cancelDeleteMode() } }
             },
-        deleteForeverAction: () -> Unit = with(mainDep.notesViewModel) {
+        deleteForeverAction: () -> Unit = with(mainDep.nVM) {
             remember {
                 {
                     listDeleteAble.forEach { deleteNote(it);deleteNoteFromFirebase(it) }
@@ -473,6 +473,7 @@ data class UiStates(
             delay(300)
             true.setSetSelectionEnable
             notesViewModel.clipboardProvider.checkForEmpty()
+            progressVisibility
         }
     }
 

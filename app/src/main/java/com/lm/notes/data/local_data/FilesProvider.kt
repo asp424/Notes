@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResult
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.lm.notes.data.models.NoteModel
+import com.lm.notes.data.models.ShareType
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.utils.longToast

@@ -23,17 +23,17 @@ fun MainDependencies.NoteBar() {
     Row(
         Modifier
             .fillMaxWidth()
-            .paddingInt(start = 20, end = 20, top = 20)
-            .size(animDp(notesViewModel.uiStates.getNoteMode, width, 0.dp)),
+            .paddingInt(start = 40, end = 20, top = 20)
+            .size(animDp(nVM.uiStates.getNoteMode, width, 0.dp)),
         Arrangement.SpaceBetween
     ) {
-        Row {
-          //  Box {
-                listShareTypes.forEach { shareButton(it) }
-                with(listIconsNote[0]) { NoteBarIcon(first, second) }
-          //  }
-        }
         Row { listIconsNote.subList(1, 4).forEachInList { NoteBarIcon(first, second) } }
+        Row {
+            Box {
+                listShareTypes.forEachInList { shareButton(this) }
+                with(listIconsNote[0]) { NoteBarIcon(first, second) }
+            }
+        }
     }
 }
 

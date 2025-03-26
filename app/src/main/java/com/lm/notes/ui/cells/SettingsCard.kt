@@ -25,7 +25,7 @@ import com.lm.notes.utils.modifiers.noRippleClickable
 @Composable
 fun SettingsCard() {
     with(mainDep) {
-        with(notesViewModel) {
+        with(nVM) {
             with(uiStates) {
                 with(editTextController) {
                     Column(

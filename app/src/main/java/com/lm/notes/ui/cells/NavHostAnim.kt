@@ -16,7 +16,7 @@ import com.lm.notes.ui.screens.NoteScreen
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun MainDependencies.NavHostAnim() {
-    with(notesViewModel) {
+    with(nVM) {
         with(uiStates) {
             NavHost(navController, NavControllerScreens.Main.screen) {
                 composable(NavControllerScreens.Main.screen, enterTransition = { enterLeftToRight },
@@ -24,7 +24,7 @@ fun MainDependencies.NavHostAnim() {
                     NotesList()
                     LaunchedEffect(true) {
                         setMainMode()
-                        notesViewModel.sortByChange()
+                        nVM.sortByChange()
                     }
                 }
 

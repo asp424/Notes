@@ -40,7 +40,7 @@ fun NotesViewModel.EditTextAndroidView() {
                 editText.also { e ->
                     AndroidView(
                         {
-                            e.parent?.run { (parent as ViewGroup).removeView(e) }
+                            e.parent?.run { (e.parent as ViewGroup).removeView(e) }
                             e.apply { textSize = 16f }
                         },
                         modifier = Modifier
@@ -55,7 +55,7 @@ fun NotesViewModel.EditTextAndroidView() {
                         repeat(uiStates.getLinesCounter) {
                             Text(
                                 text = it.toString(),
-                                fontSize = e.textSize.toSp(),
+                                fontSize = e.textSize.toSp() * 0.7,
                                 modifier = Modifier
                                     .offset(0.dp, (it * 19).dp)
                                     .padding(top = 16.dp, start = 10.dp),

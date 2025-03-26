@@ -13,7 +13,7 @@ import com.lm.notes.utils.modifiers.noRippleClickable
 
 @Composable
 fun IconFormat(source: ImageVector) {
-    with(mainDep.notesViewModel) {
+    with(mainDep.nVM) {
         Box(Modifier.padding(start = 10.dp)) {
             with(uiStates) {
                 val values = source.getButtonFormatValues()

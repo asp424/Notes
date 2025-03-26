@@ -15,7 +15,6 @@ import com.lm.notes.R
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.ui.cells.view.EditTextController
 import com.lm.notes.ui.cells.view.app_widget.ToastCreator
-import kotlinx.coroutines.*
 import javax.inject.Inject
 
 interface ClipboardProvider {
@@ -126,6 +125,9 @@ interface ClipboardProvider {
                 }
 
                 Icons.Rounded.ContentCut -> cutSelected()
+
+                Icons.Rounded.Delete -> removeSelected()
+
                 else -> Unit
             }
 

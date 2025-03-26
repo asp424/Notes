@@ -41,17 +41,9 @@ fun Context.longToast(text: String) = Toast.makeText(this, text, Toast.LENGTH_LO
 
 
 @Composable
-fun animDp(target: Boolean, first: Dp, second: Dp, delay: Int = 800) = animateDpAsState(
+fun animDp(target: Boolean, first: Dp, second: Dp = 0.dp , delay: Int = 800) = animateDpAsState(
     if (target) first else second, tween(delay)
 ).value
-
-@Composable
-fun shareDp(start: Dp, getIsExpandShare: Boolean, width: Dp, delay: Int = 300) = animDp(
-    target = getIsExpandShare,
-    first = width - start,
-    second = width - 126.dp,
-    delay = delay
-)
 
 fun formatTimestamp(timestamp: Long): String {
     val timeWas = timestamp.toString().asTime()

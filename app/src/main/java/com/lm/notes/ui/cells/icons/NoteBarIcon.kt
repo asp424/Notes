@@ -16,8 +16,7 @@ import com.lm.notes.utils.modifiers.noRippleClickable
 fun MainDependencies.NoteBarIcon(
     icon: ImageVector,
     offsetX: Dp = 0.dp
-) = with(notesViewModel.uiStates) {
-
+) = with(nVM.uiStates) {
     Icon(
         icon, null,
         Modifier
@@ -27,11 +26,11 @@ fun MainDependencies.NoteBarIcon(
                 icon.getNoteBarIconsActions(
                     rememberCoroutineScope(),
                     noteAppWidgetController,
-                    notesViewModel.noteModelFullScreen.value,
-                    notesViewModel.editTextController
+                    nVM.noteModelFullScreen.value,
+                    nVM.editTextController
                 ).second
             )
-            .iconVisibility(getNoteMode, 600), getSecondColor
+            .iconVisibility(getNoteMode && getTextIsEmpty, 600), getSecondColor
     )
 }
 

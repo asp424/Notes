@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.LaunchedEffect
 import androidx.core.text.toHtml
 import androidx.core.text.toSpanned
 import androidx.lifecycle.lifecycleScope
@@ -50,7 +49,7 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var intentController: IntentController
 
-    private val notesViewModel by viewModels<NotesViewModel> { viewModelFactory.get() }
+    private val nVM by viewModels<NotesViewModel> { viewModelFactory.get() }
 
     val chooseFolderPath =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult())
@@ -61,19 +60,13 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         appComponent.inject(this)
         setContent {
-            NotesTheme(viewModelFactory = viewModelFactory.get()) {
+            NotesTheme(nVM) {
                 MainScreenDependencies(
-                    sPreferences,
-                    viewModelFactory.get(),
-                    firebaseAuth,
-                    filesProvider,
-                    noteAppWidgetController
+                    sPreferences, firebaseAuth, filesProvider, noteAppWidgetController, nVM
                 ) {
-                    with(mainDep) { MainScreen() }
-                    if (intent.type != "null")
-                        LaunchedEffect(intent){
-                            getDataFromIntent(intent)
-                        }
+                    "start".log
+                    mainDep.MainScreen(this@MainActivity, lifecycleScope)
+                    getDataFromIntent(intent)
                 }
             }
         }
@@ -81,14 +74,14 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        notesViewModel.clipboardProvider.addListener()
-        with(notesViewModel) { uiStates.setSelection(lifecycleScope, this) }
+        nVM.clipboardProvider.addListener()
+        with(nVM) { uiStates.setSelection(lifecycleScope, this) }
     }
 
     override fun onPause() {
         super.onPause()
-        notesViewModel.clipboardProvider.removeListener()
-        CoroutineScope(IO).launch { notesViewModel.updateChangedNotes() }
+        nVM.clipboardProvider.removeListener()
+        CoroutineScope(IO).launch { nVM.updateChangedNotes() }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -97,16 +90,16 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getDataFromIntent(intent: Intent?) {
-        intentController.checkForIntentAction(intent, notesViewModel, lifecycleScope)
+        intentController.checkForIntentAction(intent, nVM, lifecycleScope)
         { i ->
-            notesViewModel.editTextController.createEditText()
-            with(notesViewModel.uiStates)
+            nVM.editTextController.createEditText()
+            with(nVM.uiStates)
             { NavControllerScreens.Note.setNavControllerScreen }
 
-            notesViewModel.addNewNote(lifecycleScope) {
+            nVM.addNewNote(lifecycleScope) {
                 when (i) {
                     is IntentStates.SendPlain ->
-                        notesViewModel.editTextController.setNewText(
+                        nVM.editTextController.setNewText(
                             i.text.toSpanned().toHtml()
                         )
 
@@ -116,17 +109,20 @@ class MainActivity : BaseActivity() {
                         )
 
                     is IntentStates.Word ->
-                        notesViewModel.editTextController.setNewText(
+                        nVM.editTextController.setNewText(
                             i.inBox.toSpanned().toHtml()
                         )
 
                     is IntentStates.Content -> TODO()
                     IntentStates.Null -> TODO()
                 }
-                notesViewModel.checkForEmptyText()
+                nVM.checkForEmptyText()
             }
         }
     }
 }
+
+
+
 
 

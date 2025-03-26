@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +32,7 @@ fun MainDependencies.IconClipBoard(
     color: Color,
     bottomPadding: Dp = 0.dp
 ) {
-    with(notesViewModel) {
+    with(nVM) {
         with(uiStates) {
             val visibleModifier = Modifier.visibility(source, textIsEmpty)
             val configuration = LocalConfiguration.current
@@ -45,7 +46,8 @@ fun MainDependencies.IconClipBoard(
                         bottom = if (source == Icons.Rounded.ContentPaste &&
                             configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
                         ) 10.dp + bottomPadding else bottomPadding
-                    ).size(source.getScale(textIsEmpty).dp * 30)
+                    )
+                    .size(source.getScale(textIsEmpty).dp * 30)
             )
             {
                 if (source == Icons.Rounded.ContentPaste)
@@ -65,14 +67,14 @@ fun MainDependencies.IconClipBoard(
                         Text(
                             modifier = Modifier.offset(0.dp, (-4).dp),
                             text = getPasteIconLabel,
-                            color = color, fontSize = 8.sp
+                            textAlign = Center, fontSize = 6.sp
                         )
                     } else Icon(
                     source, null,
                     visibleModifier.noRippleClickable(
-                            remember {
-                                { with(clipboardProvider) { source.clickOnButtonsClipboard() } }
-                            }), color
+                        remember {
+                            { with(clipboardProvider) { source.clickOnButtonsClipboard() } }
+                        }), color
                 )
             }
         }

@@ -21,14 +21,14 @@ import com.lm.notes.ui.cells.icons.icons_lists.listIconsMainBar
 fun MainDependencies.MainBar() {
     Row(
         Modifier
-            .size(animDp(notesViewModel.uiStates.getIsMainMode, width, 0.dp))
+            .size(animDp(nVM.uiStates.getIsMainMode, width, 0.dp))
             .padding(start = 20.dp, top = 20.dp, end = 20.dp), SpaceBetween
     )
     {
         Row { listIconsMainBar.forEachInList { MainBarIcon(first, second) } }
         Box(Modifier.offset(0.dp, (-5).dp)) {
-            LogOutBox(30.dp)
-            AuthBox(30.dp)
+            LogOutBox()
+            AuthBox()
         }
     }
 }

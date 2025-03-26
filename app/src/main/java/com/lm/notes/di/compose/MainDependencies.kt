@@ -11,28 +11,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.lm.notes.data.local_data.FilesProvider
 import com.lm.notes.data.local_data.SPreferences
-import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
-import com.lm.notes.presentation.ViewModelFactory
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 
 data class MainDependencies(
     val width: Dp,
     val height: Dp,
     val density: Density,
-    val notesViewModel: NotesViewModel,
+    val nVM: NotesViewModel,
     val firebaseAuth: FirebaseAuth,
     val sPreferences: SPreferences,
     val filesProvider: FilesProvider,
@@ -53,10 +48,10 @@ fun animVisibility(target: Boolean, duration: Int = 300) =
 @Composable
 fun MainScreenDependencies(
     sPreferences: SPreferences,
-    viewModelFactory: ViewModelFactory,
     firebaseAuth: FirebaseAuth,
     filesProvider: FilesProvider,
     noteAppWidgetController: NoteAppWidgetController,
+    nVM: NotesViewModel,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(
@@ -64,11 +59,7 @@ fun MainScreenDependencies(
             width = LocalConfiguration.current.screenWidthDp.dp,
             height = LocalConfiguration.current.screenHeightDp.dp,
             density = LocalDensity.current,
-            notesViewModel =
-            ViewModelProvider(
-                LocalViewModelStoreOwner.current ?: LocalContext.current as MainActivity,
-                viewModelFactory
-            )[NotesViewModel::class.java],
+            nVM = remember { nVM },
             firebaseAuth = remember { firebaseAuth },
             sPreferences = remember { sPreferences },
             filesProvider = remember { filesProvider },

@@ -1,5 +1,6 @@
-package com.lm.notes.data.local_data
+package com.lm.notes.data.models
 
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 sealed class ShareType {
@@ -18,6 +19,11 @@ sealed class ShareType {
     val fontSize get() = when(this){
         is AsHtml -> 10.sp
         else -> 12.sp
+    }
+
+    val size get() = when(this){
+        is Null -> 26.dp
+        else -> 25.dp
     }
 }
 

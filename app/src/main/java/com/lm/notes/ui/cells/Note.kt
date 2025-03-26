@@ -34,7 +34,7 @@ fun Note(
     val dens = LocalDensity.current
     with(dens) {
         with(mainDep) {
-            with(notesViewModel.uiStates) {
+            with(nVM.uiStates) {
                 Card(
                     modifier = modifier
                         .padding(bottom = 10.dp)

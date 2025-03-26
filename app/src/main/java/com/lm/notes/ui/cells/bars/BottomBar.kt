@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +29,7 @@ import com.lm.notes.utils.animDp
 @Composable
 fun BottomBar() {
     with(mainDep) {
-        with(notesViewModel) {
+        with(nVM) {
             with(uiStates) {
                 val lifecycleScope = LocalLifecycleOwner.current.lifecycleScope
                 val click = remember {
@@ -38,33 +37,45 @@ fun BottomBar() {
                         editTextController.createEditText()
                         if (!getIsDeleteMode) {
                             NavControllerScreens.Note.setNavControllerScreen
-                            }
-                            addNewNote(lifecycleScope) {
-                                editTextController.setNewText("")
-                                checkForEmptyText()
-                            }
+                        }
+                        addNewNote(lifecycleScope) {
+                            editTextController.setNewText("")
+                            checkForEmptyText()
                         }
                     }
+                }
 
                 Box(
                     modifier = Modifier
-                        .fillMaxSize().alpha(0.8f)
+                        .fillMaxSize()
+                        .alpha(0.8f)
                         .offset(0.dp, animDp(getIsMainMode, 0.dp, 200.dp)),
                     contentAlignment = Alignment.BottomEnd
                 ) {
-                    Box(Modifier.background(getMainColor).fillMaxWidth().height(70.dp))
+                    Box(Modifier
+                        .background(getMainColor)
+                        .fillMaxWidth()
+                        .height(70.dp))
                     Box(Modifier.padding(bottom = 40.dp, end = 40.dp)) {
-                        Button({}, Modifier.scale(1.2f).size(60.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = White)
-                        ) {}
-
-                        Button({}, Modifier.scale(1.05f).size(60.dp),
+                        Button(
+                            {}, Modifier
+                                .scale(1.1f)
+                                .size(60.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = getSecondColor)
                         ) {}
-                        Button(click, Modifier.size(60.dp),
+
+                        Button(
+                            {}, Modifier
+                                .scale(1.0f)
+                                .size(60.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = getSecondColor)
+                        ) {}
+                        Button(
+                            click, Modifier.size(60.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = getMainColor)
                         ) {
-                            Text("+", fontSize = 25.sp, color = getSecondColor,
+                            Text(
+                                "+", fontSize = 25.sp, color = getSecondColor,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -74,3 +85,6 @@ fun BottomBar() {
         }
     }
 }
+
+
+

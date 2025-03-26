@@ -14,6 +14,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.di.compose.MainDep.mainDep
+import com.lm.notes.ui.cells.view.LoadStatesEditText
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 
@@ -34,14 +36,14 @@ fun Modifier.paddingInt(start: Int = 0, top: Int = 0, end: Int = 0, bottom: Int 
 fun Modifier.noteClickable(noteModel: NoteModel) = composed {
     val coroutine = rememberCoroutineScope()
     with(mainDep) {
-        with(notesViewModel) {
+        with(nVM) {
             with(uiStates) {
                 with(noteModel) {
                     val interactionSource = remember { MutableInteractionSource() }
                     pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
-                                with(notesViewModel) {
+                                with(nVM) {
                                     if (getIsDeleteMode) {
                                         if (listDeleteAble.contains(id)) {
                                             removeFromDeleteAbleList(id)
@@ -56,7 +58,7 @@ fun Modifier.noteClickable(noteModel: NoteModel) = composed {
                                             androidx.compose.foundation.interaction.PressInteraction.Press(
                                                 Offset(it.x + 100f, 0f)
                                             )
-                                        coroutine.launch(kotlinx.coroutines.Dispatchers.IO) {
+                                        coroutine.launch(IO) {
                                             interactionSource.emit(press)
                                             interactionSource.emit(
                                                 androidx.compose.foundation.interaction.PressInteraction.Release(
@@ -65,7 +67,7 @@ fun Modifier.noteClickable(noteModel: NoteModel) = composed {
                                             )
                                         }
                                         setFullscreenNoteModel(id)
-                                        com.lm.notes.ui.cells.view.LoadStatesEditText.Loading.setIsSetTextInEditText
+                                        LoadStatesEditText.Loading.setIsSetTextInEditText
                                         with(editTextController) {
                                             createEditText()
                                             setNewText(text)
