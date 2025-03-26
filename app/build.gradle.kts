@@ -102,6 +102,9 @@ dependencies {
         "net.yslibrary" +
                 ".keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3")
 
+    //UiController
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+
     //Leak Canary
    // debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.9.1")
 }
