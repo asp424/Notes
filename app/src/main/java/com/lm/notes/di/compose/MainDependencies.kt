@@ -54,6 +54,8 @@ fun MainScreenDependencies(
     nVM: NotesViewModel,
     content: @Composable () -> Unit
 ) {
+
+
     CompositionLocalProvider(
         Local provides MainDependencies(
             width = LocalConfiguration.current.screenWidthDp.dp,
