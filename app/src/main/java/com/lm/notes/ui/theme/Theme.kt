@@ -1,7 +1,6 @@
 package com.lm.notes.ui.theme
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -26,7 +25,6 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Pink40
 )
 
-@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun NotesTheme(
     nVM: NotesViewModel,

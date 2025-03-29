@@ -51,7 +51,6 @@ import com.lm.notes.di.compose.animVisibility
 import com.lm.notes.presentation.MainActivity
 import com.lm.notes.presentation.NotesViewModel
 import com.lm.notes.ui.cells.view.EditTextController
-import com.lm.notes.ui.cells.view.LoadStatesEditText
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.theme.main
@@ -97,7 +96,6 @@ data class UiStates(
     val listDeleteAble: SnapshotStateList<String> = mutableStateListOf(),
     val mainColor: MutableState<Color> = mutableStateOf(main),
     val secondColor: MutableState<Color> = mutableStateOf(main),
-    val isSetTextInEditText: MutableState<LoadStatesEditText> = mutableStateOf(LoadStatesEditText.Loading),
     var selection: Pair<Int, Int> = Pair(-1, -1)
 ) {
     val getIsFormatMode get() = isFormatMode.value
@@ -186,8 +184,6 @@ data class UiStates(
     val Boolean.setClipboardIsEmpty get() = run { clipboardIsEmpty.value = this }
 
     val Boolean.setSettingsVisible get() = run { settingsVisible.value = this }
-
-    val LoadStatesEditText.setIsSetTextInEditText get() = run { isSetTextInEditText.value = this }
 
     infix fun Color.setColor(spanType: SpanType) = when (spanType) {
         is SpanType.Background -> setColorButtonBackground

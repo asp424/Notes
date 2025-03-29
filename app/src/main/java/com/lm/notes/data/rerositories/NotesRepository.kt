@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface NotesRepository {
-    fun addNewNote(coroutineScope: CoroutineScope, onAdd: (String) -> Unit)
+    fun addNewNote(coroutineScope: CoroutineScope, text: Spanned, onAdd: (String) -> Unit)
 
     val noteModelFullScreen: StateFlow<NoteModel>
 
@@ -27,7 +27,7 @@ interface NotesRepository {
 
     fun updateHeaderFromUi(text: TextFieldValue)
 
-    fun setFullscreenNoteModel(id: String)
+    fun setFullscreenNoteModel(noteModel: NoteModel)
 
     suspend fun updateChangedNotes()
 
@@ -96,12 +96,15 @@ interface NotesRepository {
 
         override val isAuth: Boolean get() = firebaseRepository.isAuth
 
-        override fun addNewNote(coroutineScope: CoroutineScope, onAdd: (String) -> Unit) {
+        override fun addNewNote(
+            coroutineScope: CoroutineScope, text: Spanned, onAdd: (String) -> Unit
+        ) {
             coroutineScope.launch(coroutineDispatcher) {
                 firebaseRepository.randomId.also { id ->
-                    with(roomRepository.newNote(id)) {
-                        notesListData.add(this@with)
-                        notesListData.setFullscreenNoteModel(id)
+                    with(roomRepository.newNote(id, text)) {
+                        notesListData.setFullscreenNoteModel(this)
+                        notesListData.add(this)
+                        checkForEmptyText()
                         onAdd(id)
                     }
                 }
@@ -145,8 +148,8 @@ interface NotesRepository {
                 roomRepository.updateNote(it)
             }
 
-        override fun setFullscreenNoteModel(id: String) =
-            notesListData.setFullscreenNoteModel(id)
+        override fun setFullscreenNoteModel(noteModel: NoteModel) =
+            notesListData.setFullscreenNoteModel(noteModel)
 
         override val noteModelFullScreen get() = notesListData.noteModelFullScreen
     }

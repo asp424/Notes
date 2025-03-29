@@ -13,6 +13,7 @@ interface NotesListData {
     val notesList: StateFlow<List<NoteModel>>
 
     val noteModelFullScreen: StateFlow<NoteModel>
+
     fun sortByCreate()
 
     fun sortByChange()
@@ -35,7 +36,7 @@ interface NotesListData {
 
     fun updateHeaderFromUi(text: TextFieldValue)
 
-    fun setFullscreenNoteModel(id: String)
+    fun setFullscreenNoteModel(noteModel: NoteModel)
 
     fun isMustRemoveFromList(): Boolean
 
@@ -89,8 +90,8 @@ interface NotesListData {
 
         override fun updateHeaderFromUi(text: TextFieldValue) = noteData.updateHeaderFromUi(text)
 
-        override fun setFullscreenNoteModel(id: String) =
-            noteData.setFullscreenNoteModel(findById(id))
+        override fun setFullscreenNoteModel(noteModel: NoteModel) =
+            noteData.setFullscreenNoteModel(noteModel)
 
         override fun isMustRemoveFromList() = noteData.isMustRemoveFromList()
 

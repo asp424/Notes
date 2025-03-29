@@ -5,6 +5,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.text.toHtml
 import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.models.UiStates
+import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,7 +77,7 @@ interface NoteData {
         override fun checkForEmptyText() {
             with(uiStates) {
                 CoroutineScope(coroutineDispatcher).launch {
-                    noteModelFullScreen.value.text.isNotEmpty().setTextIsEmpty
+                    _noteModelFullScreen.value.apply { (text + "ass").log }.text.isNotEmpty().apply { log }.setTextIsEmpty
                 }
             }
         }

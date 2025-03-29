@@ -4,12 +4,17 @@ import android.text.Spanned
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.core.text.toSpanned
 import androidx.lifecycle.ViewModel
 import com.lm.notes.data.local_data.ClipboardProvider
+import com.lm.notes.data.models.NoteModel
 import com.lm.notes.data.models.UiStates
 import com.lm.notes.data.rerositories.NotesRepository
 import com.lm.notes.ui.cells.view.EditTextController
+import com.lm.notes.utils.log
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Stable
@@ -23,18 +28,27 @@ class NotesViewModel @Inject constructor(
 
     val notesList = notesRepository.notesList
 
-    val noteModelFullScreen = notesRepository.noteModelFullScreen
+    val noteModelFullScreen = notesRepository.noteModelFullScreen.apply {
+        CoroutineScope(IO).launch {
+            collect {
+                (it.text + "fik").log
+            }
+        }
+    }
 
-    fun addNewNote(coroutineScope: CoroutineScope, onAdd: (String) -> Unit) =
-        notesRepository.addNewNote(coroutineScope) { onAdd(it) }
+    fun addNewNote(
+        coroutineScope: CoroutineScope, text: Spanned = "".toSpanned(),
+        onAdd: (String) -> Unit = {}
+    ) =
+        notesRepository.addNewNote(coroutineScope, text) { onAdd(it) }
 
     fun downloadNotesFromFirebase(coroutineScope: CoroutineScope) =
         notesRepository.downloadNotesFromFirebase(coroutineScope)
 
     fun deleteNoteFromFirebase(id: String) = notesRepository.deleteFromFirebase(id)
 
-    fun setFullscreenNoteModel(id: String) =
-        notesRepository.setFullscreenNoteModel(id)
+    fun setFullscreenNoteModel(noteModel: NoteModel) =
+        notesRepository.setFullscreenNoteModel(noteModel)
 
     fun updateNoteFromUi(newText: Spanned) = notesRepository.updateNoteFromUi(newText)
 

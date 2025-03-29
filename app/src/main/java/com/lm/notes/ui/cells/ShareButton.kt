@@ -26,7 +26,7 @@ import com.lm.notes.utils.getHeader
 @SuppressLint("ContextCastToActivity")
 @Composable
 fun MainDependencies.shareButton(shareType: Pair<ShareType, Dp>) = with(nVM) {
-    nVM.noteModelFullScreen.collectAsState().value.apply {
+    noteModelFullScreen.collectAsState().value.apply {
         val activity = LocalContext.current as MainActivity
         val coroutine = rememberCoroutineScope()
         with(filesProvider) {

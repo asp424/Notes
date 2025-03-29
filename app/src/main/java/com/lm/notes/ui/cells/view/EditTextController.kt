@@ -7,7 +7,11 @@ import android.graphics.Color.YELLOW
 import android.net.Uri
 import android.text.Html
 import android.text.Spanned
-import android.text.style.*
+import android.text.style.BackgroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.text.style.URLSpan
+import android.text.style.UnderlineSpan
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_UP
 import android.view.inputmethod.InputMethodManager
@@ -24,8 +28,11 @@ import com.lm.notes.data.models.UiStates
 import com.lm.notes.ui.core.SpanType
 import com.lm.notes.ui.core.SpanType.Bold.listClasses
 import com.lm.notes.utils.getAction
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 interface EditTextController {
@@ -110,7 +117,7 @@ interface EditTextController {
     ) : EditTextController {
 
         private var _editText: EditText? = null
-        override val editText get() = _editText?: editTextBuilder()
+        override val editText get() = _editText ?: editTextBuilder()
 
         override fun createEditText() = editTextBuilder().apply {
             _editText = this
@@ -122,15 +129,14 @@ interface EditTextController {
             setOnTouchListener { view, event ->
                 touchOffsetOnActionUp(view as TextView, event) { offset ->
                     listOfUrlSpans(
-                        onEachSpan = { uri ->
-                            checkForClick(offset) { setHighLightAndOpenLink(view, uri) }
-                        }, onEmpty = { showKeyboard() }
+                        { uri -> checkForClick(offset) { setHighLightAndOpenLink(view, uri) } },
+                        { showKeyboard() }
                     )
                 }
             }
             accessibilityDelegate = AccessibilityDelegate(this@Base, uiStates)
-                customSelectionActionModeCallback = callbackEditText
-                customInsertionActionModeCallback = callbackEditText
+            customSelectionActionModeCallback = callbackEditText
+            customInsertionActionModeCallback = callbackEditText
             setOnClickListener { onClickAction() }
         }
 
@@ -221,7 +227,6 @@ interface EditTextController {
 
         override fun updateText() = with(noteData.noteModelFullScreen.value) {
             text = editText.text.toHtml(); isChanged = true
-            with(uiStates) { LoadStatesEditText.Success.setIsSetTextInEditText }
         }
 
         override fun setRelativeSpan(scale: Float) = with(editText) {

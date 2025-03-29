@@ -22,7 +22,7 @@ import com.lm.notes.di.compose.MainScreenDependencies
 import com.lm.notes.ui.cells.view.app_widget.NoteAppWidgetController
 import com.lm.notes.ui.screens.MainScreen
 import com.lm.notes.ui.theme.NotesTheme
-import com.lm.notes.utils.log
+import dagger.Lazy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ import javax.inject.Inject
 class MainActivity : BaseActivity() {
 
     @Inject
-    lateinit var viewModelFactory: dagger.Lazy<ViewModelFactory>
+    lateinit var viewModelFactory: Lazy<ViewModelFactory>
 
     @Inject
     lateinit var sPreferences: SPreferences
@@ -64,7 +64,6 @@ class MainActivity : BaseActivity() {
                 MainScreenDependencies(
                     sPreferences, firebaseAuth, filesProvider, noteAppWidgetController, nVM
                 ) {
-                    "start".log
                     mainDep.MainScreen(this@MainActivity, lifecycleScope)
                     getDataFromIntent(intent)
                 }
@@ -104,7 +103,7 @@ class MainActivity : BaseActivity() {
                         )
 
                     is IntentStates.ViewPlain ->
-                        filesProvider.readTextFileFromDeviceAndSetToEditText(
+                        filesProvider.readTextFileFromDevice(
                             i.uri
                         )
 

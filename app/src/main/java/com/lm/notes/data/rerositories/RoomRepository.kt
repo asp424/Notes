@@ -1,5 +1,8 @@
 package com.lm.notes.data.rerositories
 
+import android.text.Spanned
+import androidx.core.text.toHtml
+import androidx.core.text.toSpanned
 import androidx.paging.PagingSource
 import com.lm.notes.data.local_data.room.NoteModelRoom
 import com.lm.notes.data.local_data.room.NotesDao
@@ -25,7 +28,7 @@ interface RoomRepository {
 
     suspend fun getNote(id: String): NoteModelRoom?
 
-    fun newNote(id: String): NoteModel
+    fun newNote(id: String, text: Spanned = "".toSpanned()): NoteModel
 
     val actualTime: Long
 
@@ -51,13 +54,16 @@ interface RoomRepository {
 
         override suspend fun getNote(id: String) = notesDao.getById(id)
 
-        override fun newNote(id: String) = with(actualTime) {
+        override fun newNote(id: String, text: Spanned) = with(actualTime) {
             notesMapper.map(
                 NoteModelRoom(
                     id,
                     this,
                     this,
-                    header = nowDate(actualTime)
+                    header = nowDate(actualTime),
+                    text = text.toHtml(),
+                    preview = if (text.length >= 40) "${text.substring(0, 40)}..."
+                    else text.toString()
                 )
             )
         }

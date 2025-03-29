@@ -37,7 +37,7 @@ interface FilesProvider {
 
     fun shareAsText(text: String, activity: MainActivity)
 
-    fun readTextFileFromDeviceAndSetToEditText(uri: Uri?)
+    fun readTextFileFromDevice(uri: Uri?, text: String.() -> Unit = {})
 
     fun getFolderNameFromUri(intent: Intent): String
 
@@ -72,10 +72,10 @@ interface FilesProvider {
             }
         }
 
-        override fun readTextFileFromDeviceAndSetToEditText(uri: Uri?) {
+        override fun readTextFileFromDevice(uri: Uri?, text: String.() -> Unit) {
             uri?.apply {
                 context.contentResolver.openInputStream(this)?.apply {
-                    editTextController.setText(reader().readText())
+                    text(reader().readText())
                     close()
                 }
             }
